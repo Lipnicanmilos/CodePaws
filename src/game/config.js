@@ -13,7 +13,7 @@
         → obchádza všetky pravidlá RLS. Sem NIKDY nepatrí a nikdy sa necommituje. */
 
 export const SUPABASE_URL = 'https://mdpfxmsovlccdaftfbkz.supabase.co';
-export const SUPABASE_ANON_KEY = '';
+export const SUPABASE_ANON_KEY = 'sb_publishable_fk9gJExKzqI6rMaDJhrBMQ_ezR6dxrF';
 
 /** Koľko priečok drží Sieň slávy. Rovnaké číslo je aj v SQL funkcii. */
 export const HALL_SIZE = 15;
