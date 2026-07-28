@@ -25,6 +25,8 @@ export class BoardView {
         const tile = document.createElement('div');
         tile.className = 'tile';
         tile.dataset.tile = world.tileAt(x, y);
+        // Uhlopriečny index → dlaždice sa pri načítaní vynoria vo vlne.
+        tile.style.setProperty('--i', x + y);
         if (world.tileAt(x, y) === 'goal') tile.innerHTML = ICONS.house();
 
         const item = world.itemAt(x, y);
@@ -85,13 +87,35 @@ export class BoardView {
         break;
       case 'win':
         this.el.classList.add('is-won');
-        this.flash(this.actorEl, 'is-happy', 1600);
+        this.flash(this.actorEl, 'is-happy', 2000);
+        this.confetti();
         break;
       case 'lose':
       case 'error':
         this.el.classList.add('is-error');
         break;
     }
+  }
+
+  /** Jeden krátky výbuch — nie trvalý efekt. */
+  confetti() {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const colors = ['#ffb01f', '#34c79a', '#5fc9e8', '#f04e37', '#ffffff'];
+    const layer = document.createElement('div');
+    layer.className = 'confetti';
+    for (let i = 0; i < 16; i++) {
+      const angle = (Math.PI * 2 * i) / 16 + Math.random() * 0.4;
+      const dist = 70 + Math.random() * 70;
+      const bit = document.createElement('i');
+      bit.style.setProperty('--dx', `${Math.cos(angle) * dist}px`);
+      bit.style.setProperty('--dy', `${Math.sin(angle) * dist - 30}px`);
+      bit.style.setProperty('--dr', `${Math.random() * 720 - 360}deg`);
+      bit.style.setProperty('--c', colors[i % colors.length]);
+      bit.style.animationDelay = `${Math.random() * 120}ms`;
+      layer.append(bit);
+    }
+    this.el.append(layer);
+    setTimeout(() => layer.remove(), 1600);
   }
 
   flash(el, cls, ms) {

@@ -12,6 +12,8 @@ import * as progress from './progress.js';
 
 const $ = (id) => document.getElementById(id);
 
+const DIR_GLYPH = { N: '▲', E: '▶', S: '▼', W: '◀' };
+
 const MESSAGES = {
   wall: 'Au! Tam je stena. Pozri sa na červený riadok.',
   fire: 'Cez oheň sa prejsť nedá — najprv ho uhas.',
@@ -177,7 +179,7 @@ class Game {
     if (vm.done) return;
     document.body.classList.add('is-running');
     this.board.setRunning(true);
-    $('btnRun').innerHTML = '<span class="btn-ico" aria-hidden="true">❚❚</span> Pauza';
+    $('btnRun').innerHTML = '<span class="key-glyph" aria-hidden="true">❚❚</span><span class="key-word">Pauza</span>';
     this.timer = setInterval(() => this.tick(), this.speed);
     this.tick();
   }
@@ -202,7 +204,7 @@ class Game {
     this.board.setRunning?.(false);
     document.body.classList.remove('is-running');
     const btn = $('btnRun');
-    if (btn) btn.innerHTML = '<span class="btn-ico" aria-hidden="true">▶</span> Štart';
+    if (btn) btn.innerHTML = '<span class="key-glyph" aria-hidden="true">▶</span><span class="key-word">Štart</span>';
   }
 
   applyEvent(ev) {
@@ -246,6 +248,9 @@ class Game {
   }
 
   win() {
+    document.body.classList.add('is-celebrating');
+    setTimeout(() => document.body.classList.remove('is-celebrating'), 2400);
+
     const stars = this.earnedStars();
     const all = progress.recordStars(this.level.id, stars);
     this.renderStars(all);
@@ -275,9 +280,9 @@ class Game {
 
   updateState() {
     const a = this.world.actor;
-    $('stPos').textContent = `${a.x + 1} · ${a.y + 1}`;
-    $('stDir').textContent = DIR_LABEL[a.dir];
-    $('stBones').textContent = `${this.world.bonesCollected()} / ${this.world.totalBones}`;
+    $('stPos').textContent = `${a.x + 1}·${a.y + 1}`;
+    $('stDir').textContent = `${DIR_GLYPH[a.dir]} ${DIR_LABEL[a.dir]}`;
+    $('stBones').textContent = `${this.world.bonesCollected()}/${this.world.totalBones}`;
   }
 
   toast(message, bad = false) {

@@ -1,53 +1,44 @@
-/* Kódolabky — paleta príkazov a tabuľka („databáza“ plánu) */
+/* Kódolabky — tabuľka plánu misie.
+   Zámerne tichá: hlasný je pult, toto je dispečerský hárok, ktorý sa naň zapisuje. */
 
-.palette {
-  display: flex; flex-wrap: wrap; gap: .4rem;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: .6rem; box-shadow: var(--shadow-sm);
+.plancard {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  animation: card-in .5s cubic-bezier(.2, .9, .3, 1) both .4s;
 }
+@keyframes card-in { from { opacity: 0; transform: translateY(16px); } }
 
-.cmdbtn {
-  display: inline-flex; align-items: center; gap: .4rem;
-  padding: .5rem .8rem .5rem .55rem; border-radius: var(--radius-sm);
-  border: 1px solid var(--border-strong); background: var(--surface-2);
-  font-family: var(--font-display); font-weight: 600; font-size: var(--step--1);
-  box-shadow: 0 2px 0 var(--border-strong);
-  transition: transform .12s ease, background .15s ease, box-shadow .12s ease;
-}
-.cmdbtn:hover { background: var(--accent-soft); transform: translateY(-1px); }
-.cmdbtn:active { transform: translateY(2px); box-shadow: none; }
-.cmdbtn svg { width: 20px; height: 20px; display: block; color: var(--accent); }
-.cmdbtn:disabled { opacity: .4; cursor: default; transform: none; }
-
-/* ── Karta s tabuľkou ────────────────────────────────────────── */
-
-.tablecard {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden;
-  display: flex; flex-direction: column; min-height: 12rem;
-}
-.tablecard-head {
+.plancard-head {
   display: flex; align-items: baseline; justify-content: space-between; gap: .5rem;
-  padding: .7rem .9rem .55rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface-2);
+  padding: .7rem .9rem .6rem;
+  background: var(--depot);
+  color: #dcebf1;
 }
-.tablecard-head h2 { font-size: var(--step-1); }
-.rowcount { font-size: var(--step--1); color: var(--text-muted); font-weight: 700; }
-.rowcount.is-over { color: var(--accent-deep); }
+.plancard-head h2 { font-size: var(--step-1); color: #fff; }
+.rowcount {
+  font-family: var(--font-data); font-size: var(--step--1); color: #8fb2c0;
+}
+.rowcount.is-over { color: var(--beacon); }
 
-.table-scroll { overflow: auto; max-height: min(42vh, 25rem); }
+.table-scroll { overflow: auto; max-height: min(46vh, 27rem); }
 
 .program { width: 100%; border-collapse: collapse; }
 .program thead th {
   position: sticky; top: 0; z-index: 1;
-  background: var(--surface);
-  text-align: left; font-family: var(--font-display); font-weight: 600;
-  font-size: .68rem; text-transform: uppercase; letter-spacing: .09em;
-  color: var(--text-muted); padding: .45rem .55rem; border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  text-align: left;
+  font-family: var(--font-display); font-weight: 600;
+  font-size: .64rem; text-transform: uppercase; letter-spacing: .13em;
+  color: var(--muted); padding: .4rem .55rem; border-bottom: 1px solid var(--line);
 }
-.program td { padding: .3rem .55rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.program td { padding: .28rem .55rem; border-bottom: 1px solid var(--line); vertical-align: middle; }
 .program tbody tr:last-child td { border-bottom: 0; }
+
+.program tbody tr { animation: row-in .28s cubic-bezier(.2, 1.3, .4, 1) both; }
+@keyframes row-in { from { opacity: 0; transform: translateX(-14px); } }
 
 .c-num { width: 2.6rem; }
 .c-act { width: 4.6rem; }
@@ -55,42 +46,43 @@
 .rownum {
   display: inline-grid; place-items: center;
   width: 1.75rem; height: 1.75rem; border-radius: 50%;
-  background: var(--surface-2); border: 1px solid var(--border);
-  font-family: var(--font-display); font-weight: 600; font-size: .82rem;
-  color: var(--text-muted);
+  background: var(--surface-2); border: 1px solid var(--line);
+  font-family: var(--font-data); font-size: .78rem; color: var(--muted);
 }
 
 .cmdcell { display: flex; align-items: center; gap: .5rem; font-weight: 700; }
-.cmdcell svg { width: 20px; height: 20px; flex: none; color: var(--accent); }
+.cmdcell svg { width: 21px; height: 21px; flex: none; color: var(--beacon-deep); }
 
 .rowacts { display: flex; gap: .15rem; justify-content: flex-end; }
 .rowacts button {
   width: 1.6rem; height: 1.6rem; border-radius: var(--radius-xs);
-  border: 1px solid transparent; background: transparent; color: var(--text-muted);
-  display: grid; place-items: center; font-size: .9rem; line-height: 1;
+  border: 1px solid transparent; background: transparent; color: var(--muted);
+  display: grid; place-items: center; font-size: .85rem; line-height: 1;
+  transition: background .15s ease, color .15s ease;
 }
 .rowacts button:hover:not(:disabled) { background: var(--surface-2); color: var(--text); }
 .rowacts button:disabled { opacity: .25; cursor: default; }
-.rowacts .del:hover { background: var(--accent-soft); color: var(--accent-deep); }
+.rowacts .del:hover { background: color-mix(in srgb, var(--siren) 16%, transparent); color: var(--siren-deep); }
 
-/* Kurzor programu: práve bežiaci riadok */
-.program tr.is-current { background: color-mix(in srgb, var(--gold) 17%, transparent); }
-.program tr.is-current .rownum {
-  background: var(--gold); color: #3b2600; border-color: transparent;
+/* Kurzor programu — ktorý riadok práve beží. */
+.program tr.is-current { background: color-mix(in srgb, var(--beacon) 20%, transparent); }
+.program tr.is-current .rownum { background: var(--beacon); color: #4a2f00; border-color: var(--beacon-deep); }
+.program tr.is-current td:first-child { box-shadow: inset 4px 0 0 var(--beacon); }
+
+.program tr.is-bad { background: color-mix(in srgb, var(--siren) 17%, transparent); }
+.program tr.is-bad .rownum { background: var(--siren); color: #fff; border-color: var(--siren-deep); }
+.program tr.is-bad td:first-child { box-shadow: inset 4px 0 0 var(--siren); }
+
+.program tr.is-done .rownum {
+  background: color-mix(in srgb, var(--mint) 25%, transparent);
+  border-color: color-mix(in srgb, var(--mint) 55%, transparent);
+  color: var(--text);
 }
-.program tr.is-current td:first-child { box-shadow: inset 3px 0 0 var(--gold); }
 
-.program tr.is-bad { background: var(--accent-soft); }
-.program tr.is-bad .rownum { background: var(--accent); color: #fff; border-color: transparent; }
-.program tr.is-bad td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
-
-.program tr.is-done .rownum { background: var(--teal-soft); color: var(--teal-deep); }
-
-body.is-running .cmdbtn,
-body.is-running .rowacts button { pointer-events: none; opacity: .45; }
+body.is-running .rowacts button { pointer-events: none; opacity: .35; }
 
 .emptyhint {
-  padding: 1.6rem 1rem; text-align: center; color: var(--text-muted);
-  font-size: var(--step--1); max-width: 34ch; margin-inline: auto;
+  padding: 1.7rem 1rem; text-align: center; color: var(--muted);
+  font-size: var(--step--1); max-width: 30ch; margin-inline: auto;
 }
 .emptyhint[hidden] { display: none; }

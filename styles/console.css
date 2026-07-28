@@ -1,0 +1,159 @@
+/* Kódolabky — dispečerský pult. Signature prvok celej hry.
+   Nitovaná oceľová doska, gumené jantárové klávesy, LCD displej.
+   Klávesy sa naozaj stláčajú: farebná spodná hrana sa pri stlačení zloží. */
+
+.console { position: sticky; top: 1rem; min-width: 0; }
+@media (max-width: 760px) { .console { position: static; } }
+
+.console-plate {
+  position: relative;
+  padding: 1.05rem 1rem .95rem;
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, var(--depot-mid) 0%, var(--depot) 55%, var(--depot-deep) 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, .16),
+    inset 0 -4px 0 rgba(0, 0, 0, .4),
+    0 14px 34px rgba(13, 34, 44, .32);
+  overflow: hidden;
+  animation: plate-in .55s cubic-bezier(.2, .9, .3, 1) both .25s;
+}
+@keyframes plate-in { from { opacity: 0; transform: translateY(22px); } }
+
+/* Nity — doska je zoskrutkovaná, nie nakreslená. */
+.rivet {
+  position: absolute; width: 7px; height: 7px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #6f93a3, #24485a);
+  box-shadow: inset 0 -1px 1px rgba(0,0,0,.5), 0 1px 0 rgba(255,255,255,.12);
+}
+.rivet-tl { top: 9px; left: 10px; }  .rivet-tr { top: 9px; right: 10px; }
+.rivet-bl { bottom: 9px; left: 10px; } .rivet-br { bottom: 9px; right: 10px; }
+
+/* Smaltovaný štítok */
+.plate-label {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: var(--step--2); letter-spacing: .16em; text-transform: uppercase;
+  color: #7fa6b5; text-align: center; margin-bottom: .7rem;
+}
+
+/* ── Krížový D-pad ───────────────────────────────────────────── */
+
+.pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, auto);
+  gap: .45rem;
+  margin-bottom: .8rem;
+}
+.pad:has(.key-pad[data-slot="down"]) { grid-template-rows: repeat(3, auto); }
+
+.key-pad[data-slot="up"]    { grid-area: 1 / 2; }
+.key-pad[data-slot="left"]  { grid-area: 2 / 1; }
+.key-pad[data-slot="right"] { grid-area: 2 / 3; }
+.key-pad[data-slot="down"]  { grid-area: 3 / 2; }
+
+.pad-emblem {
+  grid-area: 2 / 2;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 62%, #5c8496 0 40%, transparent 41%),
+    radial-gradient(circle at 23% 27%, #5c8496 0 16%, transparent 17%),
+    radial-gradient(circle at 43% 16%, #5c8496 0 16%, transparent 17%),
+    radial-gradient(circle at 64% 19%, #5c8496 0 15%, transparent 16%),
+    radial-gradient(circle at 81% 37%, #5c8496 0 14%, transparent 15%);
+  opacity: .55;
+  align-self: center; justify-self: center;
+  width: 62%; aspect-ratio: 1;
+}
+
+/* ── Klávesy ─────────────────────────────────────────────────── */
+
+.key {
+  --face: var(--beacon);
+  --edge: var(--beacon-deep);
+  display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: .1rem;
+  border: 0; border-radius: 15px;
+  padding: .55rem .5rem;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--face) 88%, white) 0%, var(--face) 62%);
+  color: #4a2f00;
+  font-family: var(--font-display); font-weight: 600; font-size: var(--step--1);
+  box-shadow: 0 var(--lift) 0 var(--edge), 0 calc(var(--lift) + 5px) 14px rgba(13, 34, 44, .38);
+  transition: transform .09s ease, box-shadow .09s ease, filter .15s ease;
+}
+.key:hover:not(:disabled) { filter: brightness(1.06); }
+.key:active:not(:disabled),
+.key.is-hit {
+  transform: translateY(var(--lift));
+  box-shadow: 0 0 0 var(--edge), 0 2px 5px rgba(13, 34, 44, .45);
+}
+.key:disabled { opacity: .38; cursor: default; }
+
+.key-pad { aspect-ratio: 1; padding: .35rem; }
+.key svg { width: 26px; height: 26px; display: block; }
+.key-word { font-size: .68rem; letter-spacing: .01em; line-height: 1.1; }
+.key-glyph { font-size: 1.05rem; line-height: 1; }
+
+.key-use {
+  --face: #5fc9e8; --edge: #2c93b2;
+  color: #06323f;
+  width: 100%; flex-direction: row; gap: .45rem; padding: .55rem;
+  margin-bottom: .8rem;
+}
+
+.key-steel {
+  --face: #93aeba; --edge: #5b7c8b;
+  color: #0d2530;
+}
+.key-run { --face: var(--siren); --edge: var(--siren-deep); color: #fff; }
+.key-wide { flex-direction: row; gap: .45rem; padding: .7rem 1.2rem; }
+
+/* ── LCD displej ─────────────────────────────────────────────── */
+
+.lcd {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: .35rem;
+  background: #08161b; border: 1px solid rgba(255, 255, 255, .09);
+  border-radius: 11px; padding: .5rem .55rem; margin-bottom: .8rem;
+  box-shadow: inset 0 3px 9px rgba(0, 0, 0, .65);
+}
+.lcd-cell { min-width: 0; text-align: center; }
+.lcd-key {
+  display: block; font-size: .58rem; letter-spacing: .13em; text-transform: uppercase;
+  color: #4d7686; font-weight: 700;
+}
+.lcd-val {
+  display: block; font-family: var(--font-data); font-size: .98rem;
+  color: var(--mint); text-shadow: 0 0 9px color-mix(in srgb, var(--mint) 55%, transparent);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ── Ovládanie behu ──────────────────────────────────────────── */
+
+.transport { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: .45rem; margin-bottom: .7rem; }
+.transport .key { padding: .5rem .35rem; }
+
+.speed { display: flex; gap: .3rem; justify-content: center; }
+.speedbtn {
+  border: 1px solid rgba(255, 255, 255, .16); background: rgba(255, 255, 255, .06);
+  color: #7fa6b5; border-radius: 8px; padding: .18rem .55rem;
+  font-size: .72rem; letter-spacing: .1em; line-height: 1.4;
+  transition: all .15s ease;
+}
+.speedbtn.is-on { background: var(--beacon); border-color: var(--beacon-deep); color: #4a2f00; }
+
+/* ── Maják pri splnenej misii ────────────────────────────────── */
+
+.beacon-sweep {
+  position: absolute; inset: -40%; pointer-events: none; opacity: 0;
+  background: conic-gradient(from 0deg,
+    transparent 0deg, color-mix(in srgb, var(--beacon) 45%, transparent) 18deg, transparent 42deg);
+}
+body.is-celebrating .beacon-sweep { animation: sweep 1.15s linear 2; }
+@keyframes sweep {
+  0% { opacity: .85; transform: rotate(0deg); }
+  100% { opacity: .85; transform: rotate(360deg); }
+}
+
+/* Počas behu sa plán needituje — klávesy to majú aj ukázať. */
+body.is-running .key-pad,
+body.is-running .key-use { opacity: .4; pointer-events: none; }
