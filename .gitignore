@@ -1,0 +1,15 @@
+# OS
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Editory
+.vscode/
+.idea/
+*.swp
+
+# Lokálne / dočasné
+node_modules/
+dist/
+*.log
+.tmp/

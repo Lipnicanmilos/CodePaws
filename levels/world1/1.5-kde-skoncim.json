@@ -1,0 +1,49 @@
+{
+  "id": "1.5",
+  "title": "Kde skončím?",
+  "world": 1,
+  "type": "predict",
+  "mode": "any",
+  "story": "Fifo už má plán hotový. Vieš povedať, kde zastane? Klikni na políčko!",
+  "grid": {
+    "legend": {
+      ".": "empty",
+      "#": "wall"
+    },
+    "rows": [
+      "#######",
+      "#.....#",
+      "#.###.#",
+      "#.....#",
+      "#######"
+    ]
+  },
+  "actors": [
+    { "id": "a1", "char": "fifo", "x": 1, "y": 1, "dir": "E" }
+  ],
+  "preset": {
+    "locked": true,
+    "relative": [
+      { "cmd": "move", "n": 4 },
+      { "cmd": "turnRight" },
+      { "cmd": "move", "n": 2 },
+      { "cmd": "turnRight" },
+      { "cmd": "move", "n": 2 }
+    ],
+    "absolute": [
+      { "cmd": "east", "n": 4 },
+      { "cmd": "south", "n": 2 },
+      { "cmd": "west", "n": 2 }
+    ]
+  },
+  "goals": [
+    { "type": "predict", "actor": "a1", "answer": { "x": 3, "y": 3 } }
+  ],
+  "palette": [],
+  "limits": { "steps": 100 },
+  "stars": [
+    { "id": "finish" },
+    { "id": "firstTry" }
+  ],
+  "hint": "Prejdi si program prstom po mriežke, riadok po riadku. Pomôže aj tlačidlo ⏭ Krok — ale najprv skús hádať!"
+}

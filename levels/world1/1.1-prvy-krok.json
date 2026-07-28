@@ -1,0 +1,48 @@
+{
+  "id": "1.1",
+  "title": "Prvý krok",
+  "world": 1,
+  "type": "path",
+  "mode": "any",
+  "story": "Fifo má na dvore prvú misiu. Dojdi k záchranárskej búdke!",
+  "grid": {
+    "legend": {
+      ".": "empty",
+      "#": "wall",
+      "o": "bone",
+      "g": "goal"
+    },
+    "rows": [
+      "######",
+      "#....#",
+      "#.##o#",
+      "#...g#",
+      "######"
+    ]
+  },
+  "actors": [
+    { "id": "a1", "char": "fifo", "x": 1, "y": 1, "dir": "E" }
+  ],
+  "goals": [
+    { "type": "reach", "actor": "a1", "tile": "goal" }
+  ],
+  "palette": ["move", "turnLeft", "turnRight"],
+  "limits": { "rows": 8, "steps": 100 },
+  "stars": [
+    { "id": "finish" },
+    { "id": "rows", "max": 4 },
+    { "id": "bones", "all": true }
+  ],
+  "hint": "Najprv rovno, potom sa otoč dole.",
+  "solutions": {
+    "relative": [
+      { "cmd": "move", "n": 3 },
+      { "cmd": "turnRight" },
+      { "cmd": "move", "n": 2 }
+    ],
+    "absolute": [
+      { "cmd": "east", "n": 3 },
+      { "cmd": "south", "n": 2 }
+    ]
+  }
+}
