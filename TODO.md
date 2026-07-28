@@ -33,11 +33,11 @@ Celý postup je v [server/README.md](server/README.md), trvá ~10 minút.
 - [x] Vložiť **publishable** kľúč do `src/game/config.js` → rebríček je globálny
 - [x] Overiť: čítanie 200, priamy zápis zamietnutý RLS, funkcia validuje,
       zápis z prehliadača prejde vrátane CORS
-- [ ] **Zmazať testovacie záznamy** — v SQL Editore:
-      `delete from public.hall where nick in ('TEST ZAPIS', 'VELITEĽ 9');`
+- [x] Zmazať testovacie záznamy — tabuľka je prázdna a pripravená
 
-**Pri každom pridaní levelu zvýš `v_max_points` v SQL** (`250 × počet levelov`),
-inak sa poctivý hráč v istom momente prestane vedieť zapísať.
+**Pri každom pridaní levelu zvýš `v_max_points`** v `server/supabase.sql`
+(`250 × počet levelov`, dnes `1250`) a spusti SQL znova. Ak sa zabudne, poctivý
+hráč sa v istom momente prestane vedieť zapísať a bude to vyzerať ako náhodná chyba.
 
 ## 1. Etapa 2 — Svet 1 kompletne
 

@@ -85,6 +85,13 @@ class Game {
       });
     }
 
+    // Zápis do rebríčka sa ponúka presne vtedy, keď body pribudnú —
+    // nie schovaný o dve okná ďalej.
+    $('hallFromWin').addEventListener('click', () => {
+      $('winBox').close();
+      this.hall.open();
+    });
+
     $('winRetry').addEventListener('click', () => { $('winBox').close(); this.resetRun(); });
     $('winNext').addEventListener('click', () => {
       $('winBox').close();

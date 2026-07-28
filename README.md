@@ -67,9 +67,13 @@ tablete neprepíšu. Nič z toho neopúšťa prehliadač.
 
 ### Sieň slávy
 
-Z Knihy služieb sa dá otvoriť **rebríček prvých pätnástich**. Hráč si zvolí
-prezývku a zapíše svoje body — jedna prezývka je jedna priečka a horší výsledok
-ten lepší neprepíše.
+**Rebríček prvých pätnástich.** Po dohratí misie sa v okne s výsledkom ponúkne
+tlačidlo **Zapísať do Siene slávy** — teda presne vtedy, keď body pribudnú.
+Otvoriť sa dá aj kedykoľvek z Knihy služieb.
+
+Hráč si zvolí prezývku a zapíše svoje body. Jedna prezývka je jedna priečka
+a horší výsledok ten lepší neprepíše, takže rekord sa nedá pokaziť.
+Zapisuje sa **len vtedy, keď to hráč sám urobí** — nikdy automaticky.
 
 Ukladá sa iba **prezývka, body, počet misií a dátum**. Žiadne mená, e-maily ani
 IP adresy; prezývky prejdú filtrom na vulgarizmy a majú strop 10 znakov.
