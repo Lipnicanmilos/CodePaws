@@ -3,15 +3,20 @@
    práškovaná oceľ, gumené klávesy, jantárový maják, smaltované štítky, LCD. */
 
 :root {
-  --font-display: "Fredoka", "Segoe UI", system-ui, sans-serif;
-  --font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
-  --font-data: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  /* Baloo 2 — ťažké zaoblené písmo, ktoré vyzerá ako nápis namaľovaný
+     na záchranárskom aute. Atkinson Hyperlegible navrhol Braille Institute
+     na maximálne rozlíšenie tvarov písmen (I/l/1, O/0, b/d) — pre šesťročné
+     dieťa, ktoré ešte lúšti písmená, to nie je ozdoba ale funkcia.
+     DM Mono je len na LCD displeji pultu, teda na strojový údaj. */
+  --font-display: "Baloo 2", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --font-data: "DM Mono", ui-monospace, Consolas, monospace;
 
-  --step--2: 0.68rem;
-  --step--1: clamp(0.78rem, 0.74rem + 0.15vw, 0.86rem);
+  --step--2: 0.7rem;
+  --step--1: clamp(0.8rem, 0.76rem + 0.15vw, 0.88rem);
   --step-0:  clamp(0.95rem, 0.9rem + 0.2vw, 1.05rem);
-  --step-1:  clamp(1.1rem, 1rem + 0.4vw, 1.3rem);
-  --step-2:  clamp(1.35rem, 1.2rem + 0.7vw, 1.75rem);
+  --step-1:  clamp(1.15rem, 1.02rem + 0.45vw, 1.38rem);
+  --step-2:  clamp(1.5rem, 1.25rem + 1vw, 2.1rem);
 
   /* Paleta záchranárskeho vozidla: petrolejová karoséria, jantárový maják. */
   --daylight:   #dee7ec;
@@ -70,7 +75,10 @@ body {
   overflow-x: hidden;
 }
 
-h1, h2, h3 { font-family: var(--font-display); font-weight: 600; line-height: 1.15; letter-spacing: -.015em; }
+h1, h2, h3 {
+  font-family: var(--font-display); font-weight: 800;
+  line-height: 1.08; letter-spacing: -.022em;
+}
 button, select, input { font: inherit; color: inherit; }
 button { cursor: pointer; }
 
@@ -92,18 +100,14 @@ button { cursor: pointer; }
   position: relative; z-index: 20;
 }
 
-.brand { display: flex; align-items: center; gap: .55rem; }
+.brand { display: flex; align-items: center; gap: .6rem; }
 .brand-mark {
-  width: 30px; height: 30px; border-radius: 50%;
-  background: radial-gradient(circle at 50% 62%, var(--beacon) 0 42%, transparent 43%),
-              radial-gradient(circle at 22% 26%, var(--beacon) 0 17%, transparent 18%),
-              radial-gradient(circle at 42% 15%, var(--beacon) 0 17%, transparent 18%),
-              radial-gradient(circle at 64% 18%, var(--beacon) 0 16%, transparent 17%),
-              radial-gradient(circle at 82% 36%, var(--beacon) 0 15%, transparent 16%);
+  width: 34px; height: 34px; display: block; border-radius: 9px;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, .35);
 }
 .brand-name {
-  font-family: var(--font-display); font-weight: 700; font-size: var(--step-1);
-  letter-spacing: -.02em; color: #fff;
+  font-family: var(--font-display); font-weight: 800; font-size: var(--step-1);
+  letter-spacing: -.035em; color: #fff; line-height: 1;
 }
 
 .levelnav { display: flex; align-items: center; gap: .35rem; margin-inline: auto; }

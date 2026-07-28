@@ -28,6 +28,16 @@ export const ICONS = {
     '<path d="M13 2.2c.7 2.6 1.6 4.3 2.7 5.7 1.4 1.8 2.6 3.3 2.6 6A6.3 6.3 0 0 1 5.7 14c0-2.1 1-3.6 2-5 .3.9.9 1.5 1.7 1.8-.6-3.4.9-6.7 3.6-8.6z"/>'
   ),
 
+  /** Značka hry: labka poskladaná z dlaždíc bludiska. */
+  paw: () =>
+    '<svg viewBox="0 0 64 64" fill="currentColor" stroke="none" aria-hidden="true">' +
+      '<rect x="9" y="19" width="10" height="10" rx="3.2" transform="rotate(-20 14 24)"/>' +
+      '<rect x="20.5" y="12" width="10" height="10" rx="3.2" transform="rotate(-7 25.5 17)"/>' +
+      '<rect x="33.5" y="12" width="10" height="10" rx="3.2" transform="rotate(7 38.5 17)"/>' +
+      '<rect x="45" y="19" width="10" height="10" rx="3.2" transform="rotate(20 50 24)"/>' +
+      '<rect x="17" y="31" width="30" height="21" rx="8.5"/>' +
+    '</svg>',
+
   /** Záchranárska búdka — cieľ misie. */
   house: () =>
     '<svg viewBox="0 0 24 24" aria-hidden="true">' +

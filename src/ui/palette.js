@@ -5,6 +5,7 @@
    je hore „Vpred“ a po stranách otáčanie — to je pohľad psíka, nie mapy. */
 
 import { iconOf, labelOf } from '../game/commands.js';
+import { ICONS } from './icons.js';
 
 const SLOT = {
   north: 'up', south: 'down', west: 'left', east: 'right',
@@ -46,6 +47,7 @@ export class PaletteView {
     const emblem = document.createElement('span');
     emblem.className = 'pad-emblem';
     emblem.setAttribute('aria-hidden', 'true');
+    emblem.innerHTML = ICONS.paw();
     pad.append(emblem);
 
     for (const cmd of commands) {

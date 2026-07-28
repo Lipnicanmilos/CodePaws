@@ -30,6 +30,27 @@ Potom otvor `http://localhost:8140/`. Testy enginu bežia na
 
 V Claude Code stačí spustiť preview server `kodolabky`.
 
+## Nasadenie online (GitHub Pages)
+
+Hra je statická, takže ju GitHub Pages odslúži zadarmo a bez servera.
+`gh` CLI sa na firemný notebook nedá nainštalovať, takže repozitár treba
+založiť cez web na github.com (musí byť **verejný**, inak Pages vyžadujú Pro).
+
+```bash
+git -C "C:/Users/mlipnican/codepaws" remote add origin https://github.com/Lipnicanmilos/codepaws.git
+```
+
+```bash
+git -C "C:/Users/mlipnican/codepaws" push -u origin main
+```
+
+Potom na GitHube: **Settings → Pages → Source: Deploy from a branch → `main` / `/ (root)`**.
+Za pár minút beží na `https://lipnicanmilos.github.io/codepaws/`.
+
+Všetky cesty v kóde sú relatívne, takže hra funguje aj v podpriečinku — netreba
+nič prepisovať. `.nojekyll` je v repozitári preto, aby Pages súbory neprehnali
+Jekyllom.
+
 ## Ako sa to hrá
 
 1. Hore vpravo je prepínač **Otáčanie**:
