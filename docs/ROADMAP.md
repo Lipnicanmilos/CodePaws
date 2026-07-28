@@ -9,7 +9,7 @@ Cieľ: **jeden level sa dá naozaj prejsť.** Hotové 2026-07-28.
 - [x] `world.js` + `vm.js` — mriežka, príkazy `move` / otáčanie / `use`, krokovanie
 - [x] `board.js` — vykreslenie mriežky a psa, animácia po políčkach
 - [x] `table.js` — tabuľka riadkov, pridať/zmazať/presunúť riadok, kurzor ▶
-- [x] HUD — ▶ Štart, ⏭ Krok, ⟲ Znova, rýchlosť 🐢/🐕/🐇
+- [x] HUD — ▶ Štart, ⏭ Krok, ✕ Vymazať, tri rýchlosti
 - [x] `levels/world1/*.json` — levely 1.1, 1.2, 1.3, 1.4 a 1.7
 - [x] `tests/index.html` — 57 testov vrátane overenia, že každý level je riešiteľný
 - [x] navyše oproti plánu: oba režimy ovládania, tri kosti, ukladanie postupu,

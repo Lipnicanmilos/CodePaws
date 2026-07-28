@@ -52,7 +52,7 @@ class Game {
   bindUI() {
     $('btnRun').addEventListener('click', () => this.run());
     $('btnStep').addEventListener('click', () => this.singleStep());
-    $('btnReset').addEventListener('click', () => this.resetRun());
+    $('btnReset').addEventListener('click', () => this.clearPlan());
 
     $('prevLevel').addEventListener('click', () => this.loadLevel(this.index - 1));
     $('nextLevel').addEventListener('click', () => this.loadLevel(this.index + 1));
@@ -132,6 +132,17 @@ class Game {
     this.table.render(this.rows);
     this.updateRowCount();
     this.updateState();
+    $('btnReset').disabled = this.rows.length === 0;
+  }
+
+  /** Zmaže celý plán a dieťa ho skladá odznova.
+      Vrátiť psíka na štart netreba riešiť zvlášť — ▶ Štart aj úprava
+      ktoréhokoľvek riadku svet resetujú samy. */
+  clearPlan() {
+    if (!this.rows.length) return;
+    this.stopTimer();
+    this.editRows([]);
+    this.toast('Plán je prázdny. Poskladaj ho nanovo.');
   }
 
   updateRowCount() {

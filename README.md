@@ -39,7 +39,9 @@ V Claude Code stačí spustiť preview server `kodolabky`.
    nemajú počet opakovaní; „trikrát hore“ sú tri riadky. Skrátiť sa to bude dať
    až cyklom `Opakuj` v Svete 2, a to je zámer.
 3. **▶ Štart** spustí plán, **⏭ Krok** ho posúva po jednom riadku (ladenie),
-   **⟲ Znova** vráti psa na štart. Program sa dá kedykoľvek prepísať.
+   **✕ Vymazať** zahodí celý plán a skladá sa odznova.
+   Psíka na štart vracať netreba — Štart aj úprava ktoréhokoľvek riadku to
+   spravia samy, takže sa dá donekonečna skúšať bez jediného kliku navyše.
 4. Tri kosti za level: dôjsť do cieľa · zmestiť sa do limitu riadkov ·
    pozbierať všetky kosti na mape.
 

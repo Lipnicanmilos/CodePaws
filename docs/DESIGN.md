@@ -25,7 +25,7 @@ s očíslovanými riadkami a kurzorom**, a nie farebné bloky, ktoré sa len zac
  │        🐶 → → → 🎯          │  4  ↑ Vpred              │   práve bežiaci riadok
  │                             │  5  🔥 Použi             │
  │                             ├──────────────────────────┤
- │                             │  ▶ Štart  ⏭ Krok  ⟲ Znova│
+ │                             │ ▶ Štart ⏭ Krok ✕ Vymazať │
  └─────────────────────────────┴──────────────────────────┘
 ```
 
@@ -33,7 +33,9 @@ s očíslovanými riadkami a kurzorom**, a nie farebné bloky, ktoré sa len zac
 2. Do tabuľky vpravo skladá príkazy — klikom na paletu alebo ťahaním.
 3. **▶ Štart** = program beží riadok po riadku, šteniatko sa hýbe po jednom kroku,
    aktívny riadok tabuľky svieti.
-4. Ak to nevyjde: **⟲ Reset**, oprav riadok, skús znova. Žiadny trest, žiadne životy.
+4. Ak to nevyjde: oprav riadok a stlač Štart znova — svet sa vráti na začiatok sám.
+   Žiadny trest, žiadne životy, žiadny klik navyše. **✕ Vymazať** je až na to,
+   keď chce dieťa zahodiť celý plán a začať odznova.
 5. **⏭ Krok** = ladenie. Dieťa si samo posúva program po jednom riadku a pozerá,
    čo sa deje. (Toto je v skutočnosti debugger — a deti ho milujú.)
 
