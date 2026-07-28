@@ -12,13 +12,16 @@ ako do databázy.
 > práve beží.
 
 Cieľ nie je len „prejsť bludisko“, ale naučiť sa **plánovať dopredu, predvídať výsledok
-a hľadať chybu vo vlastnom pláne**.
+a hľadať chybu vo vlastnom pláne**. Preto sú v hre aj typy levelov, kde sa
+neprogramuje, ale iba číta a predpovedá cudzí plán.
 
 ## Stav projektu
 
 🎮 **Etapa 1 hotová a nasadená.** Hra je hrateľná: 5 levelov sveta 1, oba režimy
-ovládania, tri kosti za level, ukladanie postupu. Ďalej pokračuje
-[ROADMAP](docs/ROADMAP.md) etapou 2.
+ovládania, tri kosti a body za level, Kniha služieb, 63 testov.
+
+⚠️ **Hru zatiaľ nevidelo ani jedno dieťa.** To je najbližšia úloha a blokuje
+niekoľko rozhodnutí — viď [TODO](TODO.md).
 
 ## Ako sa to hrá
 
@@ -34,17 +37,34 @@ ovládania, tri kosti za level, ukladanie postupu. Ďalej pokračuje
    **✕ Vymazať** zahodí celý plán a skladá sa odznova.
    Psíka na štart vracať netreba — Štart aj úprava ktoréhokoľvek riadku to spravia
    samy, takže sa dá donekonečna skúšať bez jediného kliku navyše.
-4. Tri kosti za level: dôjsť do cieľa · zmestiť sa do limitu riadkov ·
-   pozbierať všetky kosti na mape.
-5. K tomu **body dispečera** — 100 za splnenú misiu, 60 za krátky plán, 40 za všetky
-   kosti a 50 za prechod **bez jediného nárazu**. Ten posledný sa nedá vyklikať:
-   buď si plán premyslel dopredu, alebo nie. Body sa dajú získať raz, opakovaním
-   sa nefarmia. Zbierajú sa do hodností *Šteniatko → Pomocník → Dispečer →
-   Veliteľ zmeny → Hlavný dispečer*.
-6. Odznak vpravo hore otvorí **Knihu služieb** — posádku tohto zariadenia. Každý si
-   napíše svoj volací znak (`LABKA 1`, `NINKA Ľ`) a má vlastný postup, takže sa
-   súrodenci na jednom tablete neprepíšu. Nie je to rebríček proti cudzím deťom;
-   nič neopúšťa prehliadač.
+4. Náraz do steny nie je prehra: pes zavrtí hlavou a v tabuľke sa **červeno označí
+   ten riadok, ktorý za to môže**. Po druhom neúspechu sa ponúkne tip.
+
+### Kosti a body
+
+Tri kosti za level: dôjsť do cieľa · zmestiť sa do limitu riadkov · pozbierať
+všetky kosti na mape. K tomu **body dispečera**:
+
+| Ocenenie | Body | Čo odmeňuje |
+|---|---|---|
+| Misia splnená | **100** | riešenie existuje — dostane každý |
+| Krátky plán | **60** | optimalizácia, cesta k cyklu |
+| Všetky kosti | **40** | pozornosť k mape |
+| **Bez jediného nárazu** | **50** | premyslenie plánu *pred* spustením |
+
+To posledné sa **nedá vyklikať** — metóda pokus-omyl ho nikdy nedá. Zámerne tu nie sú
+body za čas ani za počet pokusov; to by dieťa naučilo klikať namiesto rozmýšľať.
+Body sa dajú získať raz, opakovaním sa nefarmia, a raz získané sa nedajú stratiť.
+
+Zbierajú sa do hodností: *Šteniatko* → *Pomocník* (150) → *Dispečer* (400) →
+*Veliteľ zmeny* (700) → *Hlavný dispečer* (1000).
+
+### Kniha služieb
+
+Odznak vpravo hore otvorí posádku tohto zariadenia. Každý si napíše svoj **volací
+znak** (`LABKA 1`, `NINKA Ľ`) a má vlastný postup, takže sa súrodenci na jednom
+tablete neprepíšu. **Nie je to rebríček proti cudzím deťom** — je to zoznam posádky
+jednej stanice a nič neopúšťa prehliadač.
 
 ## Vývoj
 
@@ -55,9 +75,54 @@ treba statický server:
 python -m http.server 8140 --directory C:/Users/mlipnican/codepaws
 ```
 
-Hra beží na `http://localhost:8140/`, testy enginu na `http://localhost:8140/tests/`
-(žiadny Node netreba, testujú sa priamo v prehliadači).
-V Claude Code stačí spustiť preview server `kodolabky`.
+Hra beží na `http://localhost:8140/`. V Claude Code stačí spustiť preview server
+`kodolabky`.
+
+### Testy
+
+```
+http://localhost:8140/tests/
+```
+
+63 testov, bežia priamo v prehliadači — **žiadny Node netreba** (a na tomto stroji
+ani nie je). Okrem interpreta a bodovania overujú aj to, že **každý level je
+riešiteľný**, že limit riadkov sedí na optimálne riešenie a že sa dajú pozbierať
+všetky kosti — a to v oboch režimoch ovládania. To chráni pred tým, aby úprava mapy
+ticho rozbila level.
+
+Rovnaké testy bežia aj naživo na
+[lipnicanmilos.github.io/CodePaws/tests/](https://lipnicanmilos.github.io/CodePaws/tests/).
+
+### Štruktúra
+
+```
+index.html            jediná stránka
+styles/               base · board · console · table
+src/
+  engine/             bez akejkoľvek väzby na DOM → testovateľné
+    world.js          mriežka, dlaždice, predmety, aktéri
+    vm.js             interpret: step() = jeden takt → udalosti
+    program.js        model tabuľky, expandRows, limity riadkov
+  ui/
+    board.js          3D dioráma, animácie, konfety
+    table.js          tabuľka plánu, kurzor programu
+    palette.js        krížový D-pad na pulte
+    crew.js           Kniha služieb
+    icons.js          všetky SVG vrátane psíkov
+  game/
+    app.js            spojenie enginu a UI
+    commands.js       katalóg príkazov, paleta podľa režimu
+    progress.js       posádka, body, hodnosti (localStorage)
+levels/               JSON, index.json je zoznam
+assets/icon.svg       značka: labka poskladaná z dlaždíc bludiska
+tests/index.html      testy v prehliadači
+```
+
+### Nový level
+
+Stačí JSON súbor v `levels/world1/` a riadok v `levels/index.json`.
+Ak má level vyplnené `solutions`, testy automaticky overia, že je riešiteľný,
+že limit riadkov sedí na optimálne riešenie a že sa dajú pozbierať všetky kosti.
 
 ## Nasadenie
 
@@ -68,39 +133,25 @@ Nasadené na GitHub Pages z vetvy `main`, priečinok `/ (root)`.
 git -C "C:/Users/mlipnican/codepaws" push
 ```
 
-Priebeh nasadenia je vidno v [Actions](https://github.com/Lipnicanmilos/CodePaws/actions)
+Priebeh je vidno v [Actions](https://github.com/Lipnicanmilos/CodePaws/actions)
 ako workflow „pages build and deployment“; **Settings → Pages** ukazuje adresu
 a čas posledného nasadenia a **Environments → `github-pages`** celú históriu.
 
 Všetky cesty v kóde sú relatívne, takže hra funguje aj v podpriečinku.
 `.nojekyll` bráni tomu, aby Pages súbory prehnali Jekyllom.
 
-## Dokumentácia
-
-| Dokument | Obsah |
-|---|---|
-| [docs/DESIGN.md](docs/DESIGN.md) | Herný a pedagogický návrh, postavičky, typy levelov |
-| [docs/CURRICULUM.md](docs/CURRICULUM.md) | Mapa 7 svetov a konceptov informatiky |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Formát levelu, model tabuľky, virtuálny stroj |
-| [docs/ADR-001-stack.md](docs/ADR-001-stack.md) | Prečo statická hra a nie React + FastAPI + PostgreSQL |
-| [docs/ROADMAP.md](docs/ROADMAP.md) | Etapy vývoja (MVP → v1.0 → Dielňa) |
-
-## Nový level
-
-Stačí JSON súbor v `levels/world1/` a riadok v `levels/index.json`.
-Ak má level vyplnené `solutions`, testy automaticky overia, že je riešiteľný,
-že limit riadkov sedí na optimálne riešenie a že sa dajú pozbierať všetky kosti —
-v oboch režimoch ovládania.
-
-## Technológie
+## Technológie a vzhľad
 
 Čistý **HTML + CSS + JavaScript** (ES moduly), **žiadny build, žiadne závislosti**.
-Engine (`src/engine/`) nevie nič o DOM, takže sa dá testovať a neskôr použiť
-v solveri. Neskôr PWA → offline na tablete.
+Engine nevie nič o DOM, takže sa dá testovať a neskôr použiť v solveri.
 
-Vzhľad: dispečerský pult záchrannej stanice — petrolejová `#16323F` s jantárovým
-akcentom `#FFB01F`, bludisko ako naklonená dioráma s vytiahnutými stenami.
-Písmo **Baloo 2** (nadpisy), **Atkinson Hyperlegible** (text — navrhnuté Braille
+Vzhľad: **dispečerský pult záchrannej stanice**. Petrolejová `#16323F` s jantárovým
+akcentom `#FFB01F` — paleta záchranárskeho vozidla. Sirénová `#F04E37` je vyhradená
+výlučne pre chybu a oheň, nikdy ako dekorácia. Bludisko je naklonená dioráma
+(`rotateX(15deg)`) s vytiahnutými stenami, aby dieťa videlo prekážku, a nie inak
+zafarbený štvorček.
+
+Písmo: **Baloo 2** (nadpisy), **Atkinson Hyperlegible** (text — navrhol Braille
 Institute na maximálne rozlíšenie tvarov písmen, čo pre začínajúceho čitateľa nie je
 ozdoba ale funkcia) a **DM Mono** (displej na pulte).
 
@@ -109,17 +160,42 @@ ozdoba ale funkcia) a **DM Mono** (displej na pulte).
 - 🚫 žiadne reklamy, žiadne nákupy, žiadne účty, žiadne odosielanie dát o deťoch
 - 📴 postup v `localStorage`, nič neodchádza zo zariadenia
 - ⏱️ žiadne časomiery a žiadny stres — dieťa má na premýšľanie neobmedzený čas
-- ❌ chyba nie je prehra: pes zavrtí hlavou a v tabuľke sa červeno označí ten riadok,
-  ktorý za to môže
-- 🎨 vlastné originálne postavičky (viď [poznámka o právach](docs/DESIGN.md#pravna-poznamka))
+- ❌ chyba nie je prehra, iba chybové hlásenie s miestom chyby
+- 🚫 žiadne body za rýchlosť ani za počet levelov, žiadny rebríček proti cudzím deťom
+- 🎨 vlastné originálne postavičky (viď nižšie)
+
+## Kľúčové rozhodnutia
+
+| Rozhodnutie | Kde je zdôvodnené |
+|---|---|
+| Vlastné postavičky namiesto Labkovej patroly (ochranná známka Spin Master) | [DESIGN §9](docs/DESIGN.md#pravna-poznamka) |
+| Každá postavička = jeden koncept informatiky | [DESIGN §3](docs/DESIGN.md) |
+| Jeden riadok = jeden krok, príkazy nemajú počet opakovaní | [DESIGN §2](docs/DESIGN.md) |
+| Statická hra bez backendu; React + FastAPI + PostgreSQL až na „Dielňu“ | [ADR-001](docs/ADR-001-stack.md) |
+| Body odmeňujú premýšľanie, nie rýchlosť; Kniha služieb nie je rebríček | [DESIGN §6b](docs/DESIGN.md) |
+| `Použi` mieri vždy dopredu → levely s ohňom naň musia viesť čelne | [ARCHITECTURE §4](docs/ARCHITECTURE.md) |
+
+## Dokumentácia
+
+| Dokument | Obsah |
+|---|---|
+| [TODO.md](TODO.md) | Konkrétne úlohy na najbližšie sedenia |
+| [docs/ROADMAP.md](docs/ROADMAP.md) | Etapy vývoja (MVP → v1.0 → Dielňa) |
+| [docs/DESIGN.md](docs/DESIGN.md) | Herný a pedagogický návrh, postavičky, typy levelov, bodovanie |
+| [docs/CURRICULUM.md](docs/CURRICULUM.md) | Mapa 7 svetov a konceptov informatiky, level po leveli |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Formát levelu, model tabuľky, virtuálny stroj |
+| [docs/ADR-001-stack.md](docs/ADR-001-stack.md) | Prečo statická hra a nie React + FastAPI + PostgreSQL |
 
 ## Známe obmedzenia
 
 - Fonty sa ťahajú z Google Fonts → bez internetu sa použije systémový záložný font.
   Pred PWA ich treba self-hostovať.
-- `Použi` mieri vždy dopredu; v absolútnom režime teda tam, kam pes naposledy kráčal.
-  Levely s ohňom naň musia viesť čelne (viď ARCHITECTURE).
 - Ikona je zatiaľ len SVG. Na inštaláciu PWA na tablet budú treba aj PNG veľkosti.
+- `Použi` mieri vždy dopredu; v absolútnom režime teda tam, kam pes naposledy kráčal,
+  a nie je to na mape vidno.
+- Číslovanie levelov má dieru (1.1–1.4, potom 1.7) — 1.5 a 1.6 sú typy, ktoré ešte
+  nie sú naprogramované.
+- Hra sa ovláda myšou a dotykom; klávesnicou zatiaľ len čiastočne.
 
 ## Licencia
 
