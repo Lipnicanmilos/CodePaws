@@ -1,0 +1,39 @@
+{
+  "id": "1.3",
+  "title": "Pozor, stena!",
+  "world": 1,
+  "type": "path",
+  "mode": "any",
+  "story": "Fifo sa pozerá doprava — ale rovno tadiaľ to nejde. Čo urobí, keď narazí?",
+  "grid": {
+    "legend": { ".": "empty", "#": "wall", "o": "bone", "g": "goal" },
+    "rows": [
+      "#######",
+      "#..#..#",
+      "#..#..#",
+      "#.o..g#",
+      "#######"
+    ]
+  },
+  "actors": [
+    { "id": "a1", "char": "fifo", "x": 1, "y": 1, "dir": "E" }
+  ],
+  "goals": [
+    { "type": "reach", "actor": "a1", "tile": "goal" }
+  ],
+  "palette": ["walk"],
+  "limits": { "steps": 100 },
+  "stars": [
+    { "id": "finish" },
+    { "id": "rows", "max": { "absolute": 2, "relative": 4 } },
+    { "id": "bones", "all": true }
+  ],
+  "hint": "Keď je stena v ceste, treba ju obísť spodkom.",
+  "solutions": {
+    "absolute": [{ "cmd": "south", "n": 2 }, { "cmd": "east", "n": 4 }],
+    "relative": [
+      { "cmd": "turnRight" }, { "cmd": "move", "n": 2 },
+      { "cmd": "turnLeft" }, { "cmd": "move", "n": 4 }
+    ]
+  }
+}

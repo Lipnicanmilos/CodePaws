@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "kodolabky",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8140", "-d", "C:/Users/mlipnican/codepaws"],
+      "port": 8140
+    }
+  ]
+}

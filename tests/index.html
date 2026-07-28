@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<title>Kódolabky — testy enginu</title>
+<style>
+  body { font-family: ui-monospace, Consolas, monospace; margin: 2rem auto; max-width: 60rem; padding-inline: 1rem;
+         background: #14110c; color: #eee6d8; }
+  h1 { font-family: system-ui, sans-serif; }
+  .sum { padding: .8rem 1rem; border-radius: 10px; margin-bottom: 1rem; font-size: 1.1rem; }
+  .sum.ok { background: #1d4b32; } .sum.bad { background: #6b2118; }
+  table { width: 100%; border-collapse: collapse; }
+  td { padding: .35rem .5rem; border-bottom: 1px solid #2e2820; vertical-align: top; }
+  .pass { color: #7fd39b; } .fail { color: #ff9b86; }
+  .name { width: 60%; }
+</style>
+</head>
+<body>
+<h1>Kódolabky — testy enginu</h1>
+<div class="sum" id="sum">Bežia testy…</div>
+<table><tbody id="out"></tbody></table>
+
+<script type="module">
+import { World } from '../src/engine/world.js';
+import { VM, run } from '../src/engine/vm.js';
+import { countRows, rowLimitFor } from '../src/engine/program.js';
+
+const results = [];
+const test = (name, fn) => {
+  try { fn(); results.push([name, null]); }
+  catch (err) { results.push([name, err.message]); }
+};
+const ok = (cond, msg) => { if (!cond) throw new Error(msg ?? 'nesplnené'); };
+const eq = (a, b, msg) => ok(Object.is(a, b), `${msg ?? ''} — dostal ${JSON.stringify(a)}, čakal ${JSON.stringify(b)}`);
+
+const withIds = (rows) => rows.map((r, i) => ({ ...r, id: `t${i}` }));
+
+const LEVEL = {
+  id: 'test', title: 'test',
+  grid: { legend: { '.': 'empty', '#': 'wall', o: 'bone', f: 'fire', g: 'goal' },
+          rows: ['#####', '#..o#', '#..f#', '#..g#', '#####'] },
+  actors: [{ id: 'a1', char: 'fifo', x: 1, y: 1, dir: 'E' }],
+  goals: [{ type: 'reach', actor: 'a1', tile: 'goal' }],
+};
+
+// ── Svet ────────────────────────────────────────────────────────
+test('svet načíta rozmery a dlaždice', () => {
+  const w = new World(LEVEL);
+  eq(w.w, 5, 'šírka'); eq(w.h, 5, 'výška');
+  eq(w.tileAt(0, 0), 'wall', 'okraj je stena');
+  eq(w.tileAt(3, 3), 'goal', 'cieľ');
+});
+
+test('predmety sú nad prázdnou dlaždicou, nie namiesto nej', () => {
+  const w = new World(LEVEL);
+  eq(w.tileAt(3, 1), 'empty', 'pod kosťou je prázdno');
+  eq(w.itemAt(3, 1), 'bone', 'kosť');
+  eq(w.totalBones, 1, 'počet kostí');
+});
+
+test('mimo mapy sa správa ako stena', () => {
+  const w = new World(LEVEL);
+  ok(w.isBlocked(-1, 1), 'vľavo od mapy');
+  ok(w.isBlocked(99, 99), 'ďaleko mimo');
+});
+
+test('oheň blokuje pohyb', () => {
+  const w = new World(LEVEL);
+  ok(w.isBlocked(3, 2), 'políčko s ohňom');
+});
+
+// ── Interpret ───────────────────────────────────────────────────
+test('relatívny pohyb: vpred sa posunie o jedno políčko', () => {
+  const w = new World(LEVEL);
+  const vm = new VM(w, withIds([{ cmd: 'move', n: 1 }]));
+  vm.step();
+  eq(w.actor.x, 2, 'x'); eq(w.actor.y, 1, 'y');
+});
+
+test('move n=3 trvá tri takty a kurzor stojí na tom istom riadku', () => {
+  const w = new World(LEVEL);
+  const vm = new VM(w, withIds([{ cmd: 'move', n: 2 }]));
+  const e1 = vm.step();
+  eq(e1[0].rowId, 't0', 'prvý takt');
+  eq(w.actor.x, 2, 'po prvom takte');
+  vm.step();
+  eq(w.actor.x, 3, 'po druhom takte');
+});
+
+test('otáčanie mení smer v správnom poradí', () => {
+  const w = new World(LEVEL);
+  const vm = new VM(w, withIds([{ cmd: 'turnRight' }, { cmd: 'turnRight' }, { cmd: 'turnLeft' }]));
+  vm.step(); eq(w.actor.dir, 'S', 'E → vpravo');
+  vm.step(); eq(w.actor.dir, 'W', 'S → vpravo');
+  vm.step(); eq(w.actor.dir, 'S', 'W → vľavo');
+});
+
+test('absolútny príkaz najprv otočí, potom posunie', () => {
+  const w = new World(LEVEL);
+  const vm = new VM(w, withIds([{ cmd: 'south', n: 1 }]));
+  vm.step();
+  eq(w.actor.dir, 'S', 'smer'); eq(w.actor.y, 2, 'y');
+});
+
+test('náraz do steny zastaví program a označí riadok', () => {
+  const w = new World(LEVEL);
+  const { vm, events } = run(w, withIds([{ cmd: 'south', n: 3 }]));
+  eq(vm.status, 'error', 'stav'); eq(vm.errorCode, 'wall', 'kód');
+  const blocked = events.find((e) => e.type === 'blocked');
+  ok(blocked, 'udalosť blocked'); eq(blocked.rowId, 't0', 'riadok');
+});
+
+test('kosť sa zoberie prechodom cez políčko', () => {
+  const w = new World(LEVEL);
+  run(w, withIds([{ cmd: 'east', n: 2 }]));
+  eq(w.bonesCollected(), 1, 'pozbierané'); eq(w.itemAt(3, 1), null, 'kosť zmizla');
+});
+
+test('použi uhasí oheň na políčku, na ktoré sa pes pozerá', () => {
+  const w = new World(LEVEL);
+  run(w, withIds([{ cmd: 'move', n: 2 }, { cmd: 'turnRight' }, { cmd: 'use' }, { cmd: 'move', n: 2 }]));
+  eq(w.itemAt(3, 2), null, 'oheň uhasený');
+});
+
+test('použi mimo ohňa nespraví nič a program beží ďalej', () => {
+  const w = new World(LEVEL);
+  const { vm, events } = run(w, withIds([{ cmd: 'use' }, { cmd: 'south', n: 2 }, { cmd: 'east', n: 2 }]));
+  ok(events.some((e) => e.type === 'nothing'), 'udalosť nothing');
+  eq(vm.status, 'won', 'program pokračoval až do cieľa');
+});
+
+// V absolútnom režime sa pes nedá otočiť bez pohybu — `Použi` preto vždy mieri
+// tam, kam naposledy kráčal. Levely s ohňom naň musia viesť „čelne“.
+test('absolútny režim: použi mieri tam, kam pes naposledy kráčal', () => {
+  const w = new World(LEVEL);
+  run(w, withIds([{ cmd: 'south', n: 1 }, { cmd: 'east', n: 1 }, { cmd: 'use' }]));
+  eq(w.actor.dir, 'E', 'smer po poslednom kroku');
+  eq(w.itemAt(3, 2), null, 'oheň pred psom uhasený');
+});
+
+test('dosiahnutie cieľa vyhráva', () => {
+  const w = new World(LEVEL);
+  const { vm } = run(w, withIds([{ cmd: 'south', n: 2 }, { cmd: 'east', n: 2 }]));
+  eq(vm.status, 'won', 'stav');
+});
+
+test('minutý plán bez cieľa = prehra, nie tichý koniec', () => {
+  const w = new World(LEVEL);
+  const { vm } = run(w, withIds([{ cmd: 'south', n: 1 }]));
+  eq(vm.status, 'lost', 'stav'); eq(vm.errorCode, 'notFinished', 'kód');
+});
+
+test('ochrana proti zacykleniu zastaví beh', () => {
+  const w = new World(LEVEL);
+  const { vm } = run(w, withIds([{ cmd: 'turnLeft' }, { cmd: 'turnRight' }]), { stepLimit: 5 });
+  ok(vm.status === 'error' || vm.status === 'lost', `stav ${vm.status}`);
+});
+
+test('reset vráti svet do pôvodného stavu', () => {
+  const w = new World(LEVEL);
+  run(w, withIds([{ cmd: 'east', n: 2 }]));
+  w.reset();
+  eq(w.actor.x, 1, 'x'); eq(w.bonesCollected(), 0, 'kosti'); eq(w.itemAt(3, 1), 'bone', 'kosť späť');
+});
+
+// ── Levely ──────────────────────────────────────────────────────
+// Najdôležitejší test v projekte: chráni pred neriešiteľným levelom
+// po tom, čo niekto poupravuje mapu.
+
+const manifest = await (await fetch('../levels/index.json')).json();
+const levels = await Promise.all(
+  manifest.levels.map(async (p) => (await fetch(`../levels/${p}`)).json())
+);
+
+for (const level of levels) {
+  for (const mode of ['absolute', 'relative']) {
+    const rows = level.solutions?.[mode];
+    test(`level ${level.id} „${level.title}“ — riešenie (${mode}) prejde`, () => {
+      ok(rows, 'v súbore chýba referenčné riešenie');
+      const world = new World(level);
+      const { vm } = run(world, withIds(rows), { stepLimit: level.limits?.steps ?? 200 });
+      eq(vm.status, 'won', 'výsledok');
+    });
+
+    test(`level ${level.id} — riešenie (${mode}) sa zmestí do limitu riadkov`, () => {
+      const limit = rowLimitFor(level.stars?.find((s) => s.id === 'rows'), mode);
+      ok(limit, 'level nemá limit riadkov');
+      ok(countRows(rows) <= limit, `${countRows(rows)} riadkov > limit ${limit}`);
+    });
+
+    test(`level ${level.id} — riešenie (${mode}) pozbiera všetky kosti`, () => {
+      const world = new World(level);
+      run(world, withIds(rows), { stepLimit: level.limits?.steps ?? 200 });
+      eq(world.bonesCollected(), world.totalBones, 'kosti');
+    });
+  }
+
+  test(`level ${level.id} — mriežka je pravouhlá`, () => {
+    const rows = level.grid.rows;
+    ok(rows.every((r) => r.length === rows[0].length), 'riadky majú rôznu dĺžku');
+  });
+
+  test(`level ${level.id} — štart nestojí v stene`, () => {
+    const world = new World(level);
+    for (const a of world.actors) ok(!world.isBlocked(a.x, a.y), `aktér ${a.id} stojí v prekážke`);
+  });
+}
+
+// ── Výpis ───────────────────────────────────────────────────────
+const out = document.getElementById('out');
+let failed = 0;
+for (const [name, err] of results) {
+  if (err) failed++;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td class="${err ? 'fail' : 'pass'}">${err ? '✕' : '✓'}</td>` +
+                 `<td class="name">${name}</td><td class="fail">${err ?? ''}</td>`;
+  out.append(tr);
+}
+const sum = document.getElementById('sum');
+sum.className = `sum ${failed ? 'bad' : 'ok'}`;
+sum.textContent = failed
+  ? `${failed} z ${results.length} testov zlyhalo`
+  : `Všetkých ${results.length} testov prešlo`;
+</script>
+</body>
+</html>

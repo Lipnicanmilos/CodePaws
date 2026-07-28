@@ -1,0 +1,9 @@
+{
+  "levels": [
+    "world1/1.1-prvy-krok.json",
+    "world1/1.2-zakruta.json",
+    "world1/1.3-pozor-stena.json",
+    "world1/1.4-kost-navyse.json",
+    "world1/1.7-hori.json"
+  ]
+}

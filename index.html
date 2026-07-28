@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kódolabky — nauč šteniatka programovať</title>
+<meta name="description" content="Detská hra, v ktorej naprogramuješ záchranárske šteniatko cez bludisko. Riadok po riadku.">
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/board.css">
+<link rel="stylesheet" href="styles/table.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span class="brand-name">Kódolabky</span>
+  </div>
+
+  <nav class="levelnav" aria-label="Výber levelu">
+    <button class="iconbtn" id="prevLevel" type="button" aria-label="Predchádzajúci level">‹</button>
+    <select id="levelPicker" aria-label="Level"></select>
+    <button class="iconbtn" id="nextLevel" type="button" aria-label="Ďalší level">›</button>
+  </nav>
+
+  <div class="topbar-right">
+    <div class="bones" id="starRow" role="status" aria-label="Získané kosti"></div>
+    <label class="modeswitch">
+      <span class="modeswitch-label">Otáčanie</span>
+      <input type="checkbox" id="modeToggle" role="switch">
+      <span class="modeswitch-track" aria-hidden="true"><span class="modeswitch-knob"></span></span>
+    </label>
+  </div>
+</header>
+
+<main class="stage">
+
+  <section class="boardpane" aria-label="Bludisko">
+    <div class="storybar">
+      <h1 class="level-title" id="levelTitle">Kódolabky</h1>
+      <p class="level-story" id="levelStory">Načítavam misiu…</p>
+    </div>
+
+    <div class="board-wrap">
+      <div class="board" id="board" role="img" aria-label="Mapa bludiska"></div>
+    </div>
+
+    <p class="hint" id="hintBar" hidden></p>
+  </section>
+
+  <section class="panel" aria-label="Tabuľka príkazov">
+
+    <div class="palette" id="palette" aria-label="Príkazy na výber"></div>
+
+    <div class="tablecard">
+      <div class="tablecard-head">
+        <h2>Plán misie</h2>
+        <span class="rowcount" id="rowCount">0 riadkov</span>
+      </div>
+
+      <div class="table-scroll">
+        <table class="program" id="programTable">
+          <thead>
+            <tr><th class="c-num">#</th><th class="c-cmd">Príkaz</th><th class="c-n">Koľko</th><th class="c-act"><span class="sr-only">Akcie</span></th></tr>
+          </thead>
+          <tbody id="programBody"></tbody>
+        </table>
+        <p class="emptyhint" id="emptyHint">Klikni na príkaz hore a pridá sa sem ako nový riadok.</p>
+      </div>
+    </div>
+
+    <div class="statepanel" id="statePanel">
+      <div class="statepanel-item"><span class="statepanel-key">Políčko</span><span class="statepanel-val" id="stPos">–</span></div>
+      <div class="statepanel-item"><span class="statepanel-key">Pozerá</span><span class="statepanel-val" id="stDir">–</span></div>
+      <div class="statepanel-item"><span class="statepanel-key">Kosti</span><span class="statepanel-val" id="stBones">–</span></div>
+    </div>
+
+    <div class="hud">
+      <button class="btn btn-run" id="btnRun" type="button">
+        <span class="btn-ico" aria-hidden="true">▶</span> Štart
+      </button>
+      <button class="btn btn-ghost" id="btnStep" type="button">
+        <span class="btn-ico" aria-hidden="true">⏭</span> Krok
+      </button>
+      <button class="btn btn-ghost" id="btnReset" type="button">
+        <span class="btn-ico" aria-hidden="true">⟲</span> Znova
+      </button>
+      <div class="speed" role="group" aria-label="Rýchlosť">
+        <button class="speedbtn" data-speed="600" type="button" aria-label="Pomaly">🐢</button>
+        <button class="speedbtn is-on" data-speed="330" type="button" aria-label="Normálne">🐕</button>
+        <button class="speedbtn" data-speed="150" type="button" aria-label="Rýchlo">🐇</button>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<dialog class="winbox" id="winBox">
+  <h2 id="winTitle">Misia splnená!</h2>
+  <div class="bones bones-big" id="winStars"></div>
+  <ul class="winlist" id="winList"></ul>
+  <div class="winbtns">
+    <button class="btn btn-ghost" id="winRetry" type="button">Skúsiť lepšie</button>
+    <button class="btn btn-run" id="winNext" type="button">Ďalšia misia</button>
+  </div>
+</dialog>
+
+<script type="module" src="src/game/app.js"></script>
+</body>
+</html>

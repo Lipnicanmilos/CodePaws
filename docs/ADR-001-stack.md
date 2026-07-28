@@ -1,6 +1,12 @@
 # ADR-001 · Voľba technológií (React + FastAPI + PostgreSQL?)
 
-**Stav:** návrh, čaká na rozhodnutie · **Dátum:** 2026-07-28
+**Stav:** ✅ prijaté (2026-07-28) — variant „hra teraz, Dielňa neskôr“ · **Dátum:** 2026-07-28
+
+> **Prijaté rozhodnutie:** Etapy 1–5 sa stavajú ako statická hra bez backendu
+> (čistý JS engine + PWA). Po nej príde **Dielňa** — samostatná aplikácia
+> React + FastAPI + PostgreSQL pre autora a učiteľov (editor levelov, solver,
+> generátor bludísk, anonymná analytika). Hra na nej nikdy nezávisí za behu;
+> levely sa z databázy exportujú do statických JSON pri builde.
 
 ## Otázka
 

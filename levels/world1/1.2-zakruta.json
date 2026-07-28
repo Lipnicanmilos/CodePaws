@@ -1,22 +1,23 @@
 {
-  "id": "1.1",
-  "title": "Prvý krok",
+  "id": "1.2",
+  "title": "Zákruta",
   "world": 1,
   "type": "path",
   "mode": "any",
-  "story": "Fifo má na dvore prvú misiu. Doveď ho do búdky — a kosť po ceste nenechaj ležať!",
+  "story": "Rovno to dnes nepôjde. Fifo musí zabočiť.",
   "grid": {
     "legend": { ".": "empty", "#": "wall", "o": "bone", "g": "goal" },
     "rows": [
       "######",
+      "#g...#",
+      "#.##.#",
+      "#o##.#",
       "#....#",
-      "#.##o#",
-      "#...g#",
       "######"
     ]
   },
   "actors": [
-    { "id": "a1", "char": "fifo", "x": 1, "y": 1, "dir": "E" }
+    { "id": "a1", "char": "fifo", "x": 4, "y": 4, "dir": "W" }
   ],
   "goals": [
     { "type": "reach", "actor": "a1", "tile": "goal" }
@@ -28,9 +29,9 @@
     { "id": "rows", "max": { "absolute": 2, "relative": 3 } },
     { "id": "bones", "all": true }
   ],
-  "hint": "Najprv choď rovno doprava, až potom dole.",
+  "hint": "Najprv celkom doľava, potom celkom hore.",
   "solutions": {
-    "absolute": [{ "cmd": "east", "n": 3 }, { "cmd": "south", "n": 2 }],
-    "relative": [{ "cmd": "move", "n": 3 }, { "cmd": "turnRight" }, { "cmd": "move", "n": 2 }]
+    "absolute": [{ "cmd": "west", "n": 3 }, { "cmd": "north", "n": 3 }],
+    "relative": [{ "cmd": "move", "n": 3 }, { "cmd": "turnRight" }, { "cmd": "move", "n": 3 }]
   }
 }

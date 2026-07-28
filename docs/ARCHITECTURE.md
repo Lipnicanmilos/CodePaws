@@ -2,9 +2,11 @@
 
 ## 1. Princípy
 
-- **Bez build stepu.** ES moduly natívne v prehliadači. `index.html` sa dá otvoriť
-  dvojklikom aj nasadiť na GitHub Pages bez čohokoľvek ďalšieho.
-  (Na tomto stroji nie je nainštalovaný Node — návrh s tým počíta.)
+- **Bez build stepu.** ES moduly natívne v prehliadači, nasadenie na GitHub Pages
+  bez čohokoľvek ďalšieho. (Na tomto stroji nie je Node — návrh s tým počíta.)
+  **Pozor:** ES moduly a `fetch` nefungujú cez `file://`, takže dvojklik na
+  `index.html` nestačí — treba statický server (`python -m http.server`).
+  Pre offline hru na tablete to nevadí: PWA sa inštaluje z `https://`.
 - **Bez závislostí.** Žiadny React, žiadny Phaser. Hra je mriežka — DOM a CSS grid
   na to stačia a sú prístupné z klávesnice zadarmo.
 - **Engine je čistá funkcia.** Simulácia nevie nič o DOM. Dá sa testovať a je
@@ -134,6 +136,13 @@ Sada príkazov (rastie podľa `palette` levelu):
 
 Podmienky (`cond`): `wallAhead`, `boneHere`, `fireAhead`, `doorAhead`,
 `counterLess:n`, `atGoal`.
+
+### Pravidlo pre tvorbu levelov: `Použi` mieri dopredu
+`use` pôsobí vždy na políčko, na ktoré sa pes práve pozerá. V **absolútnom režime**
+sa ale pes nedá otočiť bez toho, aby sa pohol — pozerá tam, kam naposledy kráčal.
+**Level s ohňom naň preto musí viesť čelne:** posledný krok pred ohňom musí smerovať
+naň. Level `1.7 Horí!` je postavený presne takto a testy to strážia v oboch režimoch.
+(Alternatívou by boli štyri smerové varianty `Použi`, čo by zbytočne nafúklo paletu.)
 
 ## 5. Virtuálny stroj
 

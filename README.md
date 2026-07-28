@@ -1,7 +1,8 @@
 # Kódolabky 🐾 (CodePaws)
 
-Hra pre deti (5–10 rokov), v ktorej **záchranárske šteniatka** prechádzajú bludiskom podľa
-programu, ktorý dieťa napíše do **tabuľky príkazov** — riadok po riadku, ako do databázy.
+Hra pre deti (5–10 rokov), v ktorej **záchranárske šteniatka** prechádzajú bludiskom
+podľa programu, ktorý dieťa napíše do **tabuľky príkazov** — riadok po riadku,
+ako do databázy.
 
 > Hlavná plocha = bludisko. Vpravo = tabuľka s očíslovanými riadkami.
 > Dieťa poskladá príkazy do riadkov, stlačí **▶ Štart** a šteniatko vykonáva
@@ -12,30 +13,73 @@ a hľadať chybu vo vlastnom pláne**.
 
 ## Stav projektu
 
-📐 **Fáza návrhu.** Kód zatiaľ nie je — v repozitári je kompletný herný, pedagogický
-a technický návrh + ukážkový formát levelu.
+🎮 **Etapa 1 hotová** — hra je hrateľná, 5 levelov sveta 1, oba režimy ovládania.
+Ďalej pokračuje [ROADMAP](docs/ROADMAP.md) etapou 2.
+
+## Spustenie
+
+ES moduly nefungujú cez `file://`, takže dvojklik na `index.html` nestačí —
+treba statický server:
+
+```bash
+python -m http.server 8140 --directory C:/Users/mlipnican/codepaws
+```
+
+Potom otvor `http://localhost:8140/`. Testy enginu bežia na
+`http://localhost:8140/tests/` (žiadny Node netreba, testujú sa priamo v prehliadači).
+
+V Claude Code stačí spustiť preview server `kodolabky`.
+
+## Ako sa to hrá
+
+1. Hore vpravo je prepínač **Otáčanie**:
+   - **vypnuté** = režim *Šteniatko* (5–6 r.) — príkazy `Hore/Dole/Doľava/Doprava`
+   - **zapnuté** = režim *Záchranár* (7+) — `Vpred` + `Vľavo`/`Vpravo`, pes má smer
+2. Klikaním na paletu pribúdajú riadky. Rovnaký príkaz dvakrát za sebou zväčší
+   číslo v stĺpci **Koľko** namiesto pridania riadku.
+3. **▶ Štart** spustí plán, **⏭ Krok** ho posúva po jednom riadku (ladenie),
+   **⟲ Znova** vráti psa na štart. Program sa dá kedykoľvek prepísať.
+4. Tri kosti za level: dôjsť do cieľa · zmestiť sa do limitu riadkov ·
+   pozbierať všetky kosti na mape.
+
+## Dokumentácia
 
 | Dokument | Obsah |
 |---|---|
-| [docs/DESIGN.md](docs/DESIGN.md) | Herný a pedagogický návrh, postavičky, typy levelov, prečo je to pútavé |
+| [docs/DESIGN.md](docs/DESIGN.md) | Herný a pedagogický návrh, postavičky, typy levelov |
 | [docs/CURRICULUM.md](docs/CURRICULUM.md) | Mapa 7 svetov a konceptov informatiky |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Technický návrh, formát levelu, virtuálny stroj |
-| [docs/ROADMAP.md](docs/ROADMAP.md) | Etapy vývoja (MVP → v1.0) |
-| [levels/](levels/) | Ukážkové levely v JSON |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Formát levelu, model tabuľky, virtuálny stroj |
+| [docs/ADR-001-stack.md](docs/ADR-001-stack.md) | Prečo statická hra a nie React + FastAPI + PostgreSQL |
+| [docs/ROADMAP.md](docs/ROADMAP.md) | Etapy vývoja (MVP → v1.0 → Dielňa) |
+
+## Nový level
+
+Stačí JSON súbor v `levels/world1/` a riadok v `levels/index.json`.
+Ak má level vyplnené `solutions`, testy automaticky overia, že je riešiteľný,
+že sa referenčné riešenie zmestí do limitu riadkov a že pozbiera všetky kosti —
+v oboch režimoch ovládania.
 
 ## Technológie
 
 Čistý **HTML + CSS + JavaScript** (ES moduly), **žiadny build, žiadne závislosti**.
-Otvorí sa dvojklikom na `index.html` alebo cez GitHub Pages. Neskôr PWA → funguje
-offline na tablete.
+Engine (`src/engine/`) nevie nič o DOM, takže sa dá testovať aj použiť neskôr
+v solveri. Neskôr PWA → offline na tablete.
 
 ## Zásady
 
 - 🚫 žiadne reklamy, žiadne nákupy, žiadne účty, žiadne odosielanie dát o deťoch
-- 📴 funguje offline, postup v `localStorage`
+- 📴 postup v `localStorage`, nič neodchádza zo zariadenia
 - ⏱️ žiadne časomiery a žiadny stres — dieťa má na premýšľanie neobmedzený čas
-- 🔤 hrateľné aj bez čítania (ikony + hlasové čítanie príkazov)
+- ❌ chyba nie je prehra: pes zavrtí hlavou a v tabuľke sa červeno označí ten riadok,
+  ktorý za to môže
 - 🎨 vlastné originálne postavičky (viď [poznámka o právach](docs/DESIGN.md#pravna-poznamka))
+
+## Známe obmedzenia
+
+- Fonty sa zatiaľ ťahajú z Google Fonts → bez internetu sa použije systémový záložný
+  font. Pred PWA ich treba self-hostovať.
+- `Použi` mieri vždy dopredu; v absolútnom režime teda tam, kam pes naposledy kráčal.
+  Levely s ohňom naň musia viesť čelne (viď ARCHITECTURE).
 
 ## Licencia
 

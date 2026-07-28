@@ -3,25 +3,28 @@
 ## Etapa 0 · Návrh ✅
 Herný, pedagogický a technický návrh, formát levelu, ukážkové levely.
 
-## Etapa 1 · Hrateľné jadro (MVP)
-Cieľ: **jeden level sa dá naozaj prejsť.**
+## Etapa 1 · Hrateľné jadro (MVP) ✅
+Cieľ: **jeden level sa dá naozaj prejsť.** Hotové 2026-07-28.
 
-- [ ] `world.js` + `vm.js` — mriežka, príkazy `move` / otáčanie / `use`, krokovanie
-- [ ] `board.js` — vykreslenie mriežky a psa, animácia po políčkach
-- [ ] `table.js` — tabuľka riadkov, pridať/zmazať/presunúť riadok, kurzor ▶
-- [ ] `hud.js` — ▶ Štart, ⏭ Krok, ⟲ Reset, rýchlosť
-- [ ] `levels/world1/*.json` — levely 1.1 – 1.4
-- [ ] `tests/index.html` — prvé testy interpreta
+- [x] `world.js` + `vm.js` — mriežka, príkazy `move` / otáčanie / `use`, krokovanie
+- [x] `board.js` — vykreslenie mriežky a psa, animácia po políčkach
+- [x] `table.js` — tabuľka riadkov, pridať/zmazať/presunúť riadok, kurzor ▶
+- [x] HUD — ▶ Štart, ⏭ Krok, ⟲ Znova, rýchlosť 🐢/🐕/🐇
+- [x] `levels/world1/*.json` — levely 1.1, 1.2, 1.3, 1.4 a 1.7
+- [x] `tests/index.html` — 57 testov vrátane overenia, že každý level je riešiteľný
+- [x] navyše oproti plánu: oba režimy ovládania, tri kosti, ukladanie postupu,
+      panel Stav, tip po druhom neúspechu
 
 Výstup: dá sa ukázať dieťaťu a sledovať, kde tápa. **Toto je najdôležitejší
 míľnik celého projektu** — návrh sa po ňom bude prekresľovať.
 
 ## Etapa 2 · Svet 1 kompletne
-- [ ] typy levelov **Predpoveď** a **Oprav chybu**
-- [ ] tri kosti, mapa misií, ukladanie postupu do `localStorage`
-- [ ] zvuky, idle animácie, oslava v cieli
+- [ ] typy levelov **Predpoveď** (1.5) a **Oprav chybu** (1.6)
+- [ ] zvyšné levely sveta 1 (1.8 – 1.10) a mapa misií namiesto rozbaľovacieho zoznamu
+- [ ] zvuky a oslava v cieli
 - [ ] hlasové čítanie príkazov (`sk-SK`)
 - [ ] mobil/tablet: dotyk, na výšku aj na šírku
+- [ ] fonty self-hostovať (teraz sa ťahajú z Google Fonts → offline zlyhá)
 
 ## Etapa 3 · Cykly a podmienky (Svety 2–3)
 - [ ] `repeat` s blokom riadkov + odsadenie v tabuľke
@@ -44,6 +47,20 @@ míľnik celého projektu** — návrh sa po ňom bude prekresľovať.
 - [ ] tlačiteľné kartičky príkazov (PDF) na hru pri stole
 - [ ] EN/DE preklad (`i18n/`)
 - [ ] otestovať s aspoň 5 deťmi mimo rodiny
+
+## Etapa 7 · Dielňa (React + FastAPI + PostgreSQL)
+Samostatná aplikácia pre **autora a učiteľov** — nie pre deti. Hra na nej nikdy
+nezávisí za behu, levely sa exportujú do statických JSON pri builde.
+Podrobnosti a schéma: [ADR-001](ADR-001-stack.md).
+
+- [ ] FastAPI + SQLAlchemy + Alembic, PostgreSQL (cloud free tier)
+- [ ] **solver** — nájde optimálne riešenie levelu → automaticky nastaví limit
+      riadkov pre druhú kosť
+- [ ] **generátor bludísk** s garanciou riešiteľnosti a cieľovej obtiažnosti
+- [ ] **validácia sady levelov v CI** — zachytí neriešiteľný level po úprave mapy
+- [ ] React editor levelov pre autora
+- [ ] učiteľský prehľad tried (pseudonymy „Žiak 7“, žiadne mená detí — GDPR)
+- [ ] export `levels/*.json` z databázy do statického buildu hry
 
 ## Otvorené otázky
 - Cieľový vek pre prvé testovanie — od toho závisí, či je východiskový režim

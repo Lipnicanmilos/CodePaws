@@ -1,0 +1,112 @@
+/* Kódolabky — paleta príkazov a tabuľka („databáza“ plánu) */
+
+.palette {
+  display: flex; flex-wrap: wrap; gap: .4rem;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: .6rem; box-shadow: var(--shadow-sm);
+}
+
+.cmdbtn {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .5rem .8rem .5rem .55rem; border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong); background: var(--surface-2);
+  font-family: var(--font-display); font-weight: 600; font-size: var(--step--1);
+  box-shadow: 0 2px 0 var(--border-strong);
+  transition: transform .12s ease, background .15s ease, box-shadow .12s ease;
+}
+.cmdbtn:hover { background: var(--accent-soft); transform: translateY(-1px); }
+.cmdbtn:active { transform: translateY(2px); box-shadow: none; }
+.cmdbtn svg { width: 20px; height: 20px; display: block; color: var(--accent); }
+.cmdbtn:disabled { opacity: .4; cursor: default; transform: none; }
+
+/* ── Karta s tabuľkou ────────────────────────────────────────── */
+
+.tablecard {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden;
+  display: flex; flex-direction: column; min-height: 12rem;
+}
+.tablecard-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: .5rem;
+  padding: .7rem .9rem .55rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+}
+.tablecard-head h2 { font-size: var(--step-1); }
+.rowcount { font-size: var(--step--1); color: var(--text-muted); font-weight: 700; }
+.rowcount.is-over { color: var(--accent-deep); }
+
+.table-scroll { overflow: auto; max-height: min(42vh, 25rem); }
+
+.program { width: 100%; border-collapse: collapse; }
+.program thead th {
+  position: sticky; top: 0; z-index: 1;
+  background: var(--surface);
+  text-align: left; font-family: var(--font-display); font-weight: 600;
+  font-size: .68rem; text-transform: uppercase; letter-spacing: .09em;
+  color: var(--text-muted); padding: .45rem .55rem; border-bottom: 1px solid var(--border);
+}
+.program td { padding: .3rem .55rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.program tbody tr:last-child td { border-bottom: 0; }
+
+.c-num { width: 2.6rem; }
+.c-n   { width: 5.4rem; }
+.c-act { width: 4.6rem; }
+
+.rownum {
+  display: inline-grid; place-items: center;
+  width: 1.75rem; height: 1.75rem; border-radius: 50%;
+  background: var(--surface-2); border: 1px solid var(--border);
+  font-family: var(--font-display); font-weight: 600; font-size: .82rem;
+  color: var(--text-muted);
+}
+
+.cmdcell { display: flex; align-items: center; gap: .5rem; font-weight: 700; }
+.cmdcell svg { width: 20px; height: 20px; flex: none; color: var(--accent); }
+
+.stepper { display: inline-flex; align-items: center; gap: .1rem; }
+.stepper button {
+  width: 1.6rem; height: 1.6rem; border-radius: var(--radius-xs);
+  border: 1px solid var(--border-strong); background: var(--surface-2);
+  font-weight: 700; line-height: 1; display: grid; place-items: center;
+}
+.stepper button:hover:not(:disabled) { background: var(--accent-soft); }
+.stepper button:disabled { opacity: .3; cursor: default; }
+.stepper output {
+  min-width: 1.4rem; text-align: center;
+  font-family: var(--font-display); font-weight: 600;
+}
+.dash { color: var(--text-muted); }
+
+.rowacts { display: flex; gap: .15rem; justify-content: flex-end; }
+.rowacts button {
+  width: 1.6rem; height: 1.6rem; border-radius: var(--radius-xs);
+  border: 1px solid transparent; background: transparent; color: var(--text-muted);
+  display: grid; place-items: center; font-size: .9rem; line-height: 1;
+}
+.rowacts button:hover:not(:disabled) { background: var(--surface-2); color: var(--text); }
+.rowacts button:disabled { opacity: .25; cursor: default; }
+.rowacts .del:hover { background: var(--accent-soft); color: var(--accent-deep); }
+
+/* Kurzor programu: práve bežiaci riadok */
+.program tr.is-current { background: color-mix(in srgb, var(--gold) 17%, transparent); }
+.program tr.is-current .rownum {
+  background: var(--gold); color: #3b2600; border-color: transparent;
+}
+.program tr.is-current td:first-child { box-shadow: inset 3px 0 0 var(--gold); }
+
+.program tr.is-bad { background: var(--accent-soft); }
+.program tr.is-bad .rownum { background: var(--accent); color: #fff; border-color: transparent; }
+.program tr.is-bad td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+
+.program tr.is-done .rownum { background: var(--teal-soft); color: var(--teal-deep); }
+
+body.is-running .cmdbtn,
+body.is-running .stepper button,
+body.is-running .rowacts button { pointer-events: none; opacity: .45; }
+
+.emptyhint {
+  padding: 1.6rem 1rem; text-align: center; color: var(--text-muted);
+  font-size: var(--step--1); max-width: 34ch; margin-inline: auto;
+}
+.emptyhint[hidden] { display: none; }

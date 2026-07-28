@@ -1,0 +1,42 @@
+{
+  "id": "1.7",
+  "title": "Horí!",
+  "world": 1,
+  "type": "path",
+  "mode": "any",
+  "story": "Chodbu blokuje oheň. Fifo je hasič — postav ho tesne pred oheň a použi hadicu.",
+  "grid": {
+    "legend": { ".": "empty", "#": "wall", "o": "bone", "f": "fire", "g": "goal" },
+    "rows": [
+      "#######",
+      "#.o...#",
+      "#####.#",
+      "#g.f..#",
+      "#######"
+    ]
+  },
+  "actors": [
+    { "id": "a1", "char": "fifo", "x": 1, "y": 1, "dir": "E" }
+  ],
+  "goals": [
+    { "type": "reach", "actor": "a1", "tile": "goal" }
+  ],
+  "palette": ["walk", "use"],
+  "limits": { "steps": 120 },
+  "stars": [
+    { "id": "finish" },
+    { "id": "rows", "max": { "absolute": 5, "relative": 7 } },
+    { "id": "bones", "all": true }
+  ],
+  "hint": "Hadica funguje len na políčko, na ktoré sa Fifo práve pozerá.",
+  "solutions": {
+    "absolute": [
+      { "cmd": "east", "n": 4 }, { "cmd": "south", "n": 2 },
+      { "cmd": "west", "n": 1 }, { "cmd": "use" }, { "cmd": "west", "n": 3 }
+    ],
+    "relative": [
+      { "cmd": "move", "n": 4 }, { "cmd": "turnRight" }, { "cmd": "move", "n": 2 },
+      { "cmd": "turnRight" }, { "cmd": "move", "n": 1 }, { "cmd": "use" }, { "cmd": "move", "n": 3 }
+    ]
+  }
+}
