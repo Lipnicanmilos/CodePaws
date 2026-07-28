@@ -1,4 +1,4 @@
-# Sieň slávy — serverová časť (Supabase)
+# Rebríček — serverová časť (Supabase)
 
 Globálny rebríček prvých pätnástich. Jedna tabuľka a jedna funkcia — pätnásť
 riadkov dát, takže nič zložitejšie netreba.
@@ -41,7 +41,7 @@ ignoruj — tá je pre backend v Node. Kódolabky sú statický klient a volajú
 REST rozhranie priamo, žiadny balík netreba.
 
 Commitni a pushni — Pages sa nasadia samy a rebríček je globálny.
-**Kým sú polia prázdne, hra funguje ďalej**, len je Sieň slávy lokálna.
+**Kým sú polia prázdne, hra funguje ďalej**, len je rebríček lokálny.
 
 ### Overenie
 

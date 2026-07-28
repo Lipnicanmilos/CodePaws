@@ -1,6 +1,6 @@
-/* Kódolabky — prepojenie na Supabase pre globálnu Sieň slávy.
+/* Kódolabky — prepojenie na Supabase pre globálny Rebríček.
 
-   Kým sú údaje prázdne, Sieň slávy funguje lokálne (len toto zariadenie).
+   Kým sú údaje prázdne, rebríček funguje lokálne (len toto zariadenie).
    Po vyplnení sa rebríček stane globálnym bez akejkoľvek ďalšej zmeny v hre.
    Postup je v server/README.md.
 
@@ -15,5 +15,5 @@
 export const SUPABASE_URL = 'https://mdpfxmsovlccdaftfbkz.supabase.co';
 export const SUPABASE_ANON_KEY = 'sb_publishable_fk9gJExKzqI6rMaDJhrBMQ_ezR6dxrF';
 
-/** Koľko priečok drží Sieň slávy. Rovnaké číslo je aj v SQL funkcii. */
+/** Koľko priečok drží rebríček. Rovnaké číslo je aj v SQL funkcii. */
 export const HALL_SIZE = 15;

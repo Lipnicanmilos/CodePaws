@@ -1,4 +1,4 @@
--- Kódolabky — Sieň slávy v Supabase.
+-- Kódolabky — Rebríček v Supabase.
 -- Spusti celé naraz v SQL Editore. Dá sa spustiť opakovane.
 --
 -- Myšlienka: anon kľúč je v kóde stránky verejný, takže tabuľka NESMIE byť

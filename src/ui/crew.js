@@ -1,4 +1,4 @@
-/* Kódolabky — Kniha služieb.
+/* Kódolabky — Hráči.
    Nie je to rebríček proti cudzím deťom, ale zoznam posádky na tomto zariadení:
    súrodenci alebo trieda, každý s vlastným volacím znakom a vlastným postupom.
    Nič sa nikam neposiela. */

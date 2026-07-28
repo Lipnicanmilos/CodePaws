@@ -18,7 +18,7 @@ neprogramuje, ale iba číta a predpovedá cudzí plán.
 ## Stav projektu
 
 🎮 **Etapa 1 hotová a nasadená.** Hra je hrateľná: 5 levelov sveta 1, oba režimy
-ovládania, tri kosti a body za level, Kniha služieb, 63 testov.
+ovládania, tri kosti a body za level, Hráči, 63 testov.
 
 ⚠️ **Hru zatiaľ nevidelo ani jedno dieťa.** To je najbližšia úloha a blokuje
 niekoľko rozhodnutí — viď [TODO](TODO.md).
@@ -59,17 +59,17 @@ Body sa dajú získať raz, opakovaním sa nefarmia, a raz získané sa nedajú 
 Zbierajú sa do hodností: *Šteniatko* → *Pomocník* (150) → *Dispečer* (400) →
 *Veliteľ zmeny* (700) → *Hlavný dispečer* (1000).
 
-### Kniha služieb
+### Hráči
 
 Odznak vpravo hore otvorí posádku tohto zariadenia. Každý si napíše svoj **volací
 znak** (`LABKA 1`, `NINKA Ľ`) a má vlastný postup, takže sa súrodenci na jednom
 tablete neprepíšu. Nič z toho neopúšťa prehliadač.
 
-### Sieň slávy
+### Rebríček
 
-**Rebríček prvých pätnástich.** Po dohratí misie sa v okne s výsledkom ponúkne
-tlačidlo **Zapísať do Siene slávy** — teda presne vtedy, keď body pribudnú.
-Otvoriť sa dá aj kedykoľvek z Knihy služieb.
+Rebríček drží **prvých pätnásť**. Po dohratí misie sa v okne s výsledkom ponúkne
+tlačidlo **Zapísať do rebríčka** — teda presne vtedy, keď body pribudnú.
+Otvoriť sa dá aj kedykoľvek zo zoznamu Hráči.
 
 Hráč si zvolí prezývku a zapíše svoje body. Jedna prezývka je jedna priečka
 a horší výsledok ten lepší neprepíše, takže rekord sa nedá pokaziť.
@@ -123,13 +123,13 @@ src/
     board.js          3D dioráma, animácie, konfety
     table.js          tabuľka plánu, kurzor programu
     palette.js        krížový D-pad na pulte
-    crew.js           Kniha služieb
+    crew.js           Hráči
     icons.js          všetky SVG vrátane psíkov
   game/
     app.js            spojenie enginu a UI
     commands.js       katalóg príkazov, paleta podľa režimu
     progress.js       posádka, body, hodnosti (localStorage)
-    leaderboard.js    Sieň slávy — lokálne alebo Supabase, podľa config.js
+    leaderboard.js    Rebríček — lokálne alebo Supabase, podľa config.js
     config.js         adresa a kľúč Supabase (prázdne = lokálny rebríček)
 levels/               JSON, index.json je zoznam
 server/               SQL a návod na globálny rebríček (Supabase)
@@ -191,7 +191,7 @@ ozdoba ale funkcia) a **DM Mono** (displej na pulte).
 | Každá postavička = jeden koncept informatiky | [DESIGN §3](docs/DESIGN.md) |
 | Jeden riadok = jeden krok, príkazy nemajú počet opakovaní | [DESIGN §2](docs/DESIGN.md) |
 | Statická hra bez backendu; React + FastAPI + PostgreSQL až na „Dielňu“ | [ADR-001](docs/ADR-001-stack.md) |
-| Body odmeňujú premýšľanie, nie rýchlosť; Kniha služieb nie je rebríček | [DESIGN §6b](docs/DESIGN.md) |
+| Body odmeňujú premýšľanie, nie rýchlosť; Hráči nie je rebríček | [DESIGN §6b](docs/DESIGN.md) |
 | `Použi` mieri vždy dopredu → levely s ohňom naň musia viesť čelne | [ARCHITECTURE §4](docs/ARCHITECTURE.md) |
 
 ## Dokumentácia
@@ -215,7 +215,7 @@ ozdoba ale funkcia) a **DM Mono** (displej na pulte).
 - Číslovanie levelov má dieru (1.1–1.4, potom 1.7) — 1.5 a 1.6 sú typy, ktoré ešte
   nie sú naprogramované.
 - Hra sa ovláda myšou a dotykom; klávesnicou zatiaľ len čiastočne.
-- **Sieň slávy je zatiaľ lokálna** — globálnou sa stane až po nastavení Supabase
+- **Rebríček je zatiaľ lokálna** — globálnou sa stane až po nastavení Supabase
   (viď [server/README.md](server/README.md)). Body sa zatiaľ neoverujú, klient si
   vie poslať ľubovoľné číslo; strop v SQL bráni aspoň absurditám.
 - Bezplatný projekt Supabase sa po týždni nečinnosti uspí a rebríček dovtedy

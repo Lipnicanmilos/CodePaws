@@ -182,7 +182,7 @@ export function totals(profile = activeProfile()) {
   };
 }
 
-/** Kniha služieb — posádka zoradená podľa bodov. */
+/** Hráči — posádka zoradená podľa bodov. */
 export const roster = () =>
   profiles()
     .map((p) => ({ profile: p, ...totals(p), rank: rankFor(totals(p).points) }))

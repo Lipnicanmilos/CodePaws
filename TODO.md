@@ -23,7 +23,7 @@ môže byť desať levelov do koša.
 
 ---
 
-## 0b. Zapnúť globálnu Sieň slávy
+## 0b. Zapnúť globálny Rebríček
 
 Kód je hotový, chýba už len účet — ten ti nikto nezaloží za teba.
 Celý postup je v [server/README.md](server/README.md), trvá ~10 minút.
@@ -108,6 +108,6 @@ Detaily v [ROADMAP](docs/ROADMAP.md). V skratke:
 - [x] Redizajn — dispečerský pult v strede, 3D dioráma, prekreslení psíci
 - [x] Jeden riadok = jeden krok (zrušený stĺpec „Koľko“)
 - [x] Vlastné písmo a ikona
-- [x] Body dispečera, hodnosti a Kniha služieb
-- [x] Sieň slávy — rebríček prvých 15, filter prezývok, SQL a návod na Supabase
+- [x] Body dispečera, hodnosti a Hráči
+- [x] Rebríček — rebríček prvých 15, filter prezývok, SQL a návod na Supabase
 - [x] Nasadenie na GitHub Pages

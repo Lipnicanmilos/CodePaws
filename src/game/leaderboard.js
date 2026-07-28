@@ -1,4 +1,4 @@
-/* Kódolabky — Sieň slávy.
+/* Kódolabky — Rebríček.
 
    Rovnaké dáta, dve úložiská: kým nie je nastavená adresa Workera, drží sa
    rebríček v localStorage a platí pre toto zariadenie. Po nastavení adresy

@@ -1,4 +1,4 @@
-/* Kódolabky — Sieň slávy: pätnásť najlepších a zápis do nej. */
+/* Kódolabky — Rebríček: pätnásť najlepších a zápis do nej. */
 
 import * as hall from '../game/leaderboard.js';
 import * as progress from '../game/progress.js';

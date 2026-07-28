@@ -136,7 +136,7 @@ button { cursor: pointer; }
 
 .topbar-right { display: flex; align-items: center; gap: var(--space-2); }
 
-/* Odznak posádky — volací znak a body, klik otvorí Knihu služieb. */
+/* Odznak posádky — volací znak a body, klik otvorí zoznam hráčov. */
 .crewchip {
   display: flex; align-items: center; gap: .5rem;
   padding: .3rem .5rem .3rem .7rem;
@@ -265,7 +265,7 @@ button { cursor: pointer; }
 
 .winbtns { display: flex; gap: .5rem; justify-content: center; flex-wrap: wrap; }
 
-/* ── Kniha služieb ───────────────────────────────────────────── */
+/* ── Hráči ───────────────────────────────────────────── */
 
 .crewbox {
   border: 0; border-radius: var(--radius); padding: 1.6rem;
@@ -318,7 +318,7 @@ button { cursor: pointer; }
 }
 .crewadd .key { flex: none; padding: .55rem 1rem; }
 
-/* ── Sieň slávy ──────────────────────────────────────────────── */
+/* ── Rebríček ──────────────────────────────────────────────── */
 
 .hallbox {
   border: 0; border-radius: var(--radius); padding: 1.6rem;

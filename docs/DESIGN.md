@@ -129,7 +129,7 @@ Dôležité: **prvú kosť dostane každý.** Druhá a tretia sú pozvánka vrá
 a program vylepšiť — čo je refaktoring, len sa to tak nevolá. Nikdy nie je nič
 zamknuté za tri kosti; ďalší level sa otvorí vždy po prvej.
 
-## 6b. Body dispečera a Kniha služieb
+## 6b. Body dispečera a Hráči
 
 Kosti sú odmena za jeden level. Body sú to, čo z nich robí **cestu naprieč hrou** —
 a sú navrhnuté tak, aby ťahali rovnakým smerom ako všetko ostatné.
@@ -161,14 +161,14 @@ Body sa zbierajú do hodnosti, takže postup je vidno aj bez porovnávania s ký
 **Šteniatko** (0) → **Pomocník** (150) → **Dispečer** (400) →
 **Veliteľ zmeny** (700) → **Hlavný dispečer** (1000)
 
-### Kniha služieb
+### Hráči
 
 Tabuľka posádky na tomto zariadení: každý má svoj **volací znak** (krátky, veľkými
 písmenami, ako v rádiu — `LABKA 1`, `NINKA Ľ`) a vlastný postup. Súrodenci alebo
 trieda sa tak vystriedajú na jednom tablete bez toho, aby si prepisovali kosti.
 
 **Zámerne to nie je rebríček proti cudzím deťom.** V §8 je medzi vecami, ktorým sa
-vyhnúť, aj porovnávanie detí — a to platí ďalej. Kniha služieb je zoznam posádky
+vyhnúť, aj porovnávanie detí — a to platí ďalej. Hráči je zoznam posádky
 jednej stanice, zoradený podľa bodov, ktorý nikdy neopustí prehliadač. Žiadny server,
 žiadne účty, žiadne cudzie výsledky. Ak by mala niekedy vzniknúť trieda s viacerými
 deťmi naraz, patrí to do učiteľského režimu v [Dielni](ADR-001-stack.md), a aj tam
@@ -210,7 +210,7 @@ a kde sa zaseklo. Žiadne skóre, žiadne porovnávanie s inými deťmi.
 - ❌ časomiery, srdiečka, energiu, denné odmeny — vytvárajú stres, nie premýšľanie
 - ❌ body za rýchlosť alebo za počet dokončených levelov — naučili by dieťa klikať
   namiesto rozmýšľať (bodovanie v §6b je postavené presne naopak)
-- ❌ rebríček proti cudzím deťom — Kniha služieb je posádka jedného zariadenia
+- ❌ rebríček proti cudzím deťom — Hráči je posádka jedného zariadenia
 - ❌ mikrotransakcie a reklamy v hre pre päťročné deti
 - ❌ ukladanie čohokoľvek o dieťati na server (GDPR + zdravý rozum)
 - ❌ skokovú obtiažnosť — každý level pridáva **práve jednu** novú vec
