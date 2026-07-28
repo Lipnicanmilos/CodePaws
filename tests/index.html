@@ -25,6 +25,8 @@ import { World } from '../src/engine/world.js';
 import { VM, run } from '../src/engine/vm.js';
 import { countRows, rowLimitFor, expandRows } from '../src/engine/program.js';
 import { AWARDS, pointsFor, rankFor, nextRank, normalizeCallsign } from '../src/game/progress.js';
+import { cleanNick, nickProblem, topOf, mergeEntry } from '../src/game/leaderboard.js';
+import { HALL_SIZE } from '../src/game/config.js';
 
 const results = [];
 const test = (name, fn) => {
@@ -211,6 +213,53 @@ test('volaci znak sa upravi na radiovy tvar a zachova diakritiku', () => {
   eq(normalizeCallsign('123456789012345'), '1234567890', 'orezanie na 10 znakov');
   eq(normalizeCallsign('   '), '', 'prazdny znak neprejde');
   eq(normalizeCallsign(null), '', 'null neprejde');
+});
+
+// ── Sieň slávy ──────────────────────────────────────────────────
+
+const entry = (nick, points, at = '2026-07-01') => ({ nick, points, missions: 1, at });
+
+test('prezyvka sa ocisti rovnako ako volaci znak', () => {
+  eq(cleanNick('ninka ľ'), 'NINKA Ľ', 'velke pismena + diakritika');
+  eq(cleanNick('<b>hack</b>'), 'BHACKB', 'znacky vypadnu');
+  eq(cleanNick('abcdefghijklmn'), 'ABCDEFGHIJ', 'orezanie na 10 znakov');
+});
+
+test('prilis kratka prezyvka neprejde', () => {
+  ok(nickProblem('A'), 'jedno pismeno');
+  ok(nickProblem('   '), 'medzery');
+  eq(nickProblem('AB'), null, 'dve pismena staci');
+});
+
+test('vulgarizmus neprejde ani schovany v inom slove', () => {
+  ok(nickProblem('kokot'), 'priamo');
+  ok(nickProblem('xxfuckxx'), 'v strede slova');
+  ok(nickProblem('k o k o t'), 'rozdelene medzerami');
+  eq(nickProblem('LABKA'), null, 'slusna prezyvka prejde');
+});
+
+test('rebricek drzi len HALL_SIZE priecok a zoradi ich podla bodov', () => {
+  const many = Array.from({ length: 30 }, (_, i) => entry(`H${i}`, i * 10));
+  const list = topOf(many);
+  eq(list.length, HALL_SIZE, 'pocet priecok');
+  eq(list[0].points, 290, 'najlepsi je prvy');
+  ok(list.every((e, i) => i === 0 || list[i - 1].points >= e.points), 'zostupne poradie');
+});
+
+test('pri rovnosti bodov je vyssie skorsi zapis', () => {
+  const list = topOf([entry('NESKOR', 100, '2026-07-05'), entry('SKOR', 100, '2026-07-01')]);
+  eq(list[0].nick, 'SKOR', 'prvy');
+});
+
+test('jedna prezyvka = jedna priecka', () => {
+  const list = mergeEntry([entry('LABKA', 100)], entry('LABKA', 300));
+  eq(list.length, 1, 'nezdvoji sa');
+  eq(list[0].points, 300, 'lepsi vysledok vyhrava');
+});
+
+test('horsi vysledok neprepise lepsi', () => {
+  const list = mergeEntry([entry('LABKA', 500)], entry('LABKA', 120));
+  eq(list[0].points, 500, 'rekord ostava');
 });
 
 // ── Levely ──────────────────────────────────────────────────────

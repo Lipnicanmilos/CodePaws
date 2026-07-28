@@ -63,8 +63,20 @@ Zbierajú sa do hodností: *Šteniatko* → *Pomocník* (150) → *Dispečer* (4
 
 Odznak vpravo hore otvorí posádku tohto zariadenia. Každý si napíše svoj **volací
 znak** (`LABKA 1`, `NINKA Ľ`) a má vlastný postup, takže sa súrodenci na jednom
-tablete neprepíšu. **Nie je to rebríček proti cudzím deťom** — je to zoznam posádky
-jednej stanice a nič neopúšťa prehliadač.
+tablete neprepíšu. Nič z toho neopúšťa prehliadač.
+
+### Sieň slávy
+
+Z Knihy služieb sa dá otvoriť **rebríček prvých pätnástich**. Hráč si zvolí
+prezývku a zapíše svoje body — jedna prezývka je jedna priečka a horší výsledok
+ten lepší neprepíše.
+
+Ukladá sa iba **prezývka, body, počet misií a dátum**. Žiadne mená, e-maily ani
+IP adresy; prezývky prejdú filtrom na vulgarizmy a majú strop 10 znakov.
+
+Rebríček je **globálny**, keď je vyplnený [`src/game/config.js`](src/game/config.js);
+kým je prázdny, funguje lokálne na jednom zariadení. Nastavenie servera je
+v [server/README.md](server/README.md).
 
 ## Vývoj
 
@@ -113,7 +125,10 @@ src/
     app.js            spojenie enginu a UI
     commands.js       katalóg príkazov, paleta podľa režimu
     progress.js       posádka, body, hodnosti (localStorage)
+    leaderboard.js    Sieň slávy — lokálne alebo Supabase, podľa config.js
+    config.js         adresa a kľúč Supabase (prázdne = lokálny rebríček)
 levels/               JSON, index.json je zoznam
+server/               SQL a návod na globálny rebríček (Supabase)
 assets/icon.svg       značka: labka poskladaná z dlaždíc bludiska
 tests/index.html      testy v prehliadači
 ```
@@ -196,6 +211,11 @@ ozdoba ale funkcia) a **DM Mono** (displej na pulte).
 - Číslovanie levelov má dieru (1.1–1.4, potom 1.7) — 1.5 a 1.6 sú typy, ktoré ešte
   nie sú naprogramované.
 - Hra sa ovláda myšou a dotykom; klávesnicou zatiaľ len čiastočne.
+- **Sieň slávy je zatiaľ lokálna** — globálnou sa stane až po nastavení Supabase
+  (viď [server/README.md](server/README.md)). Body sa zatiaľ neoverujú, klient si
+  vie poslať ľubovoľné číslo; strop v SQL bráni aspoň absurditám.
+- Bezplatný projekt Supabase sa po týždni nečinnosti uspí a rebríček dovtedy
+  neodpovedá, kým ho v konzole neprebudíš.
 
 ## Licencia
 

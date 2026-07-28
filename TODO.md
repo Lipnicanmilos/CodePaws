@@ -23,6 +23,21 @@ môže byť desať levelov do koša.
 
 ---
 
+## 0b. Zapnúť globálnu Sieň slávy
+
+Kód je hotový, chýba už len účet — ten ti nikto nezaloží za teba.
+Celý postup je v [server/README.md](server/README.md), trvá ~10 minút.
+
+- [ ] Založiť bezplatný projekt na [supabase.com](https://supabase.com) (región Frankfurt)
+- [ ] Spustiť [`server/supabase.sql`](server/supabase.sql) v SQL Editore
+- [ ] Vložiť **Project URL** a **anon public** kľúč do `src/game/config.js`
+      (anon kľúč je verejný zámerne; `service_role` tam NIKDY nedávaj)
+- [ ] Commitnúť a pushnúť → rebríček je globálny
+- [ ] Overiť, že cudzí prehliadač vidí ten istý rebríček
+
+**Pri každom pridaní levelu zvýš `v_max_points` v SQL** (`250 × počet levelov`),
+inak sa poctivý hráč v istom momente prestane vedieť zapísať.
+
 ## 1. Etapa 2 — Svet 1 kompletne
 
 ### Nové typy levelov
@@ -93,4 +108,5 @@ Detaily v [ROADMAP](docs/ROADMAP.md). V skratke:
 - [x] Jeden riadok = jeden krok (zrušený stĺpec „Koľko“)
 - [x] Vlastné písmo a ikona
 - [x] Body dispečera, hodnosti a Kniha služieb
+- [x] Sieň slávy — rebríček prvých 15, filter prezývok, SQL a návod na Supabase
 - [x] Nasadenie na GitHub Pages

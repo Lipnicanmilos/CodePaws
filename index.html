@@ -154,7 +154,36 @@
     <button class="key key-steel" type="submit">Pridať</button>
   </form>
   <div class="winbtns">
+    <button class="key key-steel key-wide" id="hallOpen" type="button">Sieň slávy</button>
     <button class="key key-run key-wide" id="crewClose" type="button">Späť do hry</button>
+  </div>
+</dialog>
+
+<dialog class="hallbox" id="hallBox">
+  <h2>Sieň slávy</h2>
+  <p class="hallbox-note" id="hallNote"></p>
+  <div class="hall-scroll">
+    <table class="hall">
+      <thead>
+        <tr>
+          <th>#</th><th>Prezývka</th>
+          <th class="num">Body</th><th class="num">Misie</th><th>Kedy</th>
+        </tr>
+      </thead>
+      <tbody id="hallBody"></tbody>
+    </table>
+  </div>
+  <form class="hallform" id="hallForm">
+    <input id="hallNick" maxlength="10" placeholder="Prezývka" aria-label="Prezývka do rebríčka">
+    <button class="key key-run" id="hallSend" type="submit">Zapísať</button>
+  </form>
+  <p class="hallstatus" id="hallStatus" role="status"></p>
+  <p class="hallbox-privacy">
+    Ukladá sa len prezývka, body a dátum. Žiadne mená, žiadne e-maily —
+    tak sem prosím nepíš svoje skutočné meno.
+  </p>
+  <div class="winbtns">
+    <button class="key key-steel key-wide" id="hallClose" type="button">Zavrieť</button>
   </div>
 </dialog>
 

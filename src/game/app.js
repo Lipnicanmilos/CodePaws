@@ -8,6 +8,7 @@ import { BoardView } from '../ui/board.js';
 import { TableView } from '../ui/table.js';
 import { PaletteView } from '../ui/palette.js';
 import { CrewView } from '../ui/crew.js';
+import { HallView } from '../ui/hall.js';
 import { ICONS } from '../ui/icons.js';
 import * as progress from './progress.js';
 
@@ -46,6 +47,7 @@ class Game {
       this.loadLevel(this.index);
     });
     this.crew.renderChip();
+    this.hall = new HallView();
 
     this.bindUI();
     this.buildPicker();

@@ -316,6 +316,56 @@ button { cursor: pointer; }
 }
 .crewadd .key { flex: none; padding: .55rem 1rem; }
 
+/* ── Sieň slávy ──────────────────────────────────────────────── */
+
+.hallbox {
+  border: 0; border-radius: var(--radius); padding: 1.6rem;
+  background: var(--surface); color: var(--text); box-shadow: var(--shadow);
+  max-width: min(94vw, 34rem); width: 100%;
+}
+.hallbox::backdrop { background: rgba(13, 34, 44, .55); backdrop-filter: blur(4px); }
+.hallbox h2 { font-size: var(--step-2); }
+.hallbox-note { color: var(--muted); font-size: var(--step--1); margin: .3rem 0 var(--space-2); }
+.hallbox-privacy {
+  color: var(--muted); font-size: .74rem; margin: var(--space-2) 0;
+  padding-left: .7rem; border-left: 3px solid var(--line-strong);
+  text-align: left;
+}
+
+.hall-scroll { overflow: auto; max-height: 42vh; border: 1px solid var(--line); border-radius: var(--radius-sm); }
+.hall { width: 100%; border-collapse: collapse; }
+.hall th {
+  position: sticky; top: 0; background: var(--surface-2); text-align: left;
+  font-family: var(--font-display); font-weight: 600;
+  font-size: .62rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted);
+  padding: .45rem .6rem; border-bottom: 1px solid var(--line);
+}
+.hall td { padding: .3rem .6rem; border-bottom: 1px solid var(--line); }
+.hall tr:last-child td { border-bottom: 0; }
+.hall .num, .hall th.num { text-align: right; font-family: var(--font-data); font-size: .85rem; }
+.hall-place {
+  font-family: var(--font-display); font-weight: 800; color: var(--muted);
+  width: 2.2rem; text-align: right;
+}
+.hall tr:nth-child(1) .hall-place { color: var(--beacon-deep); }
+.hall tr:nth-child(2) .hall-place,
+.hall tr:nth-child(3) .hall-place { color: var(--text); }
+.hall-nick { font-family: var(--font-display); font-weight: 800; }
+.hall-date { font-family: var(--font-data); font-size: .72rem; color: var(--muted); white-space: nowrap; }
+.hall tr.is-me { background: color-mix(in srgb, var(--beacon) 18%, transparent); }
+.hall-empty { padding: 1.6rem .6rem; text-align: center; color: var(--muted); font-size: var(--step--1); }
+
+.hallform { display: flex; gap: .5rem; margin: var(--space-2) 0 .4rem; }
+.hallform input {
+  flex: 1; min-width: 0; border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+  padding: .55rem .8rem; background: var(--surface);
+  font-family: var(--font-display); font-weight: 600;
+}
+.hallform .key { flex: none; padding: .55rem 1.1rem; }
+
+.hallstatus { font-size: var(--step--1); color: var(--muted); min-height: 1.4em; text-align: left; }
+.hallstatus.is-bad { color: var(--siren-deep); font-weight: 700; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important;
     transition-duration: .01ms !important; }
