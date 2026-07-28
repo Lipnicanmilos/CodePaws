@@ -25,7 +25,7 @@
   "limits": { "steps": 100 },
   "stars": [
     { "id": "finish" },
-    { "id": "rows", "max": { "absolute": 2, "relative": 4 } },
+    { "id": "rows", "max": { "absolute": 6, "relative": 8 } },
     { "id": "bones", "all": true }
   ],
   "hint": "Keď je stena v ceste, treba ju obísť spodkom.",

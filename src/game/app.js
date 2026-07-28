@@ -3,7 +3,7 @@
 import { World, DIR_LABEL } from '../engine/world.js';
 import { VM, DEFAULT_STEP_LIMIT } from '../engine/vm.js';
 import { newRow, countRows, cloneRows, moveRow, rowLimitFor } from '../engine/program.js';
-import { paletteFor, isCountable } from './commands.js';
+import { paletteFor } from './commands.js';
 import { BoardView } from '../ui/board.js';
 import { TableView } from '../ui/table.js';
 import { PaletteView } from '../ui/palette.js';
@@ -11,7 +11,6 @@ import { ICONS } from '../ui/icons.js';
 import * as progress from './progress.js';
 
 const $ = (id) => document.getElementById(id);
-const MAX_N = 9;
 
 const MESSAGES = {
   wall: 'Au! Tam je stena. Pozri sa na červený riadok.',
@@ -37,8 +36,6 @@ class Game {
     this.table = new TableView($('programBody'), $('emptyHint'), {
       onDelete: (i) => this.editRows(this.rows.filter((_, k) => k !== i)),
       onMove: (i, d) => this.editRows(moveRow(this.rows, i, d)),
-      onCount: (i, d) => this.editRows(this.rows.map((r, k) =>
-        k === i ? { ...r, n: Math.min(MAX_N, Math.max(1, (r.n ?? 1) + d)) } : r)),
     });
 
     this.bindUI();
@@ -124,14 +121,7 @@ class Game {
 
   addRow(cmd) {
     if (this.isRunning) return;
-    const rows = [...this.rows, newRow(cmd)];
-    // Rovnaký príkaz hneď za sebou radšej zväčší počet, než by pribudol riadok.
-    const prev = this.rows.at(-1);
-    if (prev && prev.cmd === cmd && isCountable(cmd) && (prev.n ?? 1) < MAX_N) {
-      this.editRows(this.rows.map((r, i) => (i === this.rows.length - 1 ? { ...r, n: r.n + 1 } : r)));
-      return;
-    }
-    this.editRows(rows);
+    this.editRows([...this.rows, newRow(cmd)]);
   }
 
   editRows(rows) {

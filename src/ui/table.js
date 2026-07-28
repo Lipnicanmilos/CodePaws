@@ -2,9 +2,7 @@
    Presúvanie je cez šípky ▲▼, nie drag & drop: na tablete je to spoľahlivejšie
    a funguje to aj z klávesnice. */
 
-import { iconOf, labelOf, isCountable } from '../game/commands.js';
-
-const MAX_N = 9;
+import { iconOf, labelOf } from '../game/commands.js';
 
 export class TableView {
   constructor(bodyEl, emptyEl, handlers) {
@@ -22,8 +20,6 @@ export class TableView {
         case 'del':  this.handlers.onDelete(index); break;
         case 'up':   this.handlers.onMove(index, -1); break;
         case 'down': this.handlers.onMove(index, 1); break;
-        case 'inc':  this.handlers.onCount(index, 1); break;
-        case 'dec':  this.handlers.onCount(index, -1); break;
       }
     });
   }
@@ -37,18 +33,9 @@ export class TableView {
       const tr = document.createElement('tr');
       tr.dataset.id = row.id;
 
-      const countable = isCountable(row.cmd);
-      const n = row.n ?? 1;
-
       tr.innerHTML = `
         <td><span class="rownum">${i + 1}</span></td>
         <td><span class="cmdcell">${iconOf(row.cmd)}<span>${labelOf(row.cmd)}</span></span></td>
-        <td>${countable ? `
-          <span class="stepper">
-            <button type="button" data-act="dec" aria-label="Menej" ${n <= 1 ? 'disabled' : ''}>−</button>
-            <output aria-label="Koľkokrát">${n}</output>
-            <button type="button" data-act="inc" aria-label="Viac" ${n >= MAX_N ? 'disabled' : ''}>+</button>
-          </span>` : '<span class="dash">—</span>'}</td>
         <td>
           <span class="rowacts">
             <button type="button" data-act="up" aria-label="Posunúť vyššie" ${i === 0 ? 'disabled' : ''}>▲</button>

@@ -35,8 +35,9 @@ V Claude Code stačí spustiť preview server `kodolabky`.
 1. Hore vpravo je prepínač **Otáčanie**:
    - **vypnuté** = režim *Šteniatko* (5–6 r.) — príkazy `Hore/Dole/Doľava/Doprava`
    - **zapnuté** = režim *Záchranár* (7+) — `Vpred` + `Vľavo`/`Vpravo`, pes má smer
-2. Klikaním na paletu pribúdajú riadky. Rovnaký príkaz dvakrát za sebou zväčší
-   číslo v stĺpci **Koľko** namiesto pridania riadku.
+2. Klikaním na paletu pribúdajú riadky — **jeden riadok = jeden krok**. Príkazy
+   nemajú počet opakovaní; „trikrát hore“ sú tri riadky. Skrátiť sa to bude dať
+   až cyklom `Opakuj` v Svete 2, a to je zámer.
 3. **▶ Štart** spustí plán, **⏭ Krok** ho posúva po jednom riadku (ladenie),
    **⟲ Znova** vráti psa na štart. Program sa dá kedykoľvek prepísať.
 4. Tri kosti za level: dôjsť do cieľa · zmestiť sa do limitu riadkov ·

@@ -18,13 +18,14 @@ s očíslovanými riadkami a kurzorom**, a nie farebné bloky, ktoré sa len zac
 
 ```
  ┌─────────────────────────────┬──────────────────────────┐
- │                             │  #  PRÍKAZ      KOĽKO    │
- │        B L U D I S K O      │  1  ↑ Vpred        2     │
- │        (mriežka 6×6…12×12)  │  2  ↻ Vpravo       —     │  ← kurzor ▶ ukazuje
- │                             │  3  ↑ Vpred        3     │    práve bežiaci riadok
- │        🐶 → → → 🎯          │  4  🔥 Použi       —     │
+ │                             │  #  PRÍKAZ               │
+ │        B L U D I S K O      │  1  ↑ Vpred              │
+ │        (mriežka 6×6…12×12)  │  2  ↑ Vpred              │
+ │                             │▶ 3  ↻ Vpravo             │ ← kurzor ukazuje
+ │        🐶 → → → 🎯          │  4  ↑ Vpred              │   práve bežiaci riadok
+ │                             │  5  🔥 Použi             │
  │                             ├──────────────────────────┤
- │                             │  ▶ Štart  ⏭ Krok  ⟲ Reset│
+ │                             │  ▶ Štart  ⏭ Krok  ⟲ Znova│
  └─────────────────────────────┴──────────────────────────┘
 ```
 
@@ -38,10 +39,24 @@ s očíslovanými riadkami a kurzorom**, a nie farebné bloky, ktoré sa len zac
 
 ### Tabuľka ako „databáza“
 Tabuľka je zámerne štylizovaná ako záznamník / databáza misie: očíslované riadky,
-stĺpce, možnosť riadok vložiť, zmazať, presunúť. Dieťa si tak prirodzene osvojí, že
+možnosť riadok vložiť, zmazať, presunúť. Dieťa si tak prirodzene osvojí, že
 **program je uložený zoznam inštrukcií, ktorý sa vykonáva zhora nadol** — a že poradie
 riadkov je to, na čom všetko stojí. Pod tabuľkou je malý panel **Stav** (kde stojím,
 kam pozerám, koľko mám kostí) — čo je vlastne watch okno.
+
+### Jeden riadok = jeden krok
+Príkazy zámerne **nemajú počet opakovaní**. „Choď trikrát hore“ sa napíše ako tri
+riadky, nie ako jeden riadok s číslom 3. Sú na to dva dôvody:
+
+1. **Pravidlo je bez výnimky.** Kurzor sa posunie o riadok, pes sa pohne o políčko.
+   Šesťročné dieťa to pochopí na prvý raz a nemusí rozlišovať, ktoré príkazy
+   počet majú a ktoré nie.
+2. **Robí to miesto pre cyklus.** Keď je plán v Svete 1 zdĺhavý, `Opakuj n×`
+   v Svete 2 je úľava, ktorú si dieťa naozaj odžije. Keby počet mali príkazy od
+   začiatku, cyklus by bol len iný zápis toho istého a aha-moment by sa nekonal.
+
+Interpret viactaktový riadok vie (`{cmd, n}`) — je to základ pre `Opakuj`. Do
+tabuľky sa taký riadok zatiaľ nedá vložiť.
 
 ## 3. Postavičky — každá labka = jeden koncept informatiky
 

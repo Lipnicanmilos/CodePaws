@@ -103,26 +103,34 @@ Poznámky:
 
 ## 4. Model programu (tabuľka)
 
+**Jeden riadok = jeden krok.** Bežné príkazy nemajú počet opakovaní (dôvod je
+v [DESIGN](DESIGN.md#jeden-riadok--jeden-krok)). Interpret pole `n` napriek tomu
+podporuje — je to základ pre `Opakuj n×`, ktorý ho ako jediný bude používať.
+
 Program je **strom riadkov**, nie plochý zoznam — `Opakuj` a `Ak` majú deti,
 v tabuľke sa to zobrazí ako odsadenie s farebnou lištou vľavo:
 
 ```js
 [
-  { id: "r1", cmd: "move",   n: 2 },
-  { id: "r2", cmd: "repeat", n: 4, body: [
-      { id: "r3", cmd: "move", n: 3 },
-      { id: "r4", cmd: "turnRight" }
+  { id: "r1", cmd: "move" },
+  { id: "r2", cmd: "move" },
+  { id: "r3", cmd: "repeat", n: 4, body: [
+      { id: "r4", cmd: "move" },
+      { id: "r5", cmd: "turnRight" }
   ]},
-  { id: "r5", cmd: "if", cond: "wallAhead", body: [...], else: [...] },
-  { id: "r6", cmd: "call", trick: "t1" }
+  { id: "r6", cmd: "if", cond: "wallAhead", body: [...], else: [...] },
+  { id: "r7", cmd: "call", trick: "t1" }
 ]
 ```
+
+V JSON leveloch sa referenčné riešenia píšu krátko cez `{cmd, n}` a pred
+použitím sa rozbalia funkciou `expandRows()` — inak by boli súbory neúnosne dlhé.
 
 Sada príkazov (rastie podľa `palette` levelu):
 
 | `cmd` | Zobrazenie | Kto ho prináša |
 |---|---|---|
-| `move` | ↑ Vpred × n | Fifo |
+| `move` | ↑ Vpred | Fifo |
 | `turnLeft` / `turnRight` | ↺ / ↻ | Fifo (režim relative) |
 | `north/south/east/west` | ↑ ↓ ← → | Fifo (režim absolute) |
 | `use` | 🔥 Použi | Fifo |

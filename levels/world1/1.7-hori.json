@@ -25,7 +25,7 @@
   "limits": { "steps": 120 },
   "stars": [
     { "id": "finish" },
-    { "id": "rows", "max": { "absolute": 5, "relative": 7 } },
+    { "id": "rows", "max": { "absolute": 11, "relative": 13 } },
     { "id": "bones", "all": true }
   ],
   "hint": "Hadica funguje len na políčko, na ktoré sa Fifo práve pozerá.",

@@ -23,7 +23,7 @@
 <script type="module">
 import { World } from '../src/engine/world.js';
 import { VM, run } from '../src/engine/vm.js';
-import { countRows, rowLimitFor } from '../src/engine/program.js';
+import { countRows, rowLimitFor, expandRows } from '../src/engine/program.js';
 
 const results = [];
 const test = (name, fn) => {
@@ -77,14 +77,25 @@ test('relatívny pohyb: vpred sa posunie o jedno políčko', () => {
   eq(w.actor.x, 2, 'x'); eq(w.actor.y, 1, 'y');
 });
 
-test('move n=3 trvá tri takty a kurzor stojí na tom istom riadku', () => {
+// V tabuľke je jeden riadok = jeden krok, ale interpret vie aj viactaktový
+// riadok — to je základ pre `Opakuj n×` v Svete 2.
+test('viactaktový riadok drží kurzor na tom istom riadku (základ pre Opakuj)', () => {
   const w = new World(LEVEL);
   const vm = new VM(w, withIds([{ cmd: 'move', n: 2 }]));
   const e1 = vm.step();
   eq(e1[0].rowId, 't0', 'prvý takt');
   eq(w.actor.x, 2, 'po prvom takte');
-  vm.step();
+  const e2 = vm.step();
+  eq(e2[0].rowId, 't0', 'druhý takt je stále ten istý riadok');
   eq(w.actor.x, 3, 'po druhom takte');
+});
+
+test('expandRows rozbalí {cmd, n} na samostatné riadky', () => {
+  const rows = expandRows([{ cmd: 'move', n: 3 }, { cmd: 'turnRight' }]);
+  eq(rows.length, 4, 'počet riadkov');
+  eq(rows[2].cmd, 'move', 'tretí riadok');
+  eq(rows[3].cmd, 'turnRight', 'štvrtý riadok');
+  ok(rows.every((r) => r.n === undefined), 'riadky nemajú počet opakovaní');
 });
 
 test('otáčanie mení smer v správnom poradí', () => {
@@ -174,23 +185,26 @@ const levels = await Promise.all(
 
 for (const level of levels) {
   for (const mode of ['absolute', 'relative']) {
-    const rows = level.solutions?.[mode];
+    // V JSON je riešenie zapísané krátko cez `n`; v tabuľke je jeden riadok
+    // jeden krok, takže sa pred porovnaním s limitom musí rozbaliť.
+    const rows = level.solutions?.[mode] ? expandRows(level.solutions[mode]) : null;
+
     test(`level ${level.id} „${level.title}“ — riešenie (${mode}) prejde`, () => {
       ok(rows, 'v súbore chýba referenčné riešenie');
       const world = new World(level);
-      const { vm } = run(world, withIds(rows), { stepLimit: level.limits?.steps ?? 200 });
+      const { vm } = run(world, rows, { stepLimit: level.limits?.steps ?? 200 });
       eq(vm.status, 'won', 'výsledok');
     });
 
-    test(`level ${level.id} — riešenie (${mode}) sa zmestí do limitu riadkov`, () => {
+    test(`level ${level.id} — limit riadkov (${mode}) sedí na optimálne riešenie`, () => {
       const limit = rowLimitFor(level.stars?.find((s) => s.id === 'rows'), mode);
       ok(limit, 'level nemá limit riadkov');
-      ok(countRows(rows) <= limit, `${countRows(rows)} riadkov > limit ${limit}`);
+      eq(countRows(rows), limit, 'počet krokov optimálneho riešenia');
     });
 
     test(`level ${level.id} — riešenie (${mode}) pozbiera všetky kosti`, () => {
       const world = new World(level);
-      run(world, withIds(rows), { stepLimit: level.limits?.steps ?? 200 });
+      run(world, expandRows(level.solutions[mode]), { stepLimit: level.limits?.steps ?? 200 });
       eq(world.bonesCollected(), world.totalBones, 'kosti');
     });
   }

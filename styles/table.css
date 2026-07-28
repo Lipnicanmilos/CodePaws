@@ -50,7 +50,6 @@
 .program tbody tr:last-child td { border-bottom: 0; }
 
 .c-num { width: 2.6rem; }
-.c-n   { width: 5.4rem; }
 .c-act { width: 4.6rem; }
 
 .rownum {
@@ -63,20 +62,6 @@
 
 .cmdcell { display: flex; align-items: center; gap: .5rem; font-weight: 700; }
 .cmdcell svg { width: 20px; height: 20px; flex: none; color: var(--accent); }
-
-.stepper { display: inline-flex; align-items: center; gap: .1rem; }
-.stepper button {
-  width: 1.6rem; height: 1.6rem; border-radius: var(--radius-xs);
-  border: 1px solid var(--border-strong); background: var(--surface-2);
-  font-weight: 700; line-height: 1; display: grid; place-items: center;
-}
-.stepper button:hover:not(:disabled) { background: var(--accent-soft); }
-.stepper button:disabled { opacity: .3; cursor: default; }
-.stepper output {
-  min-width: 1.4rem; text-align: center;
-  font-family: var(--font-display); font-weight: 600;
-}
-.dash { color: var(--text-muted); }
 
 .rowacts { display: flex; gap: .15rem; justify-content: flex-end; }
 .rowacts button {
@@ -102,7 +87,6 @@
 .program tr.is-done .rownum { background: var(--teal-soft); color: var(--teal-deep); }
 
 body.is-running .cmdbtn,
-body.is-running .stepper button,
 body.is-running .rowacts button { pointer-events: none; opacity: .45; }
 
 .emptyhint {

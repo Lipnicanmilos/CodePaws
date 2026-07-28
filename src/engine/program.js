@@ -1,14 +1,17 @@
 /* Kódolabky — model tabuľky príkazov.
    Riadky sú polia objektov; `body` sa použije až pri `Opakuj` a `Ak` (Etapa 3). */
 
-import { isCountable } from '../game/commands.js';
-
 let seq = 0;
 
+/** Jeden riadok = jeden krok. Žiadny počet opakovaní. */
 export function newRow(cmd) {
-  const row = { id: `r${++seq}`, cmd };
-  if (isCountable(cmd)) row.n = 1;
-  return row;
+  return { id: `r${++seq}`, cmd };
+}
+
+/** Rozbalí zápis `{cmd, n}` na n samostatných riadkov.
+    Používa sa na referenčné riešenia v leveloch, aby sa v JSON dali písať krátko. */
+export function expandRows(rows) {
+  return rows.flatMap(({ cmd, n = 1 }) => Array.from({ length: n }, () => newRow(cmd)));
 }
 
 /** Počet riadkov vrátane vnorených — to je to, čo sa porovnáva s limitom. */

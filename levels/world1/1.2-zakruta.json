@@ -26,7 +26,7 @@
   "limits": { "steps": 100 },
   "stars": [
     { "id": "finish" },
-    { "id": "rows", "max": { "absolute": 2, "relative": 3 } },
+    { "id": "rows", "max": { "absolute": 6, "relative": 7 } },
     { "id": "bones", "all": true }
   ],
   "hint": "Najprv celkom doľava, potom celkom hore.",

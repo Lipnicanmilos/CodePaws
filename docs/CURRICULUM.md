@@ -23,7 +23,7 @@ a až potom sa kombinuje s tým, čo dieťa už vie.
 
 | # | Level | Typ | Nová vec |
 |---|---|---|---|
-| 2.1 | Bitov trik | A | `Vpred ×3` — počet opakovaní v stĺpci „Koľko“ |
+| 2.1 | Bitov trik | A | `Opakuj N×` nad jedným riadkom — päť riadkov sa zmestí do dvoch |
 | 2.2 | Šesť riadkov | **B** | limit riadkov núti použiť opakovanie |
 | 2.3 | Opakuj blok | A | `Opakuj N×` cez viac riadkov (odsadenie v tabuľke) |
 | 2.4 | Štvorec | A | klasika: 4× (vpred, otoč) |

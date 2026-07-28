@@ -25,7 +25,7 @@
   "limits": { "steps": 100 },
   "stars": [
     { "id": "finish" },
-    { "id": "rows", "max": { "absolute": 2, "relative": 3 } },
+    { "id": "rows", "max": { "absolute": 5, "relative": 6 } },
     { "id": "bones", "all": true }
   ],
   "hint": "Najprv choď rovno doprava, až potom dole.",

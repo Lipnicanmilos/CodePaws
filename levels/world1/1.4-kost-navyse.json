@@ -26,7 +26,7 @@
   "limits": { "steps": 120 },
   "stars": [
     { "id": "finish" },
-    { "id": "rows", "max": { "absolute": 3, "relative": 5 } },
+    { "id": "rows", "max": { "absolute": 10, "relative": 12 } },
     { "id": "bones", "all": true }
   ],
   "hint": "Choď hore po ľavej strane, vrchom doprava a potom dole — takto stihneš všetky tri kosti.",
