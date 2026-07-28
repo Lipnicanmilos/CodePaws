@@ -136,6 +136,25 @@ button { cursor: pointer; }
 
 .topbar-right { display: flex; align-items: center; gap: var(--space-2); }
 
+/* Odznak posádky — volací znak a body, klik otvorí Knihu služieb. */
+.crewchip {
+  display: flex; align-items: center; gap: .5rem;
+  padding: .3rem .5rem .3rem .7rem;
+  border: 1px solid rgba(255, 255, 255, .2); border-radius: 999px;
+  background: rgba(255, 255, 255, .08); color: #eaf4f8;
+  transition: background .15s ease, transform .12s ease;
+}
+.crewchip:hover { background: rgba(255, 255, 255, .18); transform: translateY(-1px); }
+.crewchip-call {
+  font-family: var(--font-display); font-weight: 800; font-size: var(--step--1);
+  letter-spacing: -.01em; max-width: 8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.crewchip-pts {
+  font-family: var(--font-data); font-size: .78rem;
+  background: var(--beacon); color: #4a2f00;
+  border-radius: 999px; padding: .1rem .5rem;
+}
+
 .bones { display: flex; gap: .25rem; }
 .bone {
   width: 26px; height: 26px; border-radius: 50%;
@@ -225,12 +244,77 @@ button { cursor: pointer; }
 .winbox .bones { justify-content: center; margin-bottom: var(--space-2); }
 .winbox .bone { background: var(--surface-2); border-color: var(--line-strong); color: var(--line-strong); }
 .winbox .bone.is-on { background: var(--beacon); border-color: var(--beacon-deep); color: #5a3a00; }
-.winlist { list-style: none; padding: 0; display: grid; gap: .3rem; margin-bottom: var(--space-3);
-  font-size: var(--step--1); color: var(--muted); }
-.winlist li::before { content: "○  "; }
+.winlist { list-style: none; padding: 0; display: grid; gap: .3rem; margin-bottom: var(--space-2);
+  font-size: var(--step--1); color: var(--muted); text-align: left; }
+.winlist li { display: flex; align-items: baseline; gap: .5rem; }
+.winlist li::before { content: "○"; }
 .winlist li.got { color: var(--text); font-weight: 700; }
-.winlist li.got::before { content: "●  "; color: var(--beacon-deep); }
+.winlist li.got::before { content: "●"; color: var(--beacon-deep); }
+.winlist .pts { margin-left: auto; font-family: var(--font-data); font-size: .78rem; opacity: .55; }
+.winlist li.got .pts { opacity: 1; color: var(--beacon-deep); }
+
+.winscore {
+  margin-bottom: var(--space-3); padding: .55rem .8rem;
+  background: var(--surface-2); border-radius: var(--radius-sm);
+  font-size: var(--step--1);
+}
+.winscore strong { font-family: var(--font-display); font-weight: 800; font-size: var(--step-1); }
+.winscore .toNext { display: block; color: var(--muted); }
+
 .winbtns { display: flex; gap: .5rem; justify-content: center; flex-wrap: wrap; }
+
+/* ── Kniha služieb ───────────────────────────────────────────── */
+
+.crewbox {
+  border: 0; border-radius: var(--radius); padding: 1.6rem;
+  background: var(--surface); color: var(--text); box-shadow: var(--shadow);
+  max-width: min(94vw, 34rem); width: 100%;
+}
+.crewbox::backdrop { background: rgba(13, 34, 44, .55); backdrop-filter: blur(4px); }
+.crewbox h2 { font-size: var(--step-2); }
+.crewbox-note { color: var(--muted); font-size: var(--step--1); margin: .3rem 0 var(--space-2); }
+
+.crew-scroll { overflow: auto; max-height: 46vh; border: 1px solid var(--line); border-radius: var(--radius-sm); }
+.crew { width: 100%; border-collapse: collapse; }
+.crew th {
+  position: sticky; top: 0; background: var(--surface-2); text-align: left;
+  font-family: var(--font-display); font-weight: 600;
+  font-size: .62rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted);
+  padding: .45rem .6rem; border-bottom: 1px solid var(--line);
+}
+.crew td { padding: .3rem .6rem; border-bottom: 1px solid var(--line); }
+.crew tr:last-child td { border-bottom: 0; }
+.crew .num { text-align: right; font-family: var(--font-data); font-size: .85rem; }
+.crew th.num { text-align: right; }
+.crew tr.is-active { background: color-mix(in srgb, var(--beacon) 15%, transparent); }
+.crew-rank { font-size: var(--step--1); color: var(--muted); }
+
+.crew-pick {
+  border: 0; background: none; padding: .2rem 0; color: var(--text);
+  font-family: var(--font-display); font-weight: 800; font-size: var(--step-0);
+  text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 3px;
+}
+.crew-pick:hover { text-decoration-color: var(--beacon-deep); }
+.crew-rename {
+  width: 100%; max-width: 9rem; border: 1px solid var(--line-strong); border-radius: var(--radius-xs);
+  padding: .2rem .4rem; background: var(--surface);
+  font-family: var(--font-display); font-weight: 800; font-size: var(--step-0);
+}
+.crew-del {
+  width: 1.6rem; height: 1.6rem; border-radius: var(--radius-xs);
+  border: 1px solid transparent; background: transparent; color: var(--muted);
+  display: grid; place-items: center; font-size: .85rem;
+}
+.crew-del:hover:not(:disabled) { background: color-mix(in srgb, var(--siren) 16%, transparent); color: var(--siren-deep); }
+.crew-del:disabled { opacity: .25; cursor: default; }
+
+.crewadd { display: flex; gap: .5rem; margin: var(--space-2) 0; }
+.crewadd input {
+  flex: 1; min-width: 0; border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+  padding: .55rem .8rem; background: var(--surface);
+  font-family: var(--font-display); font-weight: 600;
+}
+.crewadd .key { flex: none; padding: .55rem 1rem; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important;

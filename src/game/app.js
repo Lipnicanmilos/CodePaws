@@ -7,6 +7,7 @@ import { paletteFor } from './commands.js';
 import { BoardView } from '../ui/board.js';
 import { TableView } from '../ui/table.js';
 import { PaletteView } from '../ui/palette.js';
+import { CrewView } from '../ui/crew.js';
 import { ICONS } from '../ui/icons.js';
 import * as progress from './progress.js';
 
@@ -39,6 +40,12 @@ class Game {
       onDelete: (i) => this.editRows(this.rows.filter((_, k) => k !== i)),
       onMove: (i, d) => this.editRows(moveRow(this.rows, i, d)),
     });
+
+    this.crew = new CrewView(() => {
+      this.buildPicker();
+      this.loadLevel(this.index);
+    });
+    this.crew.renderChip();
 
     this.bindUI();
     this.buildPicker();
@@ -115,7 +122,7 @@ class Game {
     this.board.render(this.world);
     this.board.setSpeed(this.speed);
     this.palette.render(paletteFor(this.level, this.mode));
-    this.renderStars(progress.starsFor(this.level.id));
+    this.renderStars(progress.awardsFor(this.level.id));
     this.editRows([]);
   }
 
@@ -248,43 +255,61 @@ class Game {
 
   // ── Výsledok ──────────────────────────────────────────────────
 
-  earnedStars() {
-    const stars = ['finish'];
-    const rowStar = this.level.stars?.find((s) => s.id === 'rows');
-    const limit = rowLimitFor(rowStar, this.mode);
-    if (limit && countRows(this.rows) <= limit) stars.push('rows');
-    if (this.world.totalBones > 0 && this.world.bonesCollected() === this.world.totalBones) stars.push('bones');
-    else if (this.world.totalBones === 0) stars.push('bones');
-    return stars;
+  /** Ocenenia za práve dokončený level. `clean` je bonus za to, že plán
+      vyšiel bez jediného nárazu — teda za premyslenie pred spustením. */
+  earnedAwards() {
+    const awards = ['finish'];
+    const limit = rowLimitFor(this.level.stars?.find((s) => s.id === 'rows'), this.mode);
+    if (limit && countRows(this.rows) <= limit) awards.push('rows');
+    if (this.world.bonesCollected() === this.world.totalBones) awards.push('bones');
+    if (this.fails === 0) awards.push('clean');
+    return awards;
   }
 
   win() {
     document.body.classList.add('is-celebrating');
     setTimeout(() => document.body.classList.remove('is-celebrating'), 2400);
 
-    const stars = this.earnedStars();
-    const all = progress.recordStars(this.level.id, stars);
+    const before = progress.totals().points;
+    const awards = this.earnedAwards();
+    const all = progress.recordResult(this.level.id, awards);
+    const after = progress.totals().points;
+
     this.renderStars(all);
+    this.crew.renderChip();
     this.buildPicker();
     $('levelPicker').value = String(this.index);
 
     const limit = rowLimitFor(this.level.stars?.find((s) => s.id === 'rows'), this.mode);
-    const items = [
-      ['finish', 'Misia splnená'],
-      ['rows', limit ? `Plán má najviac ${limit} riadkov` : 'Krátky plán'],
-      ['bones', `Pozbierané všetky kosti (${this.world.totalBones})`],
-    ];
-    $('winTitle').textContent = stars.length === 3 ? 'Perfektná misia!' : 'Misia splnená!';
-    $('winStars').innerHTML = boneRow(stars.length);
-    $('winList').innerHTML = items
-      .map(([id, text]) => `<li class="${stars.includes(id) ? 'got' : ''}">${text}</li>`)
+    const text = {
+      finish: 'Misia splnená',
+      rows: limit ? `Plán má najviac ${limit} riadkov` : 'Krátky plán',
+      bones: `Pozbierané všetky kosti (${this.world.totalBones})`,
+      clean: 'Bez jediného nárazu',
+    };
+
+    const bones = all.filter((a) => a !== 'clean').length;
+    $('winTitle').textContent = awards.length === 4 ? 'Bezchybná misia!' : 'Misia splnená!';
+    $('winStars').innerHTML = boneRow(bones);
+    $('winList').innerHTML = progress.AWARDS
+      .map(({ id, points }) =>
+        `<li class="${awards.includes(id) ? 'got' : ''}">${text[id]}<span class="pts">+${points}</span></li>`)
       .join('');
+
+    const gained = after - before;
+    const rank = progress.rankFor(after);
+    const next = progress.nextRank(after);
+    $('winScore').innerHTML = gained > 0
+      ? `<strong>+${gained} bodov</strong> · ${rank.name}` +
+        (next ? ` <span class="toNext">(do hodnosti ${next.name} chýba ${next.at - after})</span>` : '')
+      : `Tento level už máš vybodovaný · ${rank.name}`;
+
     $('winNext').disabled = this.index >= this.levels.length - 1;
     setTimeout(() => $('winBox').showModal(), 900);
   }
 
-  renderStars(stars) {
-    $('starRow').innerHTML = boneRow(stars.length);
+  renderStars(awards) {
+    $('starRow').innerHTML = boneRow(awards.filter((a) => a !== 'clean').length);
   }
 
   // ── Panel stavu ───────────────────────────────────────────────

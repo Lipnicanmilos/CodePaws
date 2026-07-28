@@ -24,6 +24,7 @@
 import { World } from '../src/engine/world.js';
 import { VM, run } from '../src/engine/vm.js';
 import { countRows, rowLimitFor, expandRows } from '../src/engine/program.js';
+import { AWARDS, pointsFor, rankFor, nextRank, normalizeCallsign } from '../src/game/progress.js';
 
 const results = [];
 const test = (name, fn) => {
@@ -172,6 +173,44 @@ test('reset vráti svet do pôvodného stavu', () => {
   run(w, withIds([{ cmd: 'east', n: 2 }]));
   w.reset();
   eq(w.actor.x, 1, 'x'); eq(w.bonesCollected(), 0, 'kosti'); eq(w.itemAt(3, 1), 'bone', 'kosť späť');
+});
+
+// ── Bodovanie ───────────────────────────────────────────────────
+// Čisté funkcie, nesiahajú na localStorage — testovateľné priamo.
+
+test('body sa scitavaju len za skutocne ziskane ocenenia', () => {
+  eq(pointsFor(['finish']), 100, 'iba splnena misia');
+  eq(pointsFor(['finish', 'rows', 'bones', 'clean']), 250, 'vsetko');
+  eq(pointsFor([]), 0, 'nic');
+  eq(pointsFor(['vymyslene']), 0, 'neznamy id sa ignoruje');
+});
+
+test('bonus za bezchybny prechod je presne polovica zakladu', () => {
+  const clean = AWARDS.find((a) => a.id === 'clean');
+  ok(clean, 'ocenenie clean existuje');
+  eq(clean.points, 50, 'body');
+});
+
+test('hodnost rastie s bodmi a nikdy nepadne pod prvu', () => {
+  eq(rankFor(0).name, 'Šteniatko', '0 bodov');
+  eq(rankFor(149).name, 'Šteniatko', 'tesne pod hranicou');
+  eq(rankFor(150).name, 'Pomocník', 'presne na hranici');
+  eq(rankFor(999999).name, 'Hlavný dispečer', 'vela bodov');
+});
+
+test('dalsia hodnost sa hlasi len kym nejaka je', () => {
+  eq(nextRank(0).name, 'Pomocník', 'zo Steniatka');
+  eq(nextRank(0).at - 0, 150, 'chybajuce body');
+  eq(nextRank(999999), null, 'na vrchole uz dalsia nie je');
+});
+
+test('volaci znak sa upravi na radiovy tvar a zachova diakritiku', () => {
+  eq(normalizeCallsign('ninka ľ'), 'NINKA Ľ', 'velke pismena + diakritika');
+  eq(normalizeCallsign('  veliteľ   9  '), 'VELITEĽ 9', 'orezanie a jedna medzera');
+  eq(normalizeCallsign('a<script>b'), 'ASCRIPTB', 'znaky mimo pismen a cisel vypadnu');
+  eq(normalizeCallsign('123456789012345'), '1234567890', 'orezanie na 10 znakov');
+  eq(normalizeCallsign('   '), '', 'prazdny znak neprejde');
+  eq(normalizeCallsign(null), '', 'null neprejde');
 });
 
 // ── Levely ──────────────────────────────────────────────────────

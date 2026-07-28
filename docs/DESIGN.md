@@ -129,6 +129,51 @@ Dôležité: **prvú kosť dostane každý.** Druhá a tretia sú pozvánka vrá
 a program vylepšiť — čo je refaktoring, len sa to tak nevolá. Nikdy nie je nič
 zamknuté za tri kosti; ďalší level sa otvorí vždy po prvej.
 
+## 6b. Body dispečera a Kniha služieb
+
+Kosti sú odmena za jeden level. Body sú to, čo z nich robí **cestu naprieč hrou** —
+a sú navrhnuté tak, aby ťahali rovnakým smerom ako všetko ostatné.
+
+| Ocenenie | Body | Čo odmeňuje |
+|---|---|---|
+| **Misia splnená** | 100 | riešenie existuje |
+| **Krátky plán** | 60 | optimalizácia, cesta k cyklu |
+| **Všetky kosti** | 40 | pozornosť k mape |
+| **Bez jediného nárazu** | 50 | premyslenie plánu *pred* spustením |
+
+Maximum je **250 za level**. Body sa dajú získať raz — opakovaním sa nefarmia,
+drží sa najlepší výsledok. Nedá sa teda „nabodovať“ tým, že dieťa hrá ten istý
+level dokola.
+
+### Prečo práve tieto štyri
+
+Klasický bodovač odmeňuje rýchlosť a počet dokončených úrovní. To by tu bolo
+kontraproduktívne: hra učí zastaviť sa a premyslieť. Preto tu **nie sú** body
+za čas ani za počet pokusov, a preto je najzaujímavejšie ocenenie
+*Bez jediného nárazu* — jediný spôsob, ako ho získať, je prejsť si plán v hlave
+skôr, než sa stlačí Štart. Je to bonus, nikdy nie trest: základných 100 bodov
+dostane dieťa aj po dvadsiatich nárazoch, a raz získané ocenenie sa nedá stratiť.
+
+### Hodnosti
+
+Body sa zbierajú do hodnosti, takže postup je vidno aj bez porovnávania s kýmkoľvek:
+
+**Šteniatko** (0) → **Pomocník** (150) → **Dispečer** (400) →
+**Veliteľ zmeny** (700) → **Hlavný dispečer** (1000)
+
+### Kniha služieb
+
+Tabuľka posádky na tomto zariadení: každý má svoj **volací znak** (krátky, veľkými
+písmenami, ako v rádiu — `LABKA 1`, `NINKA Ľ`) a vlastný postup. Súrodenci alebo
+trieda sa tak vystriedajú na jednom tablete bez toho, aby si prepisovali kosti.
+
+**Zámerne to nie je rebríček proti cudzím deťom.** V §8 je medzi vecami, ktorým sa
+vyhnúť, aj porovnávanie detí — a to platí ďalej. Kniha služieb je zoznam posádky
+jednej stanice, zoradený podľa bodov, ktorý nikdy neopustí prehliadač. Žiadny server,
+žiadne účty, žiadne cudzie výsledky. Ak by mala niekedy vzniknúť trieda s viacerými
+deťmi naraz, patrí to do učiteľského režimu v [Dielni](ADR-001-stack.md), a aj tam
+pod pseudonymami.
+
 ## 7. Čo hru robí príťažlivou (kontrolný zoznam)
 
 **Okamžitá odozva.** Kliknem príkaz → pes sa hýbe do 300 ms. Žiadne načítavanie, žiadne
@@ -163,6 +208,9 @@ a kde sa zaseklo. Žiadne skóre, žiadne porovnávanie s inými deťmi.
 ## 8. Čomu sa vyhnúť
 
 - ❌ časomiery, srdiečka, energiu, denné odmeny — vytvárajú stres, nie premýšľanie
+- ❌ body za rýchlosť alebo za počet dokončených levelov — naučili by dieťa klikať
+  namiesto rozmýšľať (bodovanie v §6b je postavené presne naopak)
+- ❌ rebríček proti cudzím deťom — Kniha služieb je posádka jedného zariadenia
 - ❌ mikrotransakcie a reklamy v hre pre päťročné deti
 - ❌ ukladanie čohokoľvek o dieťati na server (GDPR + zdravý rozum)
 - ❌ skokovú obtiažnosť — každý level pridáva **práve jednu** novú vec

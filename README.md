@@ -36,6 +36,15 @@ ovládania, tri kosti za level, ukladanie postupu. Ďalej pokračuje
    samy, takže sa dá donekonečna skúšať bez jediného kliku navyše.
 4. Tri kosti za level: dôjsť do cieľa · zmestiť sa do limitu riadkov ·
    pozbierať všetky kosti na mape.
+5. K tomu **body dispečera** — 100 za splnenú misiu, 60 za krátky plán, 40 za všetky
+   kosti a 50 za prechod **bez jediného nárazu**. Ten posledný sa nedá vyklikať:
+   buď si plán premyslel dopredu, alebo nie. Body sa dajú získať raz, opakovaním
+   sa nefarmia. Zbierajú sa do hodností *Šteniatko → Pomocník → Dispečer →
+   Veliteľ zmeny → Hlavný dispečer*.
+6. Odznak vpravo hore otvorí **Knihu služieb** — posádku tohto zariadenia. Každý si
+   napíše svoj volací znak (`LABKA 1`, `NINKA Ľ`) a má vlastný postup, takže sa
+   súrodenci na jednom tablete neprepíšu. Nie je to rebríček proti cudzím deťom;
+   nič neopúšťa prehliadač.
 
 ## Vývoj
 

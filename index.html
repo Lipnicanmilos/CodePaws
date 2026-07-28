@@ -32,6 +32,10 @@
   </nav>
 
   <div class="topbar-right">
+    <button class="crewchip" id="crewChip" type="button">
+      <span class="crewchip-call" id="crewCall">LABKA 1</span>
+      <span class="crewchip-pts" id="crewPts">0 b</span>
+    </button>
     <div class="bones" id="starRow" role="status" aria-label="Získané kosti"></div>
     <label class="modeswitch">
       <span class="modeswitch-label">Otáčanie</span>
@@ -120,9 +124,37 @@
   <h2 id="winTitle">Misia splnená!</h2>
   <div class="bones bones-big" id="winStars"></div>
   <ul class="winlist" id="winList"></ul>
+  <p class="winscore" id="winScore"></p>
   <div class="winbtns">
     <button class="key key-steel key-wide" id="winRetry" type="button">Skúsiť lepšie</button>
     <button class="key key-run key-wide" id="winNext" type="button">Ďalšia misia</button>
+  </div>
+</dialog>
+
+<dialog class="crewbox" id="crewBox">
+  <h2>Kniha služieb</h2>
+  <p class="crewbox-note">
+    Klikni na volací znak a hráš zaňho. Každý má svoj vlastný postup —
+    a všetko ostáva len v tomto prehliadači.
+  </p>
+  <div class="crew-scroll">
+    <table class="crew">
+      <thead>
+        <tr>
+          <th>Volací znak</th><th>Hodnosť</th>
+          <th class="num">Body</th><th class="num">Misie</th>
+          <th><span class="sr-only">Zmazať</span></th>
+        </tr>
+      </thead>
+      <tbody id="crewBody"></tbody>
+    </table>
+  </div>
+  <form class="crewadd" id="crewAdd">
+    <input id="crewInput" maxlength="10" placeholder="Nový volací znak" aria-label="Nový volací znak">
+    <button class="key key-steel" type="submit">Pridať</button>
+  </form>
+  <div class="winbtns">
+    <button class="key key-run key-wide" id="crewClose" type="button">Späť do hry</button>
   </div>
 </dialog>
 
