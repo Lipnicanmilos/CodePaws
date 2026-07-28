@@ -4,11 +4,15 @@
    Po vyplnení sa rebríček stane globálnym bez akejkoľvek ďalšej zmeny v hre.
    Postup je v server/README.md.
 
-   POZOR na kľúče: `anon` kľúč je verejný zámerne — je navrhnutý na to, aby bol
-   v kóde stránky, a dáta chráni RLS na strane databázy. Kľúč `service_role`
-   sem NIKDY nepatrí, ten obchádza všetky pravidlá. */
+   POZOR na kľúče. Supabase ich premenoval, v konzole môžeš vidieť oba názvy:
 
-export const SUPABASE_URL = '';
+     publishable (`sb_publishable_…`), staršie `anon`
+        → verejný ZÁMERNE, patrí do kódu stránky, dáta chráni RLS v databáze
+
+     secret (`sb_secret_…`), staršie `service_role`
+        → obchádza všetky pravidlá RLS. Sem NIKDY nepatrí a nikdy sa necommituje. */
+
+export const SUPABASE_URL = 'https://mdpfxmsovlccdaftfbkz.supabase.co';
 export const SUPABASE_ANON_KEY = '';
 
 /** Koľko priečok drží Sieň slávy. Rovnaké číslo je aj v SQL funkcii. */

@@ -28,10 +28,11 @@ môže byť desať levelov do koša.
 Kód je hotový, chýba už len účet — ten ti nikto nezaloží za teba.
 Celý postup je v [server/README.md](server/README.md), trvá ~10 minút.
 
-- [ ] Založiť bezplatný projekt na [supabase.com](https://supabase.com) (región Frankfurt)
+- [x] Založiť bezplatný projekt na [supabase.com](https://supabase.com)
 - [ ] Spustiť [`server/supabase.sql`](server/supabase.sql) v SQL Editore
-- [ ] Vložiť **Project URL** a **anon public** kľúč do `src/game/config.js`
-      (anon kľúč je verejný zámerne; `service_role` tam NIKDY nedávaj)
+- [ ] Vložiť **publishable** kľúč (`sb_publishable_…`) do `src/game/config.js`
+      — Project URL je už doplnená.
+      Kľúč `sb_secret_…` (staršie `service_role`) tam NIKDY nedávaj.
 - [ ] Commitnúť a pushnúť → rebríček je globálny
 - [ ] Overiť, že cudzí prehliadač vidí ten istý rebríček
 

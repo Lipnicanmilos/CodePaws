@@ -27,13 +27,18 @@ Vytvorí sa tabuľka `hall`, zapne sa RLS (čítať smie ktokoľvek, zapisovať 
 a pridá sa funkcia `submit_score`, ktorá je jediná cesta, ako sa dá zapísať.
 
 ### 3. Kľúče do hry
-**Project Settings → API**, skopíruj **Project URL** a **anon public** kľúč
+**Project Settings → API Keys**, skopíruj **Project URL** a **publishable** kľúč
+(`sb_publishable_…`; v starších projektoch sa volá **anon public** a začína `eyJ…`)
 do [`src/game/config.js`](../src/game/config.js):
 
 ```js
 export const SUPABASE_URL = 'https://xxxxxxxx.supabase.co';
-export const SUPABASE_ANON_KEY = 'eyJhbGciOi...';
+export const SUPABASE_ANON_KEY = 'sb_publishable_...';
 ```
+
+Ponuku **Connect → Server / Build APIs** s `npm install @supabase/server`
+ignoruj — tá je pre backend v Node. Kódolabky sú statický klient a volajú
+REST rozhranie priamo, žiadny balík netreba.
 
 Commitni a pushni — Pages sa nasadia samy a rebríček je globálny.
 **Kým sú polia prázdne, hra funguje ďalej**, len je Sieň slávy lokálna.
@@ -50,11 +55,19 @@ Má vrátiť `[]`.
 
 ## Kľúče: čo je verejné a čo nie
 
-**`anon` kľúč je verejný zámerne.** Je navrhnutý na to, aby bol v kóde stránky,
-a dáta nechráni on, ale RLS v databáze. Pokojne ho commitni.
+Supabase kľúče premenoval, v konzole sa dajú vidieť oba názvy:
 
-**`service_role` kľúč do hry NIKDY nepatrí.** Obchádza všetky pravidlá RLS.
-Ostáva len v konzole Supabase.
+| Kľúč | Starší názov | Kam patrí |
+|---|---|---|
+| `sb_publishable_…` | `anon` public | **do kódu stránky** — je verejný zámerne |
+| `sb_secret_…` | `service_role` | **nikam** okrem konzoly Supabase |
+
+Publishable kľúč dáta nechráni — chráni ich RLS v databáze. Preto sa pokojne
+commituje a preto je dôležité, že tabuľka `hall` nemá žiadnu politiku na zápis.
+
+**Secret kľúč obchádza RLS.** Keby sa dostal do repozitára, ktokoľvek by mohol
+rebríček prepísať alebo zmazať. Ak sa to raz stane, treba ho v konzole otočiť
+(**API Keys → Rotate**), nestačí ho z kódu vymazať — v histórii gitu ostane.
 
 ## Čo funkcia robí a nerobí
 
