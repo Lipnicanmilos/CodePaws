@@ -35,9 +35,13 @@ Celý postup je v [server/README.md](server/README.md), trvá ~10 minút.
       zápis z prehliadača prejde vrátane CORS
 - [x] Zmazať testovacie záznamy — tabuľka je prázdna a pripravená
 
-**Pri každom pridaní levelu zvýš `v_max_points`** v `server/supabase.sql`
-(`250 × počet levelov`, dnes `1250`) a spusti SQL znova. Ak sa zabudne, poctivý
-hráč sa v istom momente prestane vedieť zapísať a bude to vyzerať ako náhodná chyba.
+- [ ] **Spustiť aktualizovaný [`server/supabase.sql`](server/supabase.sql) znova**
+      (2026-07-29: zrušený strop `v_max_points`, body sa pripočítavajú). Bez toho
+      beží na Supabase stará funkcia a zápis nad 1250 bodov ďalej padá.
+
+Strop viazaný na počet levelov už neexistuje — pri každom novom leveli sa zabudol
+zvýšiť a poctivému hráčovi potom zápis tíško padol. Ostáva len poistka proti
+nezmyslu, ktorú hraním nedosiahneš.
 
 ## 1. Etapa 2 — Svet 1 kompletne
 
