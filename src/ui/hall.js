@@ -40,11 +40,18 @@ export class HallView {
   async load() {
     this.renderMessage('Načítavam…');
     try {
-      this.render(await hall.fetchTop());
+      this.entries = await hall.fetchTop();
+      this.render(this.entries);
     } catch (err) {
+      this.entries = null;
       this.renderMessage('Rebríček sa teraz nedá načítať. Skús o chvíľu.');
       console.error(err);
     }
+  }
+
+  /** Koľko bodov má daná prezývka práve teraz na serveri (null = nie je v prvých 15). */
+  serverPoints(nick, entries = this.entries) {
+    return entries?.find((e) => e.nick === nick)?.points ?? null;
   }
 
   async send() {
@@ -54,16 +61,32 @@ export class HallView {
     const button = document.getElementById('hallSend');
     button.disabled = true;
     this.say('Zapisujem…');
+    const sent = this.pending.points;
+    const nick = cleanNick(this.input.value);
+    const pointsBefore = this.serverPoints(nick);
+
     try {
       const entries = await hall.submit({ nick: this.input.value, ...this.pending });
-      this.lastNick = cleanNick(this.input.value);
+      this.lastNick = nick;
       // Prezývka v rebríčku a prezývka v hre majú byť tá istá.
       progress.setNick(this.lastNick);
       // Zapísané body sa už druhýkrát nepripočítajú.
       progress.markSubmitted();
       this.pending = { points: 0, missions: this.pending.missions };
       this.onNickChange();
+      this.entries = entries;
       this.render(entries);
+
+      // Server prijal zápis, ale body nepribudli? Potom na Supabase beží stará
+      // verzia funkcie (drží najvyššiu hodnotu namiesto pripočítania). Bez tejto
+      // kontroly to vyzerá ako záhada — priečka sa proste nehýbe.
+      const pointsAfter = this.serverPoints(nick, entries);
+      if (sent > 0 && pointsBefore !== null && pointsAfter !== null && pointsAfter <= pointsBefore) {
+        return this.say(
+          `Zápis prešiel, ale rebríček ${sent} bodov nepripočítal. Na serveri zrejme ` +
+          'beží stará verzia funkcie — spusti znova server/supabase.sql.', true);
+      }
+
       const place = entries.findIndex((e) => e.nick === this.lastNick);
       this.say(place >= 0
         ? `Zapísané — si na ${place + 1}. mieste.`

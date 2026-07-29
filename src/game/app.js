@@ -109,6 +109,9 @@ class Game {
       this.hall.open();
     });
 
+    // Aj zavretie cez Esc musí hru odblokovať, inak by Štart prestal reagovať.
+    $('winBox').addEventListener('close', () => { this.finished = false; });
+
     $('winRetry').addEventListener('click', () => { $('winBox').close(); this.resetRun(); });
     $('winNext').addEventListener('click', () => {
       $('winBox').close();
@@ -140,6 +143,7 @@ class Game {
     this.guess = null;
     this.guessRight = false;
     this.guessTries = 0;
+    this.finished = false;
 
     $('levelPicker').value = String(index);
     $('prevLevel').disabled = index === 0;
@@ -244,6 +248,7 @@ class Game {
   }
 
   resetRun() {
+    this.finished = false;
     this.resetWorld();
     // Nový pokus v Predpovedi znamená aj nový tip — starý je už prezradený.
     if (this.isPredict) this.board.setGuessMode((x, y) => this.pickGuess(x, y));
@@ -279,6 +284,13 @@ class Game {
 
   /** Spoločná vstupná kontrola pre ▶ Štart aj ⏭ Krok. */
   canStart() {
+    // Po dohratí sa level ticho nereštartuje. Bez tejto zábrany by sa dal
+    // bonus za opakovanie nafarmiť mlátením do ⏭ Krok skôr, než sa vôbec
+    // stihne ukázať okno výsledku.
+    if (this.finished) {
+      this.toast('Misia je dohratá. Vyber „Skúsiť lepšie“ alebo „Ďalšia misia“.');
+      return false;
+    }
     if (this.isPredict && !this.guess) {
       this.toast('Najprv klikni na políčko, kde podľa teba pes zastane.', true);
       return false;
@@ -361,11 +373,13 @@ class Game {
   }
 
   win() {
+    this.finished = true;
     document.body.classList.add('is-celebrating');
     setTimeout(() => document.body.classList.remove('is-celebrating'), 2400);
 
     if (this.isPredict) this.judgeGuess();
 
+    const replay = progress.isSolved(this.level.id);   // hral to už raz
     const before = progress.totals().points;
     const awards = this.earnedAwards();
     const all = progress.recordResult(this.level.id, awards);
@@ -401,9 +415,9 @@ class Game {
     const gained = after - before;
     const rank = progress.rankFor(after);
     const next = progress.nextRank(after);
+    const toNext = next ? ` <span class="toNext">(do hodnosti ${next.name} chýba ${next.at - after})</span>` : '';
     $('winScore').innerHTML = gained > 0
-      ? `<strong>+${gained} bodov</strong> · ${rank.name}` +
-        (next ? ` <span class="toNext">(do hodnosti ${next.name} chýba ${next.at - after})</span>` : '')
+      ? `<strong>+${gained} bodov</strong>${replay ? ' za opakovanie' : ''} · ${rank.name}${toNext}`
       : `Tento level už máš vybodovaný · ${rank.name}`;
 
     $('winNext').disabled = this.index >= this.levels.length - 1;

@@ -24,7 +24,7 @@
 import { World } from '../src/engine/world.js';
 import { VM, run } from '../src/engine/vm.js';
 import { countRows, rowLimitFor, expandRows } from '../src/engine/program.js';
-import { AWARDS, pointsFor, rankFor, nextRank, migrate } from '../src/game/progress.js';
+import { AWARDS, pointsFor, rankFor, nextRank, migrate, REPEAT_SHARE } from '../src/game/progress.js';
 import { topOf, mergeEntry } from '../src/game/leaderboard.js';
 import { cleanNick, nickProblem } from '../src/game/nick.js';
 import { HALL_SIZE } from '../src/game/config.js';
@@ -217,6 +217,31 @@ test('dalsia hodnost sa hlasi len kym nejaka je', () => {
   eq(nextRank(0).name, 'Pomocník', 'zo Steniatka');
   eq(nextRank(0).at - 0, 150, 'chybajuce body');
   eq(nextRank(999999), null, 'na vrchole uz dalsia nie je');
+});
+
+// ── Bonus za opakovanie ───────────────────────────────────────
+// Vracať sa k oblubenej misii sa ma oplatit, ale grindovat tu najlahsiu nie.
+
+test('opakovanie da zlomok, novy level vzdy podstatne viac', () => {
+  const plny = pointsFor(['finish', 'rows', 'bones', 'clean']);
+  const zaOpakovanie = Math.round(plny * REPEAT_SHARE);
+  eq(plny, 250, 'plny pocet za level');
+  eq(zaOpakovanie, 50, 'opakovanie da 20 %');
+  ok(zaOpakovanie < plny, 'opakovanie nikdy nedava tolko co prve dohratie');
+  // Aj pat opakovani ma dat menej nez jeden novy level.
+  ok(zaOpakovanie * 5 <= plny, 'pat opakovani neprebije jeden novy level');
+});
+
+test('zaklad sa opakovanim nezdvoji, rastie len bonus', () => {
+  // Tak, ako to pocita recordResult: zaklad z najlepsich oceneni + zbierany bonus.
+  const zaklad = pointsFor(['finish', 'rows', 'bones', 'clean']);
+  let bonus = 0;
+  const spolu = () => zaklad + bonus;
+  eq(spolu(), 250, 'prve dohratie');
+  bonus += Math.round(zaklad * REPEAT_SHARE);
+  eq(spolu(), 300, 'druhe dohratie');
+  bonus += Math.round(zaklad * REPEAT_SHARE);
+  eq(spolu(), 350, 'tretie dohratie');
 });
 
 // ── Nezapísané body ───────────────────────────────────────────

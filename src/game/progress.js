@@ -136,13 +136,27 @@ export const awardsFor = (levelId) => load().levels[levelId]?.awards ?? [];
 
 export const isSolved = (levelId) => awardsFor(levelId).includes('finish');
 
-/** Uloží len zlepšenie — raz získaná kosť ani bod sa nedajú stratiť. */
+/** Koľko z bodov sa pripíše za OPAKOVANÉ dohratie už vyriešeného levelu.
+    Vracať sa k obľúbenej misii sa má oplatiť, ale grindovať tú najľahšiu nie —
+    nový level dá vždy podstatne viac než päť opakovaní starého. */
+export const REPEAT_SHARE = 0.2;
+
+/** Ocenenia sa len zlepšujú — raz získaná kosť sa nedá stratiť. Základné body
+    za level sa počítajú z najlepších ocenení, opakovania sa zbierajú vedľa
+    v `bonus`, aby sa základ nikdy nezdvojil. */
 export function recordResult(levelId, awardIds) {
   const store = load();
-  const prev = new Set(store.levels[levelId]?.awards ?? []);
+  const record = store.levels[levelId];
+  const wasSolved = (record?.awards ?? []).includes('finish');
+
+  const prev = new Set(record?.awards ?? []);
   for (const id of awardIds) prev.add(id);
   const awards = [...prev];
-  store.levels[levelId] = { awards, points: pointsFor(awards) };
+
+  const bonus = (record?.bonus ?? 0) +
+    (wasSolved ? Math.round(pointsFor(awardIds) * REPEAT_SHARE) : 0);
+
+  store.levels[levelId] = { awards, points: pointsFor(awards), bonus };
   save();
   return awards;
 }
@@ -150,7 +164,7 @@ export function recordResult(levelId, awardIds) {
 export function totals() {
   const levels = Object.values(load().levels);
   return {
-    points: levels.reduce((sum, l) => sum + (l.points ?? 0), 0),
+    points: levels.reduce((sum, l) => sum + (l.points ?? 0) + (l.bonus ?? 0), 0),
     missions: levels.filter((l) => l.awards?.includes('finish')).length,
     bones: levels.reduce((sum, l) => sum + (l.awards ?? []).filter((a) => a !== 'clean').length, 0),
     clean: levels.filter((l) => l.awards?.includes('clean')).length,
