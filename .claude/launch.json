@@ -4,7 +4,11 @@
     {
       "name": "kodolabky",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "8140", "-d", "C:/Users/mlipnican/codepaws"],
+      "runtimeArgs": [
+        "C:/Users/mlipnican/codepaws/server/dev_server.py",
+        "8140",
+        "C:/Users/mlipnican/codepaws"
+      ],
       "port": 8140
     }
   ]
