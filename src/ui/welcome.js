@@ -17,13 +17,16 @@ export class WelcomeView {
     this.skip = document.getElementById('startSkip');
   }
 
-  /** `change` = prezývku mení niekto, kto už hrá; vtedy sa dá aj cúvnuť.
-      Vráti novú prezývku, alebo null keď dieťa cúvlo. */
+  /** Okno sa ukáže pri KAŽDOM spustení hry — dieťa sa vždy predstaví. Poslednú
+      prezývku predvyplníme, takže kto sa vracia, len potvrdí „Poď hrať“.
+      `change` = mení sa počas hry (cez rebríček); vtedy sa dá aj cúvnuť.
+      Vráti prezývku, alebo null keď dieťa cúvlo. */
   ask({ change = false } = {}) {
     this.title.textContent = change ? 'Nová prezývka' : 'Ako ti máme hovoriť?';
-    this.input.value = change ? (progress.getNick() ?? '') : '';
+    this.input.value = progress.getNick() ?? '';
     this.status.textContent = '';
     this.skip.hidden = !change;
+    this.input.dispatchEvent(new Event('input'));   // hneď ukáž náhľad prezývky
 
     return new Promise((resolve) => {
       const finish = (nick) => {

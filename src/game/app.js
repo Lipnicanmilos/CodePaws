@@ -479,11 +479,11 @@ async function boot() {
     manifest.levels.map(async (path) => (await fetch(`levels/${path}`)).json())
   );
 
-  // Najprv sa dieťa predstaví, až potom sa postaví hra. Bez prezývky by sa
-  // nemalo čo zapísať do rebríčka a odznak v hlavičke by bol prázdny.
+  // Okno s prezývkou sa ukáže pri KAŽDOM spustení, až potom sa postaví hra.
+  // Poslednú prezývku predvyplní, takže vracajúce sa dieťa len potvrdí.
   const welcome = new WelcomeView();
   welcome.bindPreview();
-  if (!progress.hasNick()) await welcome.ask();
+  await welcome.ask();
 
   new Game(levels, welcome);
 }
