@@ -35,9 +35,8 @@ Celý postup je v [server/README.md](server/README.md), trvá ~10 minút.
       zápis z prehliadača prejde vrátane CORS
 - [x] Zmazať testovacie záznamy — tabuľka je prázdna a pripravená
 
-- [ ] **Spustiť aktualizovaný [`server/supabase.sql`](server/supabase.sql) znova**
-      (2026-07-29: zrušený strop `v_max_points`, body sa pripočítavajú). Bez toho
-      beží na Supabase stará funkcia a zápis nad 1250 bodov ďalej padá.
+- [x] **Spustiť aktualizovaný [`server/supabase.sql`](server/supabase.sql) znova**
+      — spustené 2026-07-29, na Supabase beží verzia bez stropu, body sa pripočítavajú.
 
 Strop viazaný na počet levelov už neexistuje — pri každom novom leveli sa zabudol
 zvýšiť a poctivému hráčovi potom zápis tíško padol. Ostáva len poistka proti
