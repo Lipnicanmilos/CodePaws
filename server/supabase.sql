@@ -43,10 +43,11 @@ security definer
 set search_path = public
 as $$
 declare
-  -- Strop na jedného hráča: 250 bodov × počet levelov.
-  -- PRI PRIDANÍ LEVELU TREBA ZVÝŠIŤ, inak sa poctivý hráč nezapíše.
-  v_max_points constant integer := 1250;
-  v_hall_size  constant integer := 15;
+  -- Žiadny strop viazaný na počet levelov: taký sa pri každom novom leveli
+  -- zabudne zvýšiť a poctivému hráčovi potom zápis tíško padne. Ostáva len
+  -- poistka proti nezmyslu, ktorú hraním nikdy nedosiahneš.
+  v_sane_points constant integer := 100000;
+  v_hall_size   constant integer := 15;
 
   v_bad constant text[] := array[
     'kokot','kurva','piced','picus','jebo','jebn','sral','sracka','hovno',
@@ -72,7 +73,8 @@ begin
     raise exception 'Takúto prezývku sem nedáme. Skús inú.';
   end if;
 
-  if p_points is null or p_points < 0 or p_points > v_max_points then
+  -- p_points sú NOVÉ body od posledného zápisu, nie celý súčet hráča.
+  if p_points is null or p_points < 0 or p_points > v_sane_points then
     raise exception 'Body sú mimo rozsahu.';
   end if;
 
@@ -86,13 +88,16 @@ begin
     raise exception 'Priveľa zápisov za sebou. Skús o chvíľu.';
   end if;
 
-  -- Jedna prezývka = jedna priečka; horší výsledok ten lepší neprepíše.
+  -- Jedna prezývka = jedna priečka a body sa PRIPOČÍTAVAJÚ: kto sa vráti a zahrá
+  -- ďalšie kolo pod tou istou prezývkou, tomu priečka narastie. Klient posiela
+  -- len nové body, takže druhý zápis toho istého pripočíta nulu.
+  -- Misie sú počet vyriešených levelov — tie sa neskladajú, drží sa najvyšší.
   insert into public.hall as h (nick, points, missions, at, updated_at)
   values (v_nick, p_points, p_missions, current_date, now())
   on conflict (nick) do update set
-    points     = greatest(h.points, excluded.points),
+    points     = h.points + excluded.points,
     missions   = greatest(h.missions, excluded.missions),
-    at         = case when excluded.points > h.points then excluded.at else h.at end,
+    at         = case when excluded.points > 0 then excluded.at else h.at end,
     updated_at = now();
 
   return query

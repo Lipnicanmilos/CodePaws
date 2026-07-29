@@ -59,9 +59,7 @@ class Game {
 
   /** Ktoré ocenenia sa v tomto leveli vôbec dajú získať. Riadi aj počet
       kostičiek — dve z dvoch má vyzerať ako plný počet, nie ako 2/3. */
-  levelAwardIds() {
-    return this.isPredict ? ['finish', 'predict'] : ['finish', 'rows', 'bones', 'clean'];
-  }
+  levelAwardIds() { return progress.awardIdsForLevel(this.level); }
 
   /** `clean` je bonus navyše, kostičku za seba nedáva. */
   boneIds() { return this.levelAwardIds().filter((id) => id !== 'clean'); }

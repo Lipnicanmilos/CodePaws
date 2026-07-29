@@ -219,6 +219,18 @@ test('dalsia hodnost sa hlasi len kym nejaka je', () => {
   eq(nextRank(999999), null, 'na vrchole uz dalsia nie je');
 });
 
+// ── Nezapísané body ───────────────────────────────────────────
+// Do rebríčka sa body pripočítavajú, takže sa musí posielať len prírastok.
+// Keby sa poslal celý súčet, druhý klik na „Zapísať“ by body zdvojnásobil.
+
+test('posiela sa len to, co este nebolo zapisane', () => {
+  const pending = (total, submitted) => Math.max(0, total - submitted);
+  eq(pending(1430, 0), 1430, 'prvy zapis posle vsetko');
+  eq(pending(1430, 1430), 0, 'hned druhy zapis uz nic nepridava');
+  eq(pending(1680, 1430), 250, 'po dalsom leveli sa posle len prirastok');
+  eq(pending(1430, 1680), 0, 'nikdy nie zaporne cislo');
+});
+
 // ── Prevod uloženého postupu ──────────────────────────────────
 // Dieťa, ktoré hru už hralo, oň nesmie prísť len preto, že sa zmenil formát.
 
@@ -295,15 +307,22 @@ test('pri rovnosti bodov je vyssie skorsi zapis', () => {
   eq(list[0].nick, 'SKOR', 'prvy');
 });
 
-test('jedna prezyvka = jedna priecka', () => {
+test('jedna prezyvka = jedna priecka a body sa pripocitaju', () => {
   const list = mergeEntry([entry('LABKA', 100)], entry('LABKA', 300));
   eq(list.length, 1, 'nezdvoji sa');
-  eq(list[0].points, 300, 'lepsi vysledok vyhrava');
+  eq(list[0].points, 400, 'nove body sa pripocitali k starym');
 });
 
-test('horsi vysledok neprepise lepsi', () => {
-  const list = mergeEntry([entry('LABKA', 500)], entry('LABKA', 120));
-  eq(list[0].points, 500, 'rekord ostava');
+test('pripisanie nuly priecku nezmeni', () => {
+  const list = mergeEntry([entry('LABKA', 500)], entry('LABKA', 0));
+  eq(list[0].points, 500, 'opakovany zapis toho isteho nic nepridava');
+});
+
+test('misie sa neskladaju, drzi sa najvyssi pocet', () => {
+  const before = { nick: 'LABKA', points: 100, missions: 4, at: '2026-07-01' };
+  const list = mergeEntry([before], { nick: 'LABKA', points: 50, missions: 6, at: '2026-07-02' });
+  eq(list[0].points, 150, 'body sa scitali');
+  eq(list[0].missions, 6, 'misie su pocet levelov, nie sucet');
 });
 
 // ── Levely ──────────────────────────────────────────────────────

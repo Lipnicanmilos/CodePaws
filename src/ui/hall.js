@@ -21,14 +21,18 @@ export class HallView {
   }
 
   async open() {
-    const { points, missions } = progress.totals();
+    const { missions } = progress.totals();
+    // Posielajú sa len body od posledného zápisu — v rebríčku sa pripočítajú.
+    const points = progress.pendingPoints();
     this.pending = { points, missions };
 
     this.input.value = cleanNick(progress.getNick() ?? '');
     this.note.textContent = hall.isGlobal()
       ? 'Rebríček je spoločný pre všetkých, čo hru hrajú.'
       : 'Rebríček je zatiaľ len na tomto zariadení.';
-    this.say(`Zapíšeš ${points} bodov za ${missions} ${plural(missions)}.`);
+    this.say(points > 0
+      ? `Pripíšeš ${points} nových bodov za ${missions} ${plural(missions)}.`
+      : 'Nové body zatiaľ nemáš — zahraj ďalšiu misiu a vráť sa.');
     this.box.showModal();
     await this.load();
   }
@@ -55,6 +59,9 @@ export class HallView {
       this.lastNick = cleanNick(this.input.value);
       // Prezývka v rebríčku a prezývka v hre majú byť tá istá.
       progress.setNick(this.lastNick);
+      // Zapísané body sa už druhýkrát nepripočítajú.
+      progress.markSubmitted();
+      this.pending = { points: 0, missions: this.pending.missions };
       this.onNickChange();
       this.render(entries);
       const place = entries.findIndex((e) => e.nick === this.lastNick);

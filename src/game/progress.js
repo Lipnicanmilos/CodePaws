@@ -37,6 +37,11 @@ export const RANKS = [
 export const pointsFor = (awardIds) =>
   AWARDS.reduce((sum, a) => sum + (awardIds.includes(a.id) ? a.points : 0), 0);
 
+/** Ktoré ocenenia sa v danom leveli vôbec dajú získať. V Predpovedi je plán daný,
+    takže „krátky plán“ ani „bez nárazu“ nie sú zásluha dieťaťa. */
+export const awardIdsForLevel = (level) =>
+  level?.type === 'predict' ? ['finish', 'predict'] : ['finish', 'rows', 'bones', 'clean'];
+
 export function rankFor(points) {
   let rank = RANKS[0];
   for (const r of RANKS) if (points >= r.at) rank = r;
@@ -53,6 +58,7 @@ const empty = () => ({
   version: VERSION,
   nick: null,
   levels: {},
+  submitted: 0,        // koľko bodov už odišlo do rebríčka
   settings: { mode: 'absolute', speed: 330 },
 });
 
@@ -149,4 +155,20 @@ export function totals() {
     bones: levels.reduce((sum, l) => sum + (l.awards ?? []).filter((a) => a !== 'clean').length, 0),
     clean: levels.filter((l) => l.awards?.includes('clean')).length,
   };
+}
+
+/* ── Zápis do rebríčka ─────────────────────────────────────────────
+   Do rebríčka sa body PRIPOČÍTAVAJÚ, preto sa musí pamätať, čo už bolo
+   zapísané. Inak by druhý klik na „Zapísať“ pridal celý súčet znova. */
+
+export const submittedPoints = () => load().submitted ?? 0;
+
+/** Koľko bodov ešte nebolo zapísaných — presne toľko sa pripočíta. */
+export const pendingPoints = () => Math.max(0, totals().points - submittedPoints());
+
+export function markSubmitted(points = totals().points) {
+  const store = load();
+  store.submitted = Math.max(store.submitted ?? 0, points);
+  save();
+  return store.submitted;
 }

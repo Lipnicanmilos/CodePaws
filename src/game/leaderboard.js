@@ -32,12 +32,19 @@ export function topOf(entries) {
     .slice(0, HALL_SIZE);
 }
 
-/** Jeden hráč = jedna priečka; nový zápis nahradí starý, len ak je lepší. */
+/** Jeden hráč = jedna priečka, ale body sa PRIPOČÍTAVAJÚ: kto sa vráti a zahrá
+    ďalšie kolo pod tou istou prezývkou, tomu priečka narastie. Preto sa posielajú
+    len nové body (`progress.pendingPoints`), nie celý súčet — druhý zápis toho
+    istého tak nepridá nič. Misie sú počet vyriešených levelov, tie sa neskladajú. */
 export function mergeEntry(entries, entry) {
   const rest = entries.filter((e) => e.nick !== entry.nick);
   const previous = entries.find((e) => e.nick === entry.nick);
-  const best = previous && previous.points >= entry.points ? previous : entry;
-  return topOf([...rest, best]);
+  const merged = previous
+    ? { ...entry,
+        points: previous.points + entry.points,
+        missions: Math.max(previous.missions ?? 0, entry.missions ?? 0) }
+    : entry;
+  return topOf([...rest, merged]);
 }
 
 /* ── Úložisko ───────────────────────────────────────────────────── */
