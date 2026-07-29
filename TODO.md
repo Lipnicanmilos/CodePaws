@@ -38,11 +38,8 @@ Celý postup je v [server/README.md](server/README.md), trvá ~10 minút.
 - [x] **Spustiť aktualizovaný [`server/supabase.sql`](server/supabase.sql) znova**
       — spustené 2026-07-29, na Supabase beží verzia bez stropu, body sa pripočítavajú.
 
-- [ ] **Spustiť [`server/supabase.sql`](server/supabase.sql) EŠTE RAZ** (2026-07-29
-      večer: pridaný stĺpec `dog` — psík hráča v rebríčku — a 4-parametrová
-      `submit_score`). Kým sa nespustí, globálny rebríček sa nenačíta (klient
-      pýta stĺpec, ktorý na serveri nie je) a zápisy padajú na neznámu funkciu.
-      Body sa nestratia — počkajú ako nezapísané a dozbierajú sa.
+- [x] **Spustiť [`server/supabase.sql`](server/supabase.sql) ešte raz** — spustené
+      2026-07-29: stĺpec `dog` a 4-parametrová `submit_score` sú na serveri.
 
 Strop viazaný na počet levelov už neexistuje — pri každom novom leveli sa zabudol
 zvýšiť a poctivému hráčovi potom zápis tíško padol. Ostáva len poistka proti
