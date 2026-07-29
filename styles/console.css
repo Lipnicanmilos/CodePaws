@@ -146,6 +146,10 @@
 }
 .speedbtn.is-on { background: var(--beacon); border-color: var(--beacon-deep); color: #4a2f00; }
 
+/* Prepínač zvuku sedí vedľa rýchlosti a preberá jej tvar; ikona namiesto textu. */
+.sndbtn { margin-left: .35rem; display: inline-flex; align-items: center; }
+.sndbtn svg { width: 15px; height: 15px; display: block; }
+
 /* ── Maják pri splnenej misii ────────────────────────────────── */
 
 .beacon-sweep {

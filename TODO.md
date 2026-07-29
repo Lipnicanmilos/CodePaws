@@ -46,25 +46,24 @@ nezmyslu, ktorú hraním nedosiahneš.
 ## 1. Etapa 2 — Svet 1 kompletne
 
 ### Nové typy levelov
-- [ ] **Typ `predict` (level 1.5 „Kde skončím?“)** — plán je hotový a zamknutý,
-      dieťa klikne na políčko, kde podľa neho pes skončí, až potom sa spustí.
-      Súbor už existuje: `levels/world1/1.5-kde-skoncim.json` (nie je v `index.json`).
-      Treba: režim klikania na dlaždicu, vyhodnotenie, zamknutá tabuľka.
-      **Nové ocenenie „Jasnovidec“ +80** — viac než čokoľvek okrem dokončenia,
-      lebo správna predpoveď je najčistejší dôkaz, že dieťa simuluje program v hlave.
-- [ ] **Typ `debug` (level 1.6 „Zlý riadok“)** — predvyplnená tabuľka, jeden riadok
-      pokazený. Potrebuje podporu `preset` + `locked` riadkov v `TableView`.
+- [x] **Typ `predict` (level 1.5 „Kde skončím?“)** — hotové, v hre vrátane
+      ocenenia „Jasnovidec“ +80.
+- [x] **Typ `debug` (level 1.6 „Zlý riadok“)** — hotové: predvyplnený plán,
+      správne riadky zamknuté (`locked` v presete prežíva `expandRows`),
+      zlý riadok sa zmaže ✕ a nový príkaz sa vloží do diery (nie na koniec).
+      Testy: pokazený plán musí zlyhať, opravený prejsť, výmena = rovnaká dĺžka.
 - [ ] Levely **1.8 – 1.10** podľa `docs/CURRICULUM.md`
 
 ### UI
 - [ ] **Mapa misií** namiesto rozbaľovacieho zoznamu — misie ako body na mape
       stanice, s kosťami a hodnosťou
-- [ ] **Zvuky** — ťapkanie labiek pri kroku, cink pri kosti, zmätené „haf“ pri
-      náraze, fanfára v cieli. Vypínateľné, východiskovo zapnuté.
+- [x] **Zvuky** — ťapkanie labiek, cink pri kosti, „haf“ pri náraze, psst pri
+      ohni, fanfára v cieli. Syntetizované cez Web Audio (žiadne súbory, offline OK),
+      prepínač vedľa rýchlosti, voľba sa pamätá, východiskovo zapnuté.
 - [ ] **Hlasové čítanie príkazov** (Web Speech API, `sk-SK`) — klik na riadok ho
       prečíta. Kvôli deťom, ktoré ešte nečítajú.
-- [ ] **Ovládanie klávesnicou** — šípky na klávesnici pridávajú kroky, `Enter` = Štart,
-      `Space` = Krok. Dnes sa D-pad ovláda len myšou/dotykom.
+- [x] **Ovládanie klávesnicou** — šípky pridávajú kroky (podľa režimu),
+      `Enter` = Štart, `Space` = Krok; pri otvorenom okne sa klávesy nechytajú.
 
 ### Blokátory pre PWA
 - [ ] **Self-hostovať fonty** (Baloo 2, Atkinson Hyperlegible, DM Mono) — dnes sa
@@ -82,8 +81,8 @@ nezmyslu, ktorú hraním nedosiahneš.
 - [ ] **Konflikt dvoch design skillov** — `modern-web-design` a `frontend-design`
       sa oba spustia na „sprav peknú stránku“. Ak si začnú protirečiť, zúžiť
       `description:` jedného z nich.
-- [ ] **Číslovanie levelov má dieru** — 1.1–1.4, potom 1.7. Vyrieši sa samo, keď
-      pribudnú 1.5, 1.6 a 1.8–1.10.
+- [x] **Číslovanie levelov má dieru** — vyriešené: 1.1–1.7 sú kompletné,
+      chýbajú už len 1.8–1.10.
 - [ ] Skontrolovať kontrast a ovládanie klávesnicou naprieč celou hrou
 - [ ] Otestovať na skutočnom tablete (nielen v zmenšenom okne prehliadača)
 
@@ -107,6 +106,11 @@ Detaily v [ROADMAP](docs/ROADMAP.md). V skratke:
 
 ## Hotové
 
+- [x] Body per hráč (2026-07-29) — každá prezývka má vlastný postup: nová začína
+      od nuly, návrat k starej pokračuje; migrácia v3→v4 nič nestráca
+- [x] Auto-zápis do rebríčka (2026-07-29) — nové body odchádzajú samé po každej
+      dohratej misii (a pri štarte hry sa dozbierajú offline zvyšky); ručné
+      „Zapísať“ v rebríčku ostáva ako záloha
 - [x] Etapa 1 — engine, UI, 5 levelov, oba režimy ovládania, tri kosti
 - [x] 63 testov v prehliadači vrátane overenia, že každý level je riešiteľný
 - [x] Redizajn — dispečerský pult v strede, 3D dioráma, prekreslení psíci

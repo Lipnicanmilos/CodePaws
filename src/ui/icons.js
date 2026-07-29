@@ -18,6 +18,9 @@ export const ICONS = {
 
   drop: () => solid('<path d="M12 3.2c3.7 4.2 6.2 7.2 6.2 10.1a6.2 6.2 0 0 1-12.4 0C5.8 10.4 8.3 7.4 12 3.2z"/>'),
 
+  soundOn:  () => stroke('<path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a9 9 0 0 1 0 12"/>'),
+  soundOff: () => stroke('<path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="m16 9 5 5m0-5-5 5"/>'),
+
   bone: () => solid(
     '<rect x="7" y="10" width="10" height="4" rx="2"/>' +
     '<circle cx="6.3" cy="9.7" r="2.7"/><circle cx="6.3" cy="14.3" r="2.7"/>' +

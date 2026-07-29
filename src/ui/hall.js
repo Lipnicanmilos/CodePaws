@@ -31,8 +31,8 @@ export class HallView {
       ? 'Rebríček je spoločný pre všetkých, čo hru hrajú.'
       : 'Rebríček je zatiaľ len na tomto zariadení.';
     this.say(points > 0
-      ? `Pripíšeš ${points} nových bodov za ${missions} ${plural(missions)}.`
-      : 'Nové body zatiaľ nemáš — zahraj ďalšiu misiu a vráť sa.');
+      ? `Máš ${points} nezapísaných bodov — pripíšu sa tlačidlom nižšie.`
+      : 'Body sa pripočítavajú samé po každej dohratej misii.');
     this.box.showModal();
     await this.load();
   }
@@ -57,6 +57,10 @@ export class HallView {
   async send() {
     const problem = nickProblem(this.input.value);
     if (problem) return this.say(problem, true);
+    // Bez nových bodov niet čo zapísať — a server by druhý rýchly zápis aj tak pribrzdil.
+    if (!this.pending.points) {
+      return this.say('Všetky body už v rebríčku sú. Zahraj ďalšiu misiu.');
+    }
 
     const button = document.getElementById('hallSend');
     button.disabled = true;

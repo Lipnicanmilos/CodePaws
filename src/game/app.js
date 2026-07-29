@@ -11,6 +11,8 @@ import { HallView } from '../ui/hall.js';
 import { WelcomeView } from '../ui/welcome.js';
 import { ICONS } from '../ui/icons.js';
 import * as progress from './progress.js';
+import * as leaderboard from './leaderboard.js';
+import * as sound from './sound.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -39,12 +41,18 @@ class Game {
     this.board = new BoardView($('board'));
     this.palette = new PaletteView($('palette'), (cmd) => this.addRow(cmd));
     this.table = new TableView($('programBody'), $('emptyHint'), {
-      onDelete: (i) => this.editRows(this.rows.filter((_, k) => k !== i)),
+      onDelete: (i) => {
+        // V Oprave si diera pamätá miesto — nový príkaz sa vloží tam, nie na koniec.
+        if (this.isDebug) this.gapAt = i;
+        this.editRows(this.rows.filter((_, k) => k !== i));
+      },
       onMove: (i, d) => this.editRows(moveRow(this.rows, i, d)),
     });
 
     this.hall = new HallView(() => this.renderChip());
     this.renderChip();
+    // Keby z minula ostali nezapísané body (napr. bez internetu), dozbierajú sa teraz.
+    this.syncHall();
 
     this.bindUI();
     this.buildPicker();
@@ -56,6 +64,11 @@ class Game {
   /** Level typu „Predpoveď“ — plán je hotový a zamknutý, dieťa najprv ukáže,
       kde podľa neho pes zastane, a až potom sa program spustí. */
   get isPredict() { return this.level.type === 'predict'; }
+
+  /** Level typu „Oprava“ — plán je predvyplnený a jeden riadok je zlý.
+      Správne riadky sú zamknuté; zlý sa dá zmazať a na jeho miesto sa vloží
+      príkaz z pultu. Poradie riadkov sa nemení — mení sa len obsah diery. */
+  get isDebug() { return this.level.type === 'debug'; }
 
   /** Ktoré ocenenia sa v tomto leveli vôbec dajú získať. Riadi aj počet
       kostičiek — dve z dvoch má vyzerať ako plný počet, nie ako 2/3. */
@@ -92,6 +105,37 @@ class Game {
         this.board.setSpeed(this.speed);
       });
     }
+
+    // Zvuky: klepnutie prepína a voľba sa pamätá. Krátky cink potvrdí zapnutie.
+    const soundBtn = $('soundToggle');
+    const paintSound = () => {
+      soundBtn.innerHTML = sound.isOn() ? ICONS.soundOn() : ICONS.soundOff();
+      soundBtn.setAttribute('aria-pressed', String(sound.isOn()));
+      soundBtn.classList.toggle('is-on', sound.isOn());
+    };
+    soundBtn.addEventListener('click', () => { sound.toggle(); paintSound(); sound.play('bone'); });
+    paintSound();
+
+    // Klávesnica: šípky pridávajú kroky (podľa režimu), Enter = Štart, Space = Krok.
+    // Kým je otvorené okno alebo sa píše do poľa, hra klávesy nechytá.
+    const KEYMAP = {
+      absolute: { ArrowUp: 'north', ArrowDown: 'south', ArrowLeft: 'west', ArrowRight: 'east' },
+      relative: { ArrowUp: 'move', ArrowLeft: 'turnLeft', ArrowRight: 'turnRight' },
+    };
+    document.addEventListener('keydown', (e) => {
+      if (document.querySelector('dialog[open]')) return;
+      if (/^(input|textarea|select)$/i.test(e.target.tagName)) return;
+      if (e.key === 'Enter') { e.preventDefault(); this.run(); return; }
+      if (e.key === ' ') { e.preventDefault(); this.singleStep(); return; }
+      const cmd = KEYMAP[this.mode]?.[e.key];
+      if (!cmd) return;
+      // Pridá sa len to, čo je naozaj na pulte — v Predpovedi je pult prázdny.
+      const btn = document.querySelector(`#palette .key[data-cmd="${cmd}"]`);
+      if (!btn) return;
+      e.preventDefault();
+      this.palette.punch(btn);
+      this.addRow(cmd);
+    });
 
     // Rebríček je jediné okno navyše — odznak hráča vedie rovno doň.
     $('playerChip').addEventListener('click', () => this.hall.open());
@@ -152,18 +196,34 @@ class Game {
     $('levelStory').textContent = this.level.story ?? '';
     $('hintBar').hidden = true;
 
-    $('plateLabel').textContent = this.isPredict ? 'Kde zastane?' : 'Naplánuj krok';
+    $('plateLabel').textContent = this.isPredict ? 'Kde zastane?'
+      : this.isDebug ? 'Oprav zlý riadok' : 'Naplánuj krok';
 
     this.board.render(this.world);
     this.board.setSpeed(this.speed);
     this.renderStars(progress.awardsFor(this.level.id));
 
     if (this.isPredict) this.startPredict();
+    else if (this.isDebug) this.startDebug();
     else {
       this.board.setGuessMode(null);
       this.palette.render(paletteFor(this.level, this.mode));
       this.editRows([]);
     }
+  }
+
+  /** Rozbehne level typu „Oprava“: predvyplnený plán so zamknutými správnymi
+      riadkami. Zlý riadok dieťa zmaže ✕ a z pultu vloží správny príkaz. */
+  startDebug() {
+    this.board.setGuessMode(null);
+    this.palette.render(paletteFor(this.level, this.mode));
+    this.gapAt = null;
+    this.rows = expandRows(this.level.preset?.[this.mode] ?? []);
+    this.resetWorld();
+    this.renderTable();
+    this.updateRowCount();
+    $('btnReset').disabled = true;
+    this.updateTransport();
   }
 
   /** Rozbehne level typu „Predpoveď“: plán z levelu, zamknutá tabuľka,
@@ -197,12 +257,25 @@ class Game {
     $('btnStep').disabled = waiting;
   }
 
-  renderTable() { this.table.render(this.rows, { locked: this.isPredict }); }
+  renderTable() {
+    this.table.render(this.rows, { locked: this.isPredict, fixedOrder: this.isDebug });
+  }
 
   // ── Plán ──────────────────────────────────────────────────────
 
   addRow(cmd) {
     if (this.isRunning || this.isPredict) return;
+    if (this.isDebug) {
+      if (this.gapAt === null) {
+        this.toast('Najprv zmaž zlý riadok ✕ — až potom vlož nový príkaz.', true);
+        return;
+      }
+      const rows = this.rows.slice();
+      rows.splice(this.gapAt, 0, newRow(cmd));
+      this.gapAt = null;
+      this.editRows(rows);
+      return;
+    }
     this.editRows([...this.rows, newRow(cmd)]);
   }
 
@@ -213,14 +286,14 @@ class Game {
     this.updateRowCount();
     this.updateState();
     this.updateTransport();
-    $('btnReset').disabled = this.rows.length === 0;
+    $('btnReset').disabled = this.rows.length === 0 || this.isDebug;
   }
 
   /** Zmaže celý plán a dieťa ho skladá odznova.
       Vrátiť psíka na štart netreba riešiť zvlášť — ▶ Štart aj úprava
       ktoréhokoľvek riadku svet resetujú samy. */
   clearPlan() {
-    if (!this.rows.length || this.isPredict) return;
+    if (!this.rows.length || this.isPredict || this.isDebug) return;
     this.stopTimer();
     this.editRows([]);
     this.toast('Plán je prázdny. Poskladaj ho nanovo.');
@@ -330,17 +403,22 @@ class Game {
     switch (ev.type) {
       case 'row': this.table.setCurrent(ev.rowId); break;
       case 'rowDone': this.table.markDone(ev.rowId); break;
+      case 'move': sound.play('step'); break;
+      case 'collect': sound.play('bone'); break;
+      case 'extinguish': sound.play('douse'); break;
       case 'nothing': this.toast(MESSAGES.nothing, true); break;
       case 'blocked':
         this.table.markBad(ev.rowId);
+        sound.play('bump');
         this.fail(MESSAGES[ev.code] ?? MESSAGES.wall);
         break;
       case 'lose':
       case 'error':
         if (ev.rowId) this.table.markBad(ev.rowId);
+        sound.play('bump');
         this.fail(MESSAGES[ev.code] ?? 'Skús to inak.');
         break;
-      case 'win': this.win(); break;
+      case 'win': sound.play('win'); this.win(); break;
     }
   }
 
@@ -387,6 +465,7 @@ class Game {
 
     this.renderStars(all);
     this.renderChip();
+    this.syncHall();
     this.buildPicker();
     $('levelPicker').value = String(this.index);
 
@@ -436,6 +515,19 @@ class Game {
     if (!this.isPredict) return null;
     if (!this.guessRight) return 'Zastal inde!';
     return this.guessTries === 1 ? 'Jasnovidec!' : 'Trafil si to!';
+  }
+
+  /** Nové body sa do rebríčka pripočítavajú samé — hneď po dohratej misii
+      a pri štarte hry (keby predtým vypadlo pripojenie). Zlyhanie nevadí:
+      nezapísané body ostávajú `pending` a skúsia sa po ďalšej misii. */
+  async syncHall() {
+    const nick = progress.getNick();
+    const points = progress.pendingPoints();
+    if (!nick || !points) return;
+    try {
+      await leaderboard.submit({ nick, points, missions: progress.totals().missions });
+      progress.markSubmitted();
+    } catch { /* offline alebo server nedostupný — body nezmiznú, len počkajú */ }
   }
 
   /** Odznak hráča v hlavičke — prezývka, body a hodnosť v bublinke. */

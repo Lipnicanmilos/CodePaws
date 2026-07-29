@@ -259,6 +259,28 @@ test('posiela sa len to, co este nebolo zapisane', () => {
 // ── Prevod uloženého postupu ──────────────────────────────────
 // Dieťa, ktoré hru už hralo, oň nesmie prísť len preto, že sa zmenil formát.
 
+test('prevod z v3 da postup a zapisane body pod prezyvku hraca', () => {
+  const store = migrate({
+    version: 3,
+    nick: 'NINKA',
+    levels: { '1.2': { awards: ['finish', 'rows'], points: 160 } },
+    submitted: 120,
+    settings: { mode: 'relative', speed: 150 },
+  });
+  eq(store.version, 4, 'verzia');
+  eq(store.nick, 'NINKA', 'prezyvka ostala');
+  eq(store.players.NINKA.levels['1.2'].points, 160, 'postup je pod prezyvkou');
+  eq(store.players.NINKA.submitted, 120, 'zapisane body sa nezabudli — inak by sa pripocitali druhykrat');
+  eq(store.settings.mode, 'relative', 'nastavenia prezili');
+});
+
+test('prevod z v3 bez prezyvky odlozi postup pre prvu zadanu', () => {
+  const store = migrate({ version: 3, nick: null, levels: { '1.1': { awards: ['finish'], points: 100 } }, submitted: 0 });
+  eq(store.nick, null, 'bez prezyvky');
+  eq(store.legacy.levels['1.1'].points, 100, 'postup caka v legacy');
+  eq(Object.keys(store.players).length, 0, 'ziadnemu hracovi sa nepriradil');
+});
+
 test('prevod z v2 zachova postup aktivneho profilu a jeho meno', () => {
   const store = migrate({
     version: 2,
@@ -269,23 +291,24 @@ test('prevod z v2 zachova postup aktivneho profilu a jeho meno', () => {
     ],
     settings: { mode: 'relative', speed: 150 },
   });
-  eq(store.version, 3, 'verzia');
+  eq(store.version, 4, 'verzia');
   eq(store.nick, 'NINKA', 'prezyvka z aktivneho profilu, ocistena');
-  eq(store.levels['1.2'].points, 160, 'postup aktivneho profilu ostal');
-  eq(store.levels['1.1'], undefined, 'cudzi profil sa neprimiesa');
+  eq(store.players.NINKA.levels['1.2'].points, 160, 'postup aktivneho profilu ostal');
+  eq(store.players.NINKA.levels['1.1'], undefined, 'cudzi profil sa neprimiesa');
   eq(store.settings.mode, 'relative', 'nastavenia prezili');
 });
 
-test('prevod z v1 prepocita body zo stariny', () => {
+test('prevod z v1 prepocita body zo stariny a odlozi ich pre prvu prezyvku', () => {
   const store = migrate({ version: 1, levels: { '1.1': { stars: ['finish', 'bones'] } } });
-  eq(store.levels['1.1'].points, 140, 'finish + bones');
+  eq(store.legacy.levels['1.1'].points, 140, 'finish + bones');
   eq(store.nick, null, 'v1 ziadnu prezyvku nemala — hra sa opyta');
 });
 
 test('prazdne alebo poskodene ulozisko dava cisty zaciatok', () => {
   const store = migrate(null);
   eq(store.nick, null, 'bez prezyvky');
-  eq(Object.keys(store.levels).length, 0, 'bez postupu');
+  eq(Object.keys(store.players).length, 0, 'bez hracov');
+  eq(store.legacy, null, 'bez odlozeneho postupu');
   eq(store.settings.mode, 'absolute', 'vychodiskovy rezim');
 });
 
@@ -401,7 +424,40 @@ for (const level of levels) {
     });
   }
 
-  for (const mode of level.type === 'predict' ? [] : ['absolute', 'relative']) {
+  // Levely typu „Oprava“: pokazený plán MUSÍ zlyhať (inak niet čo opravovať),
+  // opravený musí prejsť a výmena je riadok za riadok — dĺžka sa nemení.
+  if (level.type === 'debug') {
+    for (const mode of ['absolute', 'relative']) {
+      test(`level ${level.id} „${level.title}“ — pokazený plán (${mode}) naozaj zlyhá`, () => {
+        const rows = level.preset?.[mode];
+        ok(rows, 'v súbore chýba pokazený plán');
+        const world = new World(level);
+        const { vm } = run(world, expandRows(rows), { stepLimit: level.limits?.steps ?? 200 });
+        ok(vm.status !== 'won', 'pokazený plán nesmie vyhrať');
+      });
+
+      test(`level ${level.id} — opravený plán (${mode}) prejde a pozbiera kosti`, () => {
+        const rows = level.solutions?.[mode];
+        ok(rows, 'v súbore chýba opravené riešenie');
+        const world = new World(level);
+        const { vm } = run(world, expandRows(rows), { stepLimit: level.limits?.steps ?? 200 });
+        eq(vm.status, 'won', `stav (kód ${vm.errorCode})`);
+        eq(world.bonesCollected(), world.totalBones, 'kosti');
+      });
+
+      test(`level ${level.id} — oprava je výmena riadku, nie prístavba (${mode})`, () => {
+        eq(countRows(expandRows(level.preset[mode])), countRows(expandRows(level.solutions[mode])),
+          'pokazený a opravený plán majú rovnaký počet riadkov');
+      });
+
+      test(`level ${level.id} — zlý riadok je presne jeden (${mode})`, () => {
+        const free = expandRows(level.preset[mode]).filter((r) => !r.locked).length;
+        eq(free, 1, 'odomknutý (vymeniteľný) riadok');
+      });
+    }
+  }
+
+  for (const mode of ['predict', 'debug'].includes(level.type) ? [] : ['absolute', 'relative']) {
     // V JSON je riešenie zapísané krátko cez `n`; v tabuľke je jeden riadok
     // jeden krok, takže sa pred porovnaním s limitom musí rozbaliť.
     const rows = level.solutions?.[mode] ? expandRows(level.solutions[mode]) : null;

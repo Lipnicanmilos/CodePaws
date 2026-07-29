@@ -1,8 +1,9 @@
 /* Kódolabky — hráč, postup a body. Iba localStorage, nič neodchádza zo zariadenia.
 
-   Hráč je jeden a je to prezývka, ktorú dieťa zadá na začiatku. Tá istá
-   prezývka ide aj do rebríčka — dve mená pre to isté dieťa (volací znak zvlášť,
-   prezývka zvlášť) boli len mätúce.
+   Hráč je prezývka, ktorú dieťa zadá na začiatku, a KAŽDÁ prezývka má svoj
+   vlastný postup: nové meno začína od nuly, návrat k starému menu pokračuje
+   tam, kde skončilo. Na jednom tablete sa tak vystrieda hoci celá rodina
+   a body sa im nepomiešajú. Tá istá prezývka ide aj do rebríčka.
 
    Bodovanie odmeňuje to isté, čo hra učí: krátky plán, pozornosť k mape
    a premyslenie plánu pred spustením. Zámerne NEODMEŇUJE rýchlosť ani počet
@@ -13,7 +14,7 @@
 import { cleanNick } from './nick.js';
 
 const KEY = 'codepaws.progress';
-const VERSION = 3;
+const VERSION = 4;
 
 /* `predict` je za trafenú predpoveď a je zámerne najdrahšie ocenenie hneď po
    dokončení misie: správny tip pred spustením je najčistejší dôkaz, že dieťa
@@ -38,9 +39,13 @@ export const pointsFor = (awardIds) =>
   AWARDS.reduce((sum, a) => sum + (awardIds.includes(a.id) ? a.points : 0), 0);
 
 /** Ktoré ocenenia sa v danom leveli vôbec dajú získať. V Predpovedi je plán daný,
-    takže „krátky plán“ ani „bez nárazu“ nie sú zásluha dieťaťa. */
+    takže „krátky plán“ ani „bez nárazu“ nie sú zásluha dieťaťa. V Oprave (`debug`)
+    je dĺžka plánu daná, takže „krátky plán“ nedáva zmysel — no „bez nárazu“ áno:
+    kto si plán prečíta a opraví PRED spustením, nenarazí ani raz. */
 export const awardIdsForLevel = (level) =>
-  level?.type === 'predict' ? ['finish', 'predict'] : ['finish', 'rows', 'bones', 'clean'];
+  level?.type === 'predict' ? ['finish', 'predict']
+  : level?.type === 'debug' ? ['finish', 'bones', 'clean']
+  : ['finish', 'rows', 'bones', 'clean'];
 
 export function rankFor(points) {
   let rank = RANKS[0];
@@ -53,14 +58,27 @@ export function nextRank(points) {
   return RANKS.find((r) => r.at > points) ?? null;
 }
 
-/** `nick: null` znamená, že hra sa ešte nepredstavila — hru to nespustí. */
+/** `nick: null` znamená, že hra sa ešte nepredstavila — hru to nespustí.
+    `players` drží postup každej prezývky zvlášť; `legacy` je postup zo
+    stariny bez prezývky — adoptuje si ho prvá prezývka, ktorá sa zadá. */
 const empty = () => ({
   version: VERSION,
   nick: null,
-  levels: {},
-  submitted: 0,        // koľko bodov už odišlo do rebríčka
+  players: {},
+  legacy: null,
   settings: { mode: 'absolute', speed: 330 },
 });
+
+/** `submitted` = koľko bodov už odišlo do rebríčka (per hráč). */
+const emptyPlayer = () => ({ levels: {}, submitted: 0 });
+
+/** Postup práve prihlásenej prezývky. Bez prezývky vráti prázdny záznam,
+    ktorý sa nikam neukladá — hra sa aj tak bez predstavenia nespustí. */
+function player() {
+  const store = load();
+  if (!store.nick) return emptyPlayer();
+  return (store.players[store.nick] ??= emptyPlayer());
+}
 
 let cache = null;
 
@@ -80,7 +98,8 @@ function load() {
 }
 
 /** Postup z predošlých verzií sa nezahadzuje — dieťa oň neprišlo ničím vlastným.
-    v1 = bez posádky, v2 = viac profilov (z tých prežije ten, ktorý bol aktívny).
+    v1 = bez posádky, v2 = viac profilov (prežije aktívny), v3 = jeden hráč na
+    zariadenie. Postup bez prezývky ide do `legacy` a adoptuje si ho prvá zadaná.
     Exportované kvôli testom: tichá strata postupu je chyba, ktorú nikto nenahlási. */
 export function migrate(old) {
   const store = empty();
@@ -88,17 +107,27 @@ export function migrate(old) {
 
   store.settings = { ...store.settings, ...(old.settings ?? {}) };
 
-  if (old.version === 2) {
-    const active = old.profiles?.find((p) => p.id === old.activeId) ?? old.profiles?.[0];
-    store.nick = cleanNick(active?.callsign) || null;
-    store.levels = active?.levels ?? {};
+  if (old.version === 3) {
+    store.nick = old.nick ?? null;
+    const rec = { levels: old.levels ?? {}, submitted: old.submitted ?? 0 };
+    if (store.nick) store.players[store.nick] = rec;
+    else if (Object.keys(rec.levels).length) store.legacy = rec;
     return store;
   }
 
+  if (old.version === 2) {
+    const active = old.profiles?.find((p) => p.id === old.activeId) ?? old.profiles?.[0];
+    store.nick = cleanNick(active?.callsign) || null;
+    if (store.nick) store.players[store.nick] = { levels: active?.levels ?? {}, submitted: 0 };
+    return store;
+  }
+
+  const levels = {};
   for (const [levelId, rec] of Object.entries(old.levels ?? {})) {
     const stars = rec.stars ?? rec.awards ?? [];
-    store.levels[levelId] = { awards: stars, points: pointsFor(stars) };
+    levels[levelId] = { awards: stars, points: pointsFor(stars) };
   }
+  if (Object.keys(levels).length) store.legacy = { levels, submitted: 0 };
   return store;
 }
 
@@ -122,17 +151,24 @@ export const getNick = () => load().nick;
 /** Kým je prázdna, hra sa nespustí — najprv sa treba predstaviť. */
 export const hasNick = () => Boolean(load().nick);
 
+/** Nová prezývka začína od nuly; známa pokračuje, kde skončila. Postup zo
+    stariny (bez prezývky) si adoptuje prvá prezývka, ktorá sa zadá. */
 export function setNick(text) {
   const nick = cleanNick(text);
   if (!nick) return null;
-  load().nick = nick;
+  const store = load();
+  store.nick = nick;
+  if (!store.players[nick]) {
+    store.players[nick] = store.legacy ?? emptyPlayer();
+    store.legacy = null;
+  }
   save();
   return nick;
 }
 
 /* ── Výsledky ──────────────────────────────────────────────────── */
 
-export const awardsFor = (levelId) => load().levels[levelId]?.awards ?? [];
+export const awardsFor = (levelId) => player().levels[levelId]?.awards ?? [];
 
 export const isSolved = (levelId) => awardsFor(levelId).includes('finish');
 
@@ -145,8 +181,8 @@ export const REPEAT_SHARE = 0.2;
     za level sa počítajú z najlepších ocenení, opakovania sa zbierajú vedľa
     v `bonus`, aby sa základ nikdy nezdvojil. */
 export function recordResult(levelId, awardIds) {
-  const store = load();
-  const record = store.levels[levelId];
+  const rec = player();
+  const record = rec.levels[levelId];
   const wasSolved = (record?.awards ?? []).includes('finish');
 
   const prev = new Set(record?.awards ?? []);
@@ -156,13 +192,13 @@ export function recordResult(levelId, awardIds) {
   const bonus = (record?.bonus ?? 0) +
     (wasSolved ? Math.round(pointsFor(awardIds) * REPEAT_SHARE) : 0);
 
-  store.levels[levelId] = { awards, points: pointsFor(awards), bonus };
+  rec.levels[levelId] = { awards, points: pointsFor(awards), bonus };
   save();
   return awards;
 }
 
 export function totals() {
-  const levels = Object.values(load().levels);
+  const levels = Object.values(player().levels);
   return {
     points: levels.reduce((sum, l) => sum + (l.points ?? 0) + (l.bonus ?? 0), 0),
     missions: levels.filter((l) => l.awards?.includes('finish')).length,
@@ -175,14 +211,14 @@ export function totals() {
    Do rebríčka sa body PRIPOČÍTAVAJÚ, preto sa musí pamätať, čo už bolo
    zapísané. Inak by druhý klik na „Zapísať“ pridal celý súčet znova. */
 
-export const submittedPoints = () => load().submitted ?? 0;
+export const submittedPoints = () => player().submitted ?? 0;
 
 /** Koľko bodov ešte nebolo zapísaných — presne toľko sa pripočíta. */
 export const pendingPoints = () => Math.max(0, totals().points - submittedPoints());
 
 export function markSubmitted(points = totals().points) {
-  const store = load();
-  store.submitted = Math.max(store.submitted ?? 0, points);
+  const rec = player();
+  rec.submitted = Math.max(rec.submitted ?? 0, points);
   save();
-  return store.submitted;
+  return rec.submitted;
 }

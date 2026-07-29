@@ -24,9 +24,11 @@ export class TableView {
     });
   }
 
-  /** `locked` = plán dal level a dieťa ho nemení (typy `predict` a `debug`).
-      Riadky sa vtedy vykreslia bez akcií, aby sa nedali ani omylom prehádzať. */
-  render(rows, { locked = false } = {}) {
+  /** `locked` = celý plán dal level a dieťa ho nemení (typ `predict`).
+      `fixedOrder` = poradie je dané a mení sa len obsah (typ `debug`):
+      zamknuté riadky (`row.locked`) sú bez akcií, ostatné majú len ✕ —
+      presúvať sa nedá, vymeniť áno. */
+  render(rows, { locked = false, fixedOrder = false } = {}) {
     this.rows = rows;
     this.locked = locked;
     this.body.replaceChildren();
@@ -37,8 +39,12 @@ export class TableView {
       const tr = document.createElement('tr');
       tr.dataset.id = row.id;
 
-      const acts = locked
-        ? '<span class="rowlock" title="Tento plán sa nemení" aria-hidden="true"></span>'
+      const acts = (locked || row.locked)
+        ? '<span class="rowlock" title="Tento riadok sa nemení" aria-hidden="true"></span>'
+        : fixedOrder
+        ? `<span class="rowacts">
+            <button type="button" class="del" data-act="del" aria-label="Zmazať riadok">✕</button>
+          </span>`
         : `<span class="rowacts">
             <button type="button" data-act="up" aria-label="Posunúť vyššie" ${i === 0 ? 'disabled' : ''}>▲</button>
             <button type="button" data-act="down" aria-label="Posunúť nižšie" ${i === rows.length - 1 ? 'disabled' : ''}>▼</button>

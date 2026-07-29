@@ -9,9 +9,11 @@ export function newRow(cmd) {
 }
 
 /** Rozbalí zápis `{cmd, n}` na n samostatných riadkov.
-    Používa sa na referenčné riešenia v leveloch, aby sa v JSON dali písať krátko. */
+    Používa sa na referenčné riešenia v leveloch, aby sa v JSON dali písať krátko.
+    `locked` prežíva rozbalenie — v leveloch typu `debug` chráni správne riadky. */
 export function expandRows(rows) {
-  return rows.flatMap(({ cmd, n = 1 }) => Array.from({ length: n }, () => newRow(cmd)));
+  return rows.flatMap(({ cmd, n = 1, locked = false }) =>
+    Array.from({ length: n }, () => ({ ...newRow(cmd), ...(locked ? { locked: true } : {}) })));
 }
 
 /** Počet riadkov vrátane vnorených — to je to, čo sa porovnáva s limitom. */

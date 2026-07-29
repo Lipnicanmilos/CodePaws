@@ -10,6 +10,16 @@
         "C:/Users/mlipnican/codepaws"
       ],
       "port": 8140
+    },
+    {
+      "name": "kodolabky-alt",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "C:/Users/mlipnican/codepaws/server/dev_server.py",
+        "8141",
+        "C:/Users/mlipnican/codepaws"
+      ],
+      "port": 8141
     }
   ]
 }
