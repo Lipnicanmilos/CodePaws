@@ -10,9 +10,13 @@ create table if not exists public.hall (
   nick       text primary key,
   points     integer     not null check (points >= 0),
   missions   integer     not null default 0 check (missions >= 0),
+  dog        text        not null default 'fifo',
   at         date        not null default current_date,
   updated_at timestamptz not null default now()
 );
+
+-- Psík hráča (avatar v rebríčku) — doplnenie pre tabuľky založené staršou verziou.
+alter table public.hall add column if not exists dog text not null default 'fifo';
 
 create index if not exists hall_points_idx on public.hall (points desc, at asc);
 
@@ -32,10 +36,15 @@ create policy "hall je verejne citatelna"
 -- security definer = beží s právami vlastníka, teda obíde RLS. To je jediná
 -- cesta, ako sa dá do tabuľky zapísať.
 
+-- Stará trojparametrová verzia musí preč — s novým parametrom s default hodnotou
+-- by boli volania s tromi argumentmi nejednoznačné (dve funkcie by sedeli).
+drop function if exists public.submit_score(text, integer, integer);
+
 create or replace function public.submit_score(
   p_nick     text,
   p_points   integer,
-  p_missions integer
+  p_missions integer,
+  p_dog      text default 'fifo'
 )
 returns setof public.hall
 language plpgsql
@@ -55,8 +64,12 @@ declare
     'fuck','shit','bitch','cunt','dick','nigg','rape','nazi','hitler'
   ];
 
+  -- Zoznam psíkov drží server sám — klientovi sa neverí ani v avataroch.
+  v_dogs constant text[] := array['fifo','bit','ajka','luna','rex','cent'];
+
   v_nick text;
   v_flat text;
+  v_dog  text;
   v_last timestamptz;
 begin
   -- Prezývka sa čistí nanovo; tomu, čo prišlo od klienta, sa neverí.
@@ -82,6 +95,9 @@ begin
     raise exception 'Počet misií je mimo rozsahu.';
   end if;
 
+  -- Neznámy psík nezhodí zápis — potichu sa nahradí Fifom.
+  v_dog := case when p_dog = any(v_dogs) then p_dog else 'fifo' end;
+
   -- Jednoduchá brzda proti zaplaveniu.
   select updated_at into v_last from public.hall where nick = v_nick;
   if v_last is not null and v_last > now() - interval '5 seconds' then
@@ -92,11 +108,12 @@ begin
   -- ďalšie kolo pod tou istou prezývkou, tomu priečka narastie. Klient posiela
   -- len nové body, takže druhý zápis toho istého pripočíta nulu.
   -- Misie sú počet vyriešených levelov — tie sa neskladajú, drží sa najvyšší.
-  insert into public.hall as h (nick, points, missions, at, updated_at)
-  values (v_nick, p_points, p_missions, current_date, now())
+  insert into public.hall as h (nick, points, missions, dog, at, updated_at)
+  values (v_nick, p_points, p_missions, v_dog, current_date, now())
   on conflict (nick) do update set
     points     = h.points + excluded.points,
     missions   = greatest(h.missions, excluded.missions),
+    dog        = excluded.dog,   -- posledný zvolený psík platí
     at         = case when excluded.points > 0 then excluded.at else h.at end,
     updated_at = now();
 
@@ -107,8 +124,8 @@ begin
 end;
 $$;
 
-revoke all on function public.submit_score(text, integer, integer) from public;
-grant execute on function public.submit_score(text, integer, integer) to anon, authenticated;
+revoke all on function public.submit_score(text, integer, integer, text) from public;
+grant execute on function public.submit_score(text, integer, integer, text) to anon, authenticated;
 
 -- ── Údržba ─────────────────────────────────────────────────────────────────
 -- Zmazať jednu prezývku:   delete from public.hall where nick = 'PREZYVKA';

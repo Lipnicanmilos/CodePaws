@@ -38,6 +38,12 @@ Celý postup je v [server/README.md](server/README.md), trvá ~10 minút.
 - [x] **Spustiť aktualizovaný [`server/supabase.sql`](server/supabase.sql) znova**
       — spustené 2026-07-29, na Supabase beží verzia bez stropu, body sa pripočítavajú.
 
+- [ ] **Spustiť [`server/supabase.sql`](server/supabase.sql) EŠTE RAZ** (2026-07-29
+      večer: pridaný stĺpec `dog` — psík hráča v rebríčku — a 4-parametrová
+      `submit_score`). Kým sa nespustí, globálny rebríček sa nenačíta (klient
+      pýta stĺpec, ktorý na serveri nie je) a zápisy padajú na neznámu funkciu.
+      Body sa nestratia — počkajú ako nezapísané a dozbierajú sa.
+
 Strop viazaný na počet levelov už neexistuje — pri každom novom leveli sa zabudol
 zvýšiť a poctivému hráčovi potom zápis tíško padol. Ostáva len poistka proti
 nezmyslu, ktorú hraním nedosiahneš.
@@ -105,6 +111,12 @@ Detaily v [ROADMAP](docs/ROADMAP.md). V skratke:
 
 ## Hotové
 
+- [x] Výber psíka (2026-07-29) — v úvodnom okne si dieťa vyberie jedného zo
+      šiestich psíkov; ten hrá v leveloch a je aj avatarom v rebríčku (stĺpec
+      `dog`, server whitelistuje). Psík patrí prezývke; vracajúcemu sa hráčovi
+      sa predvyberie jeho a neprepíše sa, kým si sám nevyberie iného.
+      Zámerne VLASTNÉ postavičky, nie napodobenina Labkovej patroly (ochranná
+      známka Spin Master) — spoločný je len žáner záchranárskeho tímu.
 - [x] Body per hráč (2026-07-29) — každá prezývka má vlastný postup: nová začína
       od nuly, návrat k starej pokračuje; migrácia v3→v4 nič nestráca
 - [x] Auto-zápis do rebríčka (2026-07-29) — nové body odchádzajú samé po každej

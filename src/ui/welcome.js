@@ -6,6 +6,7 @@
 
 import * as progress from '../game/progress.js';
 import { nickProblem, cleanNick } from '../game/nick.js';
+import { CHARACTERS, dogSvg } from './icons.js';
 
 export class WelcomeView {
   constructor() {
@@ -15,6 +16,34 @@ export class WelcomeView {
     this.status = document.getElementById('startStatus');
     this.title = document.getElementById('startTitle');
     this.skip = document.getElementById('startSkip');
+    this.dogs = document.getElementById('startDogs');
+    this.buildDogs();
+  }
+
+  /** Šesť psíkov na výber — vybraný hrá v leveloch a ide aj do rebríčka. */
+  buildDogs() {
+    this.dogs.replaceChildren();
+    for (const [id, look] of Object.entries(CHARACTERS)) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'startdog';
+      btn.dataset.char = id;
+      btn.setAttribute('role', 'radio');
+      btn.setAttribute('aria-checked', 'false');
+      btn.innerHTML = `${dogSvg(look)}<span class="startdog-name">${look.name}</span>`;
+      btn.addEventListener('click', () => this.selectDog(id, true));
+      this.dogs.append(btn);
+    }
+  }
+
+  selectDog(id, byUser = false) {
+    if (byUser) this.userPicked = true;
+    this.selected = CHARACTERS[id] ? id : 'fifo';
+    for (const btn of this.dogs.children) {
+      const on = btn.dataset.char === this.selected;
+      btn.classList.toggle('is-on', on);
+      btn.setAttribute('aria-checked', String(on));
+    }
   }
 
   /** Okno sa ukáže pri KAŽDOM spustení hry — dieťa sa vždy predstaví. Poslednú
@@ -26,6 +55,8 @@ export class WelcomeView {
     this.input.value = progress.getNick() ?? '';
     this.status.textContent = '';
     this.skip.hidden = !change;
+    this.userPicked = false;
+    this.selectDog(progress.getChar());             // predvyber psíka posledného hráča
     this.input.dispatchEvent(new Event('input'));   // hneď ukáž náhľad prezývky
 
     return new Promise((resolve) => {
@@ -45,7 +76,11 @@ export class WelcomeView {
           this.input.focus();
           return;
         }
-        finish(progress.setNick(this.input.value));
+        const nick = progress.setNick(this.input.value);
+        // Psík patrí hráčovi, nie zariadeniu. Vracajúcemu sa hráčovi sa jeho
+        // psík neprepíše, pokiaľ si v tomto okne výslovne nevybral iného.
+        if (this.userPicked || !progress.charFor(nick)) progress.setChar(this.selected);
+        finish(nick);
       };
 
       // Bez prezývky sa ďalej nedá — Escape na prvom spustení nič nerobí.
@@ -66,6 +101,11 @@ export class WelcomeView {
     const preview = document.getElementById('startPreview');
     this.input.addEventListener('input', () => {
       preview.textContent = cleanNick(this.input.value) || '—';
+      // Vracajúci sa hráč hneď vidí svojho psíka — kým si sám nevyberie iného.
+      if (!this.userPicked) {
+        const saved = progress.charFor(this.input.value);
+        if (saved) this.selectDog(saved);
+      }
     });
   }
 }

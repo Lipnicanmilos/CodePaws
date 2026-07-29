@@ -3,6 +3,7 @@
 import * as hall from '../game/leaderboard.js';
 import * as progress from '../game/progress.js';
 import { cleanNick, nickProblem } from '../game/nick.js';
+import { CHARACTERS, dogSvg } from './icons.js';
 
 export class HallView {
   constructor(onNickChange = () => {}) {
@@ -24,7 +25,7 @@ export class HallView {
     const { missions } = progress.totals();
     // Posielajú sa len body od posledného zápisu — v rebríčku sa pripočítajú.
     const points = progress.pendingPoints();
-    this.pending = { points, missions };
+    this.pending = { points, missions, dog: progress.getChar() };
 
     this.input.value = cleanNick(progress.getNick() ?? '');
     this.note.textContent = hall.isGlobal()
@@ -109,9 +110,10 @@ export class HallView {
     entries.forEach((entry, i) => {
       const tr = document.createElement('tr');
       if (entry.nick === this.lastNick) tr.className = 'is-me';
+      const look = CHARACTERS[entry.dog] ?? CHARACTERS.fifo;
       tr.innerHTML = `
         <td class="hall-place">${i + 1}</td>
-        <td class="hall-nick">${escapeHtml(entry.nick)}</td>
+        <td class="hall-nick"><span class="hall-dog" title="${look.name}">${dogSvg(look)}</span>${escapeHtml(entry.nick)}</td>
         <td class="num">${entry.points}</td>
         <td class="num">${entry.missions}</td>
         <td class="hall-date">${escapeHtml(entry.at ?? '')}</td>`;

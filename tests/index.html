@@ -373,6 +373,13 @@ test('misie sa neskladaju, drzi sa najvyssi pocet', () => {
   eq(list[0].missions, 6, 'misie su pocet levelov, nie sucet');
 });
 
+test('psik v rebricku je ten naposledy zvoleny', () => {
+  const before = { nick: 'LABKA', points: 100, missions: 2, dog: 'fifo', at: '2026-07-01' };
+  const list = mergeEntry([before], { nick: 'LABKA', points: 50, missions: 3, dog: 'rex', at: '2026-07-02' });
+  eq(list[0].dog, 'rex', 'posledny zvoleny psik plati');
+  eq(list[0].points, 150, 'body sa pritom normalne pripocitali');
+});
+
 // ── Levely ──────────────────────────────────────────────────────
 // Najdôležitejší test v projekte: chráni pred neriešiteľným levelom
 // po tom, čo niekto poupravuje mapu.

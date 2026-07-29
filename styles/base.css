@@ -292,6 +292,29 @@ button { cursor: pointer; }
 }
 .startform input:focus-visible { outline: 3px solid var(--beacon); outline-offset: 2px; }
 
+/* Výber psíka — šesť kariet, vybraná svieti jantárovou ako maják. */
+.startdogs {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem;
+  margin-top: var(--space-2);
+}
+.startdog {
+  display: flex; flex-direction: column; align-items: center; gap: .1rem;
+  padding: .45rem .2rem .35rem; border-radius: var(--radius-sm);
+  border: 2px solid var(--line-strong); background: var(--surface);
+  cursor: pointer; transition: transform .15s ease, border-color .15s ease, background .15s ease;
+}
+.startdog:hover { transform: translateY(-2px); border-color: var(--muted); }
+.startdog.is-on {
+  border-color: var(--beacon);
+  background: color-mix(in srgb, var(--beacon) 14%, var(--surface));
+}
+.startdog svg { width: 44px; height: 44px; }
+.startdog-name {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: var(--step--1); color: var(--text);
+}
+.startdog:focus-visible { outline: 3px solid var(--beacon); outline-offset: 2px; }
+
 .startpreview { margin: .55rem 0 0; color: var(--muted); font-size: var(--step--1); }
 .startpreview strong {
   font-family: var(--font-display); color: var(--text); letter-spacing: .04em;
@@ -333,6 +356,7 @@ button { cursor: pointer; }
 .hall tr:nth-child(2) .hall-place,
 .hall tr:nth-child(3) .hall-place { color: var(--text); }
 .hall-nick { font-family: var(--font-display); font-weight: 800; }
+.hall-dog svg { width: 22px; height: 22px; vertical-align: -6px; margin-right: .4rem; }
 .hall-date { font-family: var(--font-data); font-size: .72rem; color: var(--muted); white-space: nowrap; }
 .hall tr.is-me { background: color-mix(in srgb, var(--beacon) 18%, transparent); }
 .hall-empty { padding: 1.6rem .6rem; text-align: center; color: var(--muted); font-size: var(--step--1); }

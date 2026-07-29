@@ -49,7 +49,8 @@ class Game {
       onMove: (i, d) => this.editRows(moveRow(this.rows, i, d)),
     });
 
-    this.hall = new HallView(() => this.renderChip());
+    this.playerNick = progress.getNick();
+    this.hall = new HallView(() => this.onPlayerChanged());
     this.renderChip();
     // Keby z minula ostali nezapísané body (napr. bez internetu), dozbierajú sa teraz.
     this.syncHall();
@@ -149,7 +150,7 @@ class Game {
 
     $('hallRename').addEventListener('click', async () => {
       $('hallBox').close();
-      if (await this.welcome.ask({ change: true })) this.renderChip();
+      if (await this.welcome.ask({ change: true })) this.onPlayerChanged();
       this.hall.open();
     });
 
@@ -183,6 +184,7 @@ class Game {
     this.fails = 0;
     this.rows = [];
     this.world = new World(this.level);
+    this.applyChar();
     this.vm = null;
     this.guess = null;
     this.guessRight = false;
@@ -311,9 +313,28 @@ class Game {
 
   get isRunning() { return this.timer !== null; }
 
+  /** Vybraný psík hráča hrá v každom leveli. Svet po resete stavia aktérov
+      z JSON-u nanovo, preto sa psík nasadzuje po každom resete znova. */
+  applyChar() {
+    const char = progress.getChar();
+    for (const a of this.world.actors) a.char = char;
+  }
+
+  /** Po zmene prezývky (rebríček / premenovanie) hrá iný hráč: iný psík,
+      iný postup, iné fajky v zozname misií. Level sa načíta nanovo. */
+  onPlayerChanged() {
+    this.renderChip();
+    if (this.playerNick !== progress.getNick()) {
+      this.playerNick = progress.getNick();
+      this.buildPicker();
+      this.loadLevel(this.index);
+    }
+  }
+
   resetWorld() {
     this.stopTimer();
     this.world.reset();
+    this.applyChar();
     this.vm = null;
     this.board.render(this.world);
     this.table.clearMarks();
@@ -525,7 +546,11 @@ class Game {
     const points = progress.pendingPoints();
     if (!nick || !points) return;
     try {
-      await leaderboard.submit({ nick, points, missions: progress.totals().missions });
+      await leaderboard.submit({
+        nick, points,
+        missions: progress.totals().missions,
+        dog: progress.getChar(),
+      });
       progress.markSubmitted();
     } catch { /* offline alebo server nedostupný — body nezmiznú, len počkajú */ }
   }

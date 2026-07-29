@@ -166,6 +166,22 @@ export function setNick(text) {
   return nick;
 }
 
+/* ── Psík ──────────────────────────────────────────────────────── */
+
+/** Vybraný psík hráča — ukladá sa per prezývka, súrodenci majú každý svojho. */
+export const getChar = () => player().char ?? 'fifo';
+
+/** Psík uloženej prezývky (null = taká prezývka ešte nehrala alebo psíka nemá).
+    Úvodné okno podľa toho predvyberá psíka vracajúceho sa hráča. */
+export const charFor = (nick) => load().players[cleanNick(nick)]?.char ?? null;
+
+export function setChar(id) {
+  const rec = player();
+  rec.char = id;
+  save();
+  return id;
+}
+
 /* ── Výsledky ──────────────────────────────────────────────────── */
 
 export const awardsFor = (levelId) => player().levels[levelId]?.awards ?? [];

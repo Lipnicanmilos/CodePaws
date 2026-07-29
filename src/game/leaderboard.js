@@ -62,17 +62,18 @@ const writeLocal = (entries) => {
 export async function fetchTop() {
   if (!isGlobal()) return topOf(readLocal());
 
-  const query = `select=nick,points,missions,at&order=points.desc,at.asc&limit=${HALL_SIZE}`;
+  const query = `select=nick,points,missions,dog,at&order=points.desc,at.asc&limit=${HALL_SIZE}`;
   const response = await fetch(`${SUPABASE_URL}/rest/v1/hall?${query}`, { headers: authHeaders() });
   if (!response.ok) throw await failure(response);
   return topOf(await response.json());
 }
 
-export async function submit({ nick, points, missions }) {
+export async function submit({ nick, points, missions, dog = 'fifo' }) {
   const entry = {
     nick: cleanNick(nick),
     points: Math.max(0, Math.floor(points)),
     missions: Math.max(0, Math.floor(missions)),
+    dog,
     at: new Date().toISOString().slice(0, 10),
   };
 
@@ -87,6 +88,7 @@ export async function submit({ nick, points, missions }) {
       p_nick: entry.nick,
       p_points: entry.points,
       p_missions: entry.missions,
+      p_dog: entry.dog,
     }),
   });
   if (!response.ok) throw await failure(response);
