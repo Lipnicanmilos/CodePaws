@@ -1,4 +1,8 @@
-/* Kódolabky — posádka, postup a body. Iba localStorage, nič neodchádza zo zariadenia.
+/* Kódolabky — hráč, postup a body. Iba localStorage, nič neodchádza zo zariadenia.
+
+   Hráč je jeden a je to prezývka, ktorú dieťa zadá na začiatku. Tá istá
+   prezývka ide aj do rebríčka — dve mená pre to isté dieťa (volací znak zvlášť,
+   prezývka zvlášť) boli len mätúce.
 
    Bodovanie odmeňuje to isté, čo hra učí: krátky plán, pozornosť k mape
    a premyslenie plánu pred spustením. Zámerne NEODMEŇUJE rýchlosť ani počet
@@ -6,14 +10,20 @@
    Body sa dajú za level získať raz; opakovaním sa nefarmia, drží sa najlepší
    výsledok. */
 
-const KEY = 'codepaws.progress';
-const VERSION = 2;
+import { cleanNick } from './nick.js';
 
+const KEY = 'codepaws.progress';
+const VERSION = 3;
+
+/* `predict` je za trafenú predpoveď a je zámerne najdrahšie ocenenie hneď po
+   dokončení misie: správny tip pred spustením je najčistejší dôkaz, že dieťa
+   si program prehralo v hlave. Dá sa získať len v leveloch typu `predict`. */
 export const AWARDS = [
-  { id: 'finish', points: 100, label: 'Misia splnená' },
-  { id: 'rows',   points:  60, label: 'Krátky plán' },
-  { id: 'bones',  points:  40, label: 'Všetky kosti' },
-  { id: 'clean',  points:  50, label: 'Bez jediného nárazu' },
+  { id: 'finish',  points: 100, label: 'Misia splnená' },
+  { id: 'predict', points:  80, label: 'Jasnovidec' },
+  { id: 'rows',    points:  60, label: 'Krátky plán' },
+  { id: 'bones',   points:  40, label: 'Všetky kosti' },
+  { id: 'clean',   points:  50, label: 'Bez jediného nárazu' },
 ];
 
 export const RANKS = [
@@ -38,21 +48,13 @@ export function nextRank(points) {
   return RANKS.find((r) => r.at > points) ?? null;
 }
 
-const newProfile = (callsign) => ({
-  id: `p${Date.now().toString(36)}${Math.floor(Math.random() * 1e4).toString(36)}`,
-  callsign,
+/** `nick: null` znamená, že hra sa ešte nepredstavila — hru to nespustí. */
+const empty = () => ({
+  version: VERSION,
+  nick: null,
   levels: {},
+  settings: { mode: 'absolute', speed: 330 },
 });
-
-const empty = () => {
-  const first = newProfile('LABKA 1');
-  return {
-    version: VERSION,
-    activeId: first.id,
-    profiles: [first],
-    settings: { mode: 'absolute', speed: 330 },
-  };
-};
 
 let cache = null;
 
@@ -64,23 +66,33 @@ function load() {
   if (raw?.version === VERSION) {
     cache = raw;
   } else {
-    cache = raw?.version === 1 ? migrateV1(raw) : empty();
+    cache = migrate(raw);
     save();   // nech sa prevod nerobí znova pri každom otvorení
   }
 
   return cache;
 }
 
-/** Verzia 1 nemala posádku — doterajší postup dostane prvý volací znak. */
-function migrateV1(old) {
+/** Postup z predošlých verzií sa nezahadzuje — dieťa oň neprišlo ničím vlastným.
+    v1 = bez posádky, v2 = viac profilov (z tých prežije ten, ktorý bol aktívny).
+    Exportované kvôli testom: tichá strata postupu je chyba, ktorú nikto nenahlási. */
+export function migrate(old) {
   const store = empty();
+  if (!old) return store;
+
   store.settings = { ...store.settings, ...(old.settings ?? {}) };
-  const levels = {};
-  for (const [levelId, rec] of Object.entries(old.levels ?? {})) {
-    const stars = rec.stars ?? [];
-    levels[levelId] = { awards: stars, points: pointsFor(stars) };
+
+  if (old.version === 2) {
+    const active = old.profiles?.find((p) => p.id === old.activeId) ?? old.profiles?.[0];
+    store.nick = cleanNick(active?.callsign) || null;
+    store.levels = active?.levels ?? {};
+    return store;
   }
-  store.profiles[0].levels = levels;
+
+  for (const [levelId, rec] of Object.entries(old.levels ?? {})) {
+    const stars = rec.stars ?? rec.awards ?? [];
+    store.levels[levelId] = { awards: stars, points: pointsFor(stars) };
+  }
   return store;
 }
 
@@ -97,83 +109,40 @@ export function setSetting(name, value) {
   save();
 }
 
-/* ── Posádka ───────────────────────────────────────────────────── */
+/* ── Hráč ──────────────────────────────────────────────────────── */
 
-export const profiles = () => load().profiles;
+export const getNick = () => load().nick;
 
-export function activeProfile() {
-  const store = load();
-  return store.profiles.find((p) => p.id === store.activeId) ?? store.profiles[0];
-}
+/** Kým je prázdna, hra sa nespustí — najprv sa treba predstaviť. */
+export const hasNick = () => Boolean(load().nick);
 
-export function setActive(id) {
-  const store = load();
-  if (store.profiles.some((p) => p.id === id)) {
-    store.activeId = id;
-    save();
-  }
-  return activeProfile();
-}
-
-/** Volací znak ako v rádiu: krátky, veľkými písmenami, ľahko sa kričí. */
-export function normalizeCallsign(text) {
-  return (text ?? '')
-    .toLocaleUpperCase('sk-SK')
-    .replace(/[^\p{L}\p{N} -]/gu, '')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .slice(0, 10);
-}
-
-export function addProfile(callsign) {
-  const name = normalizeCallsign(callsign);
-  if (!name) return null;
-  const store = load();
-  const profile = newProfile(name);
-  store.profiles.push(profile);
-  store.activeId = profile.id;
+export function setNick(text) {
+  const nick = cleanNick(text);
+  if (!nick) return null;
+  load().nick = nick;
   save();
-  return profile;
-}
-
-export function renameActive(callsign) {
-  const name = normalizeCallsign(callsign);
-  if (!name) return null;
-  activeProfile().callsign = name;
-  save();
-  return name;
-}
-
-export function removeProfile(id) {
-  const store = load();
-  if (store.profiles.length <= 1) return false;
-  store.profiles = store.profiles.filter((p) => p.id !== id);
-  if (!store.profiles.some((p) => p.id === store.activeId)) store.activeId = store.profiles[0].id;
-  save();
-  return true;
+  return nick;
 }
 
 /* ── Výsledky ──────────────────────────────────────────────────── */
 
-export const awardsFor = (levelId, profile = activeProfile()) =>
-  profile.levels[levelId]?.awards ?? [];
+export const awardsFor = (levelId) => load().levels[levelId]?.awards ?? [];
 
-export const isSolved = (levelId, profile = activeProfile()) =>
-  awardsFor(levelId, profile).includes('finish');
+export const isSolved = (levelId) => awardsFor(levelId).includes('finish');
 
 /** Uloží len zlepšenie — raz získaná kosť ani bod sa nedajú stratiť. */
 export function recordResult(levelId, awardIds) {
-  const profile = activeProfile();
-  const prev = new Set(profile.levels[levelId]?.awards ?? []);
+  const store = load();
+  const prev = new Set(store.levels[levelId]?.awards ?? []);
   for (const id of awardIds) prev.add(id);
   const awards = [...prev];
-  profile.levels[levelId] = { awards, points: pointsFor(awards) };
+  store.levels[levelId] = { awards, points: pointsFor(awards) };
   save();
   return awards;
 }
 
-export function totals(profile = activeProfile()) {
-  const levels = Object.values(profile.levels);
+export function totals() {
+  const levels = Object.values(load().levels);
   return {
     points: levels.reduce((sum, l) => sum + (l.points ?? 0), 0),
     missions: levels.filter((l) => l.awards?.includes('finish')).length,
@@ -181,9 +150,3 @@ export function totals(profile = activeProfile()) {
     clean: levels.filter((l) => l.awards?.includes('clean')).length,
   };
 }
-
-/** Hráči — posádka zoradená podľa bodov. */
-export const roster = () =>
-  profiles()
-    .map((p) => ({ profile: p, ...totals(p), rank: rankFor(totals(p).points) }))
-    .sort((a, b) => b.points - a.points || a.profile.callsign.localeCompare(b.profile.callsign, 'sk'));

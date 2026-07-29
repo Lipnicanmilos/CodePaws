@@ -24,8 +24,9 @@
 import { World } from '../src/engine/world.js';
 import { VM, run } from '../src/engine/vm.js';
 import { countRows, rowLimitFor, expandRows } from '../src/engine/program.js';
-import { AWARDS, pointsFor, rankFor, nextRank, normalizeCallsign } from '../src/game/progress.js';
-import { cleanNick, nickProblem, topOf, mergeEntry } from '../src/game/leaderboard.js';
+import { AWARDS, pointsFor, rankFor, nextRank, migrate } from '../src/game/progress.js';
+import { topOf, mergeEntry } from '../src/game/leaderboard.js';
+import { cleanNick, nickProblem } from '../src/game/nick.js';
 import { HALL_SIZE } from '../src/game/config.js';
 
 const results = [];
@@ -193,6 +194,18 @@ test('bonus za bezchybny prechod je presne polovica zakladu', () => {
   eq(clean.points, 50, 'body');
 });
 
+// Predpoveď má byť najcennejšia vec hneď po dokončení misie — inak sa dieťaťu
+// oplatí kliknúť naslepo a počkať, čo sa stane.
+test('jasnovidec je druhe najdrahsie ocenenie', () => {
+  const predict = AWARDS.find((a) => a.id === 'predict');
+  ok(predict, 'ocenenie predict existuje');
+  eq(predict.points, 80, 'body');
+  eq(pointsFor(['finish', 'predict']), 180, 'plny zisk v leveli Predpoved');
+  for (const other of AWARDS.filter((a) => a.id !== 'finish' && a.id !== 'predict')) {
+    ok(predict.points > other.points, `ma byt viac nez ${other.id}`);
+  }
+});
+
 test('hodnost rastie s bodmi a nikdy nepadne pod prvu', () => {
   eq(rankFor(0).name, 'Šteniatko', '0 bodov');
   eq(rankFor(149).name, 'Šteniatko', 'tesne pod hranicou');
@@ -206,24 +219,55 @@ test('dalsia hodnost sa hlasi len kym nejaka je', () => {
   eq(nextRank(999999), null, 'na vrchole uz dalsia nie je');
 });
 
-test('volaci znak sa upravi na radiovy tvar a zachova diakritiku', () => {
-  eq(normalizeCallsign('ninka ľ'), 'NINKA Ľ', 'velke pismena + diakritika');
-  eq(normalizeCallsign('  veliteľ   9  '), 'VELITEĽ 9', 'orezanie a jedna medzera');
-  eq(normalizeCallsign('a<script>b'), 'ASCRIPTB', 'znaky mimo pismen a cisel vypadnu');
-  eq(normalizeCallsign('123456789012345'), '1234567890', 'orezanie na 10 znakov');
-  eq(normalizeCallsign('   '), '', 'prazdny znak neprejde');
-  eq(normalizeCallsign(null), '', 'null neprejde');
+// ── Prevod uloženého postupu ──────────────────────────────────
+// Dieťa, ktoré hru už hralo, oň nesmie prísť len preto, že sa zmenil formát.
+
+test('prevod z v2 zachova postup aktivneho profilu a jeho meno', () => {
+  const store = migrate({
+    version: 2,
+    activeId: 'p2',
+    profiles: [
+      { id: 'p1', callsign: 'INA', levels: { '1.1': { awards: ['finish'], points: 100 } } },
+      { id: 'p2', callsign: 'ninka', levels: { '1.2': { awards: ['finish', 'rows'], points: 160 } } },
+    ],
+    settings: { mode: 'relative', speed: 150 },
+  });
+  eq(store.version, 3, 'verzia');
+  eq(store.nick, 'NINKA', 'prezyvka z aktivneho profilu, ocistena');
+  eq(store.levels['1.2'].points, 160, 'postup aktivneho profilu ostal');
+  eq(store.levels['1.1'], undefined, 'cudzi profil sa neprimiesa');
+  eq(store.settings.mode, 'relative', 'nastavenia prezili');
+});
+
+test('prevod z v1 prepocita body zo stariny', () => {
+  const store = migrate({ version: 1, levels: { '1.1': { stars: ['finish', 'bones'] } } });
+  eq(store.levels['1.1'].points, 140, 'finish + bones');
+  eq(store.nick, null, 'v1 ziadnu prezyvku nemala — hra sa opyta');
+});
+
+test('prazdne alebo poskodene ulozisko dava cisty zaciatok', () => {
+  const store = migrate(null);
+  eq(store.nick, null, 'bez prezyvky');
+  eq(Object.keys(store.levels).length, 0, 'bez postupu');
+  eq(store.settings.mode, 'absolute', 'vychodiskovy rezim');
+});
+
+// ── Prezývka ──────────────────────────────────────────────────
+// Jedna prezývka slúži v hre aj v rebríčku — preto sa čistí na jednom mieste.
+
+test('prezyvka sa ocisti na kratky tvar a zachova diakritiku', () => {
+  eq(cleanNick('ninka ľ'), 'NINKA Ľ', 'velke pismena + diakritika');
+  eq(cleanNick('  veliteľ   9  '), 'VELITEĽ 9', 'orezanie a jedna medzera');
+  eq(cleanNick('a<script>b'), 'ASCRIPTB', 'znaky mimo pismen a cisel vypadnu');
+  eq(cleanNick('<b>hack</b>'), 'BHACKB', 'znacky vypadnu');
+  eq(cleanNick('abcdefghijklmn'), 'ABCDEFGHIJ', 'orezanie na 10 znakov');
+  eq(cleanNick('   '), '', 'prazdny znak neprejde');
+  eq(cleanNick(null), '', 'null neprejde');
 });
 
 // ── Rebríček ──────────────────────────────────────────────────
 
 const entry = (nick, points, at = '2026-07-01') => ({ nick, points, missions: 1, at });
-
-test('prezyvka sa ocisti rovnako ako volaci znak', () => {
-  eq(cleanNick('ninka ľ'), 'NINKA Ľ', 'velke pismena + diakritika');
-  eq(cleanNick('<b>hack</b>'), 'BHACKB', 'znacky vypadnu');
-  eq(cleanNick('abcdefghijklmn'), 'ABCDEFGHIJ', 'orezanie na 10 znakov');
-});
 
 test('prilis kratka prezyvka neprejde', () => {
   ok(nickProblem('A'), 'jedno pismeno');
@@ -266,13 +310,54 @@ test('horsi vysledok neprepise lepsi', () => {
 // Najdôležitejší test v projekte: chráni pred neriešiteľným levelom
 // po tom, čo niekto poupravuje mapu.
 
-const manifest = await (await fetch('../levels/index.json')).json();
-const levels = await Promise.all(
-  manifest.levels.map(async (p) => (await fetch(`../levels/${p}`)).json())
-);
+// Bez `no-store` prehliadač podstrčí staré JSON z cache a testy potom overujú
+// level, ktorý na disku už dávno nie je. Raz to stálo pol hodiny hľadania.
+const fresh = async (path) => (await fetch(path, { cache: 'no-store' })).json();
+
+const manifest = await fresh('../levels/index.json');
+const levels = await Promise.all(manifest.levels.map((p) => fresh(`../levels/${p}`)));
 
 for (const level of levels) {
-  for (const mode of ['absolute', 'relative']) {
+  // Levely typu „Predpoveď“ nemajú riešenie ani limit riadkov — plán dáva level.
+  // Testuje sa niečo iné: že hotový plán dobehne a skončí presne na odpovedi,
+  // a to v oboch režimoch ovládania, lebo odpoveď je v JSON jedna jediná.
+  if (level.type === 'predict') {
+    const answer = level.goals.find((g) => g.type === 'predict').answer;
+
+    for (const mode of ['absolute', 'relative']) {
+      test(`level ${level.id} „${level.title}“ — hotový plán (${mode}) dobehne bez nárazu`, () => {
+        const rows = level.preset?.[mode];
+        ok(rows, 'v súbore chýba hotový plán');
+        const world = new World(level);
+        const { vm } = run(world, expandRows(rows), { stepLimit: level.limits?.steps ?? 200 });
+        eq(vm.status, 'won', `stav (kód ${vm.errorCode})`);
+      });
+
+      test(`level ${level.id} — plán (${mode}) skončí presne na odpovedi`, () => {
+        const world = new World(level);
+        run(world, expandRows(level.preset[mode]), { stepLimit: level.limits?.steps ?? 200 });
+        eq(world.actor.x, answer.x, 'x');
+        eq(world.actor.y, answer.y, 'y');
+      });
+    }
+
+    // Bez tohto by predpoveď „vyhrala“ v momente, keď pes cez políčko len prejde,
+    // a dieťa by nikdy nevidelo zvyšok plánu.
+    test(`level ${level.id} — predpoveď sa nevyhodnotí skôr, než plán dobehne`, () => {
+      const world = new World(level);
+      world.actor.x = answer.x;
+      world.actor.y = answer.y;
+      ok(!world.goalsMet(), 'počas behu ešte nie');
+      ok(world.goalsMet(true), 'po dobehnutí áno');
+    });
+
+    test(`level ${level.id} — odpoveď nestojí v stene`, () => {
+      const world = new World(level);
+      ok(!world.isBlocked(answer.x, answer.y), 'na tomto políčku pes stáť nemôže');
+    });
+  }
+
+  for (const mode of level.type === 'predict' ? [] : ['absolute', 'relative']) {
     // V JSON je riešenie zapísané krátko cez `n`; v tabuľke je jeden riadok
     // jeden krok, takže sa pred porovnaním s limitom musí rozbaliť.
     const rows = level.solutions?.[mode] ? expandRows(level.solutions[mode]) : null;

@@ -5,6 +5,7 @@
    ide všetko na server a rebríček je spoločný. Zvyšok hry o tom nevie. */
 
 import { SUPABASE_URL, SUPABASE_ANON_KEY, HALL_SIZE } from './config.js';
+import { cleanNick } from './nick.js';
 
 const LOCAL_KEY = 'codepaws.hall';
 
@@ -20,34 +21,6 @@ const authHeaders = () => ({
 async function failure(response) {
   const detail = await response.json().catch(() => ({}));
   return new Error(detail.message ?? detail.error ?? `Server odpovedal ${response.status}`);
-}
-
-/* ── Prezývka ───────────────────────────────────────────────────
-   Prezývka je jediné, čo o hráčovi ukladáme, a zámerne nemá byť meno.
-   Preto krátka, bez interpunkcie a bez zjavných vulgarizmov. */
-
-const BLOCKED = [
-  'kokot', 'kurva', 'piced', 'picus', 'jebo', 'jebn', 'sral', 'sracka', 'hovno',
-  'debil', 'idiot', 'kretén', 'kreten', 'mrdk', 'mrda', 'buzer', 'cigan',
-  'fuck', 'shit', 'bitch', 'cunt', 'dick', 'nigg', 'rape', 'nazi', 'hitler',
-];
-
-export function cleanNick(text) {
-  return (text ?? '')
-    .toLocaleUpperCase('sk-SK')
-    .replace(/[^\p{L}\p{N} -]/gu, '')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .slice(0, 10);
-}
-
-/** Vráti dôvod, prečo prezývka neprejde, alebo null keď je v poriadku. */
-export function nickProblem(text) {
-  const nick = cleanNick(text);
-  if (nick.length < 2) return 'Prezývka musí mať aspoň dve písmená.';
-  const flat = nick.toLocaleLowerCase('sk-SK').replace(/[^a-z0-9]/g, '');
-  if (BLOCKED.some((bad) => flat.includes(bad))) return 'Takúto prezývku sem nedáme. Skús inú.';
-  return null;
 }
 
 /* ── Rebríček ───────────────────────────────────────────────────── */

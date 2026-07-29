@@ -72,7 +72,7 @@ export class VM {
   }
 
   finish() {
-    if (this.world.goalsMet()) {
+    if (this.world.goalsMet(true)) {
       this.status = 'won';
       return [{ type: 'win' }];
     }

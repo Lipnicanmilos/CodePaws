@@ -32,9 +32,9 @@
   </nav>
 
   <div class="topbar-right">
-    <button class="crewchip" id="crewChip" type="button">
-      <span class="crewchip-call" id="crewCall">LABKA 1</span>
-      <span class="crewchip-pts" id="crewPts">0 b</span>
+    <button class="playerchip" id="playerChip" type="button" aria-label="Otvoriť rebríček">
+      <span class="playerchip-nick" id="playerNick">—</span>
+      <span class="playerchip-pts" id="playerPts">0 b</span>
     </button>
     <div class="bones" id="starRow" role="status" aria-label="Získané kosti"></div>
     <label class="modeswitch">
@@ -68,13 +68,13 @@
       <span class="rivet rivet-br" aria-hidden="true"></span>
       <span class="beacon-sweep" aria-hidden="true"></span>
 
-      <p class="plate-label">Naplánuj krok</p>
+      <p class="plate-label" id="plateLabel">Naplánuj krok</p>
       <div class="controls" id="palette"></div>
 
       <div class="lcd" id="statePanel">
         <div class="lcd-cell"><span class="lcd-key">Políčko</span><span class="lcd-val" id="stPos">–</span></div>
         <div class="lcd-cell"><span class="lcd-key">Pozerá</span><span class="lcd-val" id="stDir">–</span></div>
-        <div class="lcd-cell"><span class="lcd-key">Kosti</span><span class="lcd-val" id="stBones">–</span></div>
+        <div class="lcd-cell"><span class="lcd-key" id="stThirdKey">Kosti</span><span class="lcd-val" id="stBones">–</span></div>
       </div>
 
       <div class="transport">
@@ -132,33 +132,25 @@
   </div>
 </dialog>
 
-<dialog class="crewbox" id="crewBox">
-  <h2>Hráči</h2>
-  <p class="crewbox-note">
-    Klikni na volací znak a hráš zaňho. Každý má svoj vlastný postup a ten ostáva
-    len v tomto prehliadači. Do rebríčka sa zapisuje výhradne prezývka a body,
-    a len keď to sám urobíš.
+<dialog class="startbox" id="startBox">
+  <span class="startbox-mark" aria-hidden="true">
+    <img src="assets/icon.svg" alt="" width="64" height="64">
+  </span>
+  <h2 id="startTitle">Ako ti máme hovoriť?</h2>
+  <p class="startbox-note">
+    Vymysli si prezývku — nie skutočné meno. Bude ťa sprevádzať celou hrou
+    a keď raz budeš chcieť, zapíšeš sa pod ňou do rebríčka.
   </p>
-  <div class="crew-scroll">
-    <table class="crew">
-      <thead>
-        <tr>
-          <th>Volací znak</th><th>Hodnosť</th>
-          <th class="num">Body</th><th class="num">Misie</th>
-          <th><span class="sr-only">Zmazať</span></th>
-        </tr>
-      </thead>
-      <tbody id="crewBody"></tbody>
-    </table>
-  </div>
-  <form class="crewadd" id="crewAdd">
-    <input id="crewInput" maxlength="10" placeholder="Nový volací znak" aria-label="Nový volací znak">
-    <button class="key key-steel" type="submit">Pridať</button>
+  <form class="startform" id="startForm">
+    <input id="startNick" maxlength="10" autocomplete="off" placeholder="napríklad LABKA"
+           aria-label="Tvoja prezývka" required>
+    <p class="startpreview">Budeš <strong id="startPreview">—</strong></p>
+    <p class="startstatus" id="startStatus" role="status"></p>
+    <div class="winbtns">
+      <button class="key key-steel key-wide" id="startSkip" type="button" hidden>Späť</button>
+      <button class="key key-run key-wide" type="submit">Poď hrať</button>
+    </div>
   </form>
-  <div class="winbtns">
-    <button class="key key-wide" id="hallOpen" type="button">Rebríček</button>
-    <button class="key key-steel key-wide" id="crewClose" type="button">Späť do hry</button>
-  </div>
 </dialog>
 
 <dialog class="hallbox" id="hallBox">
@@ -185,6 +177,7 @@
     tak sem prosím nepíš svoje skutočné meno.
   </p>
   <div class="winbtns">
+    <button class="key key-steel key-wide" id="hallRename" type="button">Zmeniť prezývku</button>
     <button class="key key-steel key-wide" id="hallClose" type="button">Zavrieť</button>
   </div>
 </dialog>

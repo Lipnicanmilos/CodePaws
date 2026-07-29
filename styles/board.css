@@ -143,6 +143,52 @@
 @keyframes wag { from { transform: rotate(-17deg); } to { transform: rotate(17deg); } }
 .actor.is-happy .dog-tail { animation-duration: 180ms; }
 
+/* ── Predpoveď ───────────────────────────────────────────────── */
+
+/* Dlaždice sa dajú klikať len v leveli typu „Predpoveď“ — a nikdy stena. */
+.board.is-guessing .tile:not([data-tile="wall"]) { cursor: pointer; }
+.board.is-guessing .tile:not([data-tile="wall"]):hover {
+  background: linear-gradient(180deg, #f7fbfd 0%, #e6f0f5 100%);
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--beacon) 55%, transparent);
+}
+
+/* Tip dieťaťa — jantárový, prerušovaný: je to zatiaľ len návrh. */
+.tile.is-guess {
+  box-shadow: inset 0 0 0 3px var(--beacon);
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--beacon) 26%, #eef4f7) 0%,
+    color-mix(in srgb, var(--beacon) 16%, #dde8ee) 100%);
+}
+.guessmark {
+  position: absolute; inset: 24%; display: grid; place-items: center;
+  pointer-events: none; color: var(--beacon-deep);
+  transform: translateZ(6px);
+  animation: guess-in .28s cubic-bezier(.2, 1.5, .4, 1) both;
+}
+.guessmark svg { width: 100%; height: 100%; }
+@keyframes guess-in { from { opacity: 0; transform: translateZ(6px) scale(.4); } }
+
+/* Kde pes naozaj zastal. Plný mätový prstenec — toto je fakt, nie návrh. */
+.tile.is-answer { box-shadow: inset 0 0 0 3px var(--mint); }
+.tile.is-answer::before {
+  content: ""; position: absolute; inset: -3px; border-radius: 8px;
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--mint) 70%, transparent);
+  animation: answer-ping 1.4s ease-out 3;
+}
+@keyframes answer-ping {
+  from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--mint) 70%, transparent); }
+  to   { box-shadow: 0 0 0 14px transparent; }
+}
+
+/* Tip aj odpoveď na jednej dlaždici = trafil. Nech je to vidno na prvý pohľad. */
+.tile.is-guess.is-answer {
+  box-shadow: inset 0 0 0 3px var(--mint), 0 0 18px color-mix(in srgb, var(--mint) 60%, transparent);
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--mint) 34%, #eef4f7) 0%,
+    color-mix(in srgb, var(--mint) 22%, #dde8ee) 100%);
+}
+.tile.is-guess.is-answer .guessmark { color: #0b6a4f; }
+
 /* ── Stavy dosky ─────────────────────────────────────────────── */
 
 .board.is-won  { box-shadow: 0 3px 0 #7f9dab, 0 10px 0 #6b8896, 0 22px 36px rgba(13,34,44,.35),
@@ -167,4 +213,5 @@
 @media (prefers-reduced-motion: reduce) {
   .board { transform: rotateX(15deg); }
   .dog-tail, .item[data-item="bone"], .item[data-item="fire"] { animation: none; }
+  .guessmark, .tile.is-answer::before { animation: none; }
 }

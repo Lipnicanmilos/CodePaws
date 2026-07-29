@@ -10,6 +10,18 @@ export class BoardView {
     this.el = el;
     this.itemEls = new Map();
     this.actorEl = null;
+    this.guess = null;
+    this.answer = null;
+    this.onPick = null;
+
+    // Klikanie do bludiska funguje len v leveloch typu „Predpoveď“.
+    // Do steny sa pes zastaviť nemôže, tak sa na ňu ani nedá tipovať.
+    this.el.addEventListener('click', (e) => {
+      if (!this.onPick) return;
+      const tile = e.target.closest('.tile');
+      if (!tile || tile.dataset.tile === 'wall') return;
+      this.onPick(Number(tile.dataset.x), Number(tile.dataset.y));
+    });
   }
 
   render(world) {
@@ -25,6 +37,8 @@ export class BoardView {
         const tile = document.createElement('div');
         tile.className = 'tile';
         tile.dataset.tile = world.tileAt(x, y);
+        tile.dataset.x = x;
+        tile.dataset.y = y;
         // Uhlopriečny index → dlaždice sa pri načítaní vynoria vo vlne.
         tile.style.setProperty('--i', x + y);
         if (world.tileAt(x, y) === 'goal') tile.innerHTML = ICONS.house();
@@ -51,6 +65,46 @@ export class BoardView {
     this.actorEl = actorEl;
     this.bodyEl = actorEl.querySelector('.actor-body');
     this.place(actor);
+    this.paintMarks();   // dlaždice sú nové, tip aj odpoveď treba nakresliť znova
+  }
+
+  /* ── Predpoveď ─────────────────────────────────────────────────
+     Tip aj odpoveď žijú tu, nie v Game: doska sa prekresľuje pri každom
+     resete sveta a značky musia prežiť. */
+
+  /** `onPick = null` režim vypne. Zapnutie zároveň zmaže starý tip. */
+  setGuessMode(onPick) {
+    this.onPick = onPick;
+    this.guess = null;
+    this.answer = null;
+    this.el.classList.toggle('is-guessing', Boolean(onPick));
+    this.paintMarks();
+  }
+
+  setGuess(x, y) { this.guess = { x, y }; this.paintMarks(); }
+
+  /** Kde pes naozaj zastal — ukáže sa až keď program dobehne. */
+  setAnswer(x, y) { this.answer = { x, y }; this.paintMarks(); }
+
+  paintMarks() {
+    for (const mark of this.el.querySelectorAll('.guessmark')) mark.remove();
+
+    for (const tile of this.el.querySelectorAll('.tile')) {
+      const x = Number(tile.dataset.x);
+      const y = Number(tile.dataset.y);
+      const guessed = this.guess?.x === x && this.guess?.y === y;
+      const answered = this.answer?.x === x && this.answer?.y === y;
+
+      tile.classList.toggle('is-guess', guessed);
+      tile.classList.toggle('is-answer', answered);
+
+      if (guessed) {
+        const mark = document.createElement('span');
+        mark.className = 'guessmark';
+        mark.innerHTML = ICONS.paw();
+        tile.append(mark);
+      }
+    }
   }
 
   place(actor) {
@@ -60,6 +114,13 @@ export class BoardView {
   }
 
   setSpeed(ms) { this.el.style.setProperty('--tick', `${Math.round(ms * 0.8)}ms`); }
+
+  /** Pri spustení na mobile — nech je vidno psíka na trati, nie tabuľku pod ňou.
+      Na širokej obrazovke sú doska aj tabuľka viditeľné naraz, tam sa nescrolluje. */
+  reveal() {
+    if (!matchMedia('(max-width: 760px)').matches) return;
+    this.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
 
   setRunning(on) { this.actorEl?.classList.toggle('is-idle', !on); }
 

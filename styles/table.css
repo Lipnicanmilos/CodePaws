@@ -81,6 +81,23 @@
 
 body.is-running .rowacts button { pointer-events: none; opacity: .35; }
 
+/* Zamknutý plán (typ „Predpoveď“) — dieťa ho číta, nie prehadzuje. */
+.program tbody.is-locked { background: repeating-linear-gradient(
+  135deg, transparent 0 9px, color-mix(in srgb, var(--line) 45%, transparent) 9px 10px); }
+.program tbody.is-locked td { background: var(--surface); }
+.rowlock {
+  display: block; margin-left: auto;
+  width: 1.05rem; height: 1.35rem;
+  border: 2px solid var(--muted); border-radius: 3px;
+  opacity: .5; position: relative;
+}
+.rowlock::before {
+  content: ""; position: absolute; left: 50%; bottom: 100%;
+  width: .62rem; height: .42rem; translate: -50% 0;
+  border: 2px solid var(--muted); border-bottom: 0;
+  border-radius: 5px 5px 0 0;
+}
+
 .emptyhint {
   padding: 1.7rem 1rem; text-align: center; color: var(--muted);
   font-size: var(--step--1); max-width: 30ch; margin-inline: auto;

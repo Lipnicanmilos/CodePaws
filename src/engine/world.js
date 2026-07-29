@@ -61,10 +61,13 @@ export class World {
     return [actor.x + dx, actor.y + dy];
   }
 
-  goalsMet() {
+  /** `atEnd` znamená, že program dobehol. Cieľ typu `predict` sa dá vyhodnotiť
+      až vtedy — kým pes ide, cez políčko odpovede môže len prechádzať. */
+  goalsMet(atEnd = false) {
     return (this.level.goals ?? []).every((goal) => {
       const actor = this.actors.find((a) => a.id === goal.actor) ?? this.actor;
       if (goal.type === 'reach') return this.tileAt(actor.x, actor.y) === (goal.tile ?? 'goal');
+      if (goal.type === 'predict') return atEnd && actor.x === goal.answer.x && actor.y === goal.answer.y;
       return false;
     });
   }

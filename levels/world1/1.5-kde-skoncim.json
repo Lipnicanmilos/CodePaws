@@ -43,7 +43,7 @@
   "limits": { "steps": 100 },
   "stars": [
     { "id": "finish" },
-    { "id": "firstTry" }
+    { "id": "predict" }
   ],
   "hint": "Prejdi si program prstom po mriežke, riadok po riadku. Pomôže aj tlačidlo ⏭ Krok — ale najprv skús hádať!"
 }

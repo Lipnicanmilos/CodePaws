@@ -58,4 +58,13 @@ export class PaletteView {
     // `Použi` nie je pohyb, tak nesedí do kríža — dostáva vlastnú širokú klávesu.
     if (commands.includes('use')) this.el.append(this.key('use', 'key-use'));
   }
+
+  /** Level, v ktorom sa plán neskladá (typ `predict`) — namiesto kláves pokyn.
+      Prázdny pult by vyzeral ako pokazená hra. */
+  note(text) {
+    const p = document.createElement('p');
+    p.className = 'padnote';
+    p.textContent = text;
+    this.el.replaceChildren(p);
+  }
 }

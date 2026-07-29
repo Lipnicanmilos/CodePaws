@@ -2,13 +2,13 @@
 
 import { World, DIR_LABEL } from '../engine/world.js';
 import { VM, DEFAULT_STEP_LIMIT } from '../engine/vm.js';
-import { newRow, countRows, cloneRows, moveRow, rowLimitFor } from '../engine/program.js';
+import { newRow, countRows, cloneRows, moveRow, rowLimitFor, expandRows } from '../engine/program.js';
 import { paletteFor } from './commands.js';
 import { BoardView } from '../ui/board.js';
 import { TableView } from '../ui/table.js';
 import { PaletteView } from '../ui/palette.js';
-import { CrewView } from '../ui/crew.js';
 import { HallView } from '../ui/hall.js';
+import { WelcomeView } from '../ui/welcome.js';
 import { ICONS } from '../ui/icons.js';
 import * as progress from './progress.js';
 
@@ -25,8 +25,9 @@ const MESSAGES = {
 };
 
 class Game {
-  constructor(levels) {
+  constructor(levels, welcome) {
     this.levels = levels;
+    this.welcome = welcome;
     this.index = 0;
     this.mode = progress.getSetting('mode') ?? 'absolute';
     this.speed = progress.getSetting('speed') ?? 330;
@@ -42,12 +43,8 @@ class Game {
       onMove: (i, d) => this.editRows(moveRow(this.rows, i, d)),
     });
 
-    this.crew = new CrewView(() => {
-      this.buildPicker();
-      this.loadLevel(this.index);
-    });
-    this.crew.renderChip();
-    this.hall = new HallView();
+    this.hall = new HallView(() => this.renderChip());
+    this.renderChip();
 
     this.bindUI();
     this.buildPicker();
@@ -55,6 +52,19 @@ class Game {
   }
 
   get level() { return this.levels[this.index]; }
+
+  /** Level typu „Predpoveď“ — plán je hotový a zamknutý, dieťa najprv ukáže,
+      kde podľa neho pes zastane, a až potom sa program spustí. */
+  get isPredict() { return this.level.type === 'predict'; }
+
+  /** Ktoré ocenenia sa v tomto leveli vôbec dajú získať. Riadi aj počet
+      kostičiek — dve z dvoch má vyzerať ako plný počet, nie ako 2/3. */
+  levelAwardIds() {
+    return this.isPredict ? ['finish', 'predict'] : ['finish', 'rows', 'bones', 'clean'];
+  }
+
+  /** `clean` je bonus navyše, kostičku za seba nedáva. */
+  boneIds() { return this.levelAwardIds().filter((id) => id !== 'clean'); }
 
   // ── UI ────────────────────────────────────────────────────────
 
@@ -85,10 +95,19 @@ class Game {
       });
     }
 
+    // Rebríček je jediné okno navyše — odznak hráča vedie rovno doň.
+    $('playerChip').addEventListener('click', () => this.hall.open());
+
     // Zápis do rebríčka sa ponúka presne vtedy, keď body pribudnú —
     // nie schovaný o dve okná ďalej.
     $('hallFromWin').addEventListener('click', () => {
       $('winBox').close();
+      this.hall.open();
+    });
+
+    $('hallRename').addEventListener('click', async () => {
+      $('hallBox').close();
+      if (await this.welcome.ask({ change: true })) this.renderChip();
       this.hall.open();
     });
 
@@ -120,6 +139,9 @@ class Game {
     this.rows = [];
     this.world = new World(this.level);
     this.vm = null;
+    this.guess = null;
+    this.guessRight = false;
+    this.guessTries = 0;
 
     $('levelPicker').value = String(index);
     $('prevLevel').disabled = index === 0;
@@ -128,26 +150,67 @@ class Game {
     $('levelStory').textContent = this.level.story ?? '';
     $('hintBar').hidden = true;
 
+    $('plateLabel').textContent = this.isPredict ? 'Kde zastane?' : 'Naplánuj krok';
+
     this.board.render(this.world);
     this.board.setSpeed(this.speed);
-    this.palette.render(paletteFor(this.level, this.mode));
     this.renderStars(progress.awardsFor(this.level.id));
-    this.editRows([]);
+
+    if (this.isPredict) this.startPredict();
+    else {
+      this.board.setGuessMode(null);
+      this.palette.render(paletteFor(this.level, this.mode));
+      this.editRows([]);
+    }
   }
+
+  /** Rozbehne level typu „Predpoveď“: plán z levelu, zamknutá tabuľka,
+      pult bez kláves a doska, do ktorej sa dá klikať. */
+  startPredict() {
+    this.palette.note('Plán je hotový. Klikni do bludiska na políčko, kde podľa teba pes zastane.');
+    this.board.setGuessMode((x, y) => this.pickGuess(x, y));
+
+    this.rows = expandRows(this.level.preset?.[this.mode] ?? []);
+    this.resetWorld();
+    this.renderTable();
+    this.updateRowCount();
+    $('btnReset').disabled = true;
+    this.updateTransport();
+  }
+
+  pickGuess(x, y) {
+    if (this.isRunning || this.vm) return;      // po spustení sa tip už nemení
+    const first = this.guess === null;
+    this.guess = { x, y };
+    this.board.setGuess(x, y);
+    this.updateState();
+    this.updateTransport();
+    if (first) this.toast('Tip zapísaný. Teraz stlač ▶ Štart a uvidíš.');
+  }
+
+  /** Bez tipu sa program nedá spustiť — inak by si dieťa odpoveď len pozrelo. */
+  updateTransport() {
+    const waiting = this.isPredict && !this.guess;
+    $('btnRun').disabled = waiting;
+    $('btnStep').disabled = waiting;
+  }
+
+  renderTable() { this.table.render(this.rows, { locked: this.isPredict }); }
 
   // ── Plán ──────────────────────────────────────────────────────
 
   addRow(cmd) {
-    if (this.isRunning) return;
+    if (this.isRunning || this.isPredict) return;
     this.editRows([...this.rows, newRow(cmd)]);
   }
 
   editRows(rows) {
     this.rows = rows;
     this.resetWorld();
-    this.table.render(this.rows);
+    this.renderTable();
     this.updateRowCount();
     this.updateState();
+    this.updateTransport();
     $('btnReset').disabled = this.rows.length === 0;
   }
 
@@ -155,7 +218,7 @@ class Game {
       Vrátiť psíka na štart netreba riešiť zvlášť — ▶ Štart aj úprava
       ktoréhokoľvek riadku svet resetujú samy. */
   clearPlan() {
-    if (!this.rows.length) return;
+    if (!this.rows.length || this.isPredict) return;
     this.stopTimer();
     this.editRows([]);
     this.toast('Plán je prázdny. Poskladaj ho nanovo.');
@@ -184,15 +247,19 @@ class Game {
 
   resetRun() {
     this.resetWorld();
-    this.table.render(this.rows);
+    // Nový pokus v Predpovedi znamená aj nový tip — starý je už prezradený.
+    if (this.isPredict) this.board.setGuessMode((x, y) => this.pickGuess(x, y));
+    this.guess = null;
+    this.renderTable();
     document.body.classList.remove('is-running');
     this.updateState();
+    this.updateTransport();
   }
 
   ensureVM() {
     if (this.vm && !this.vm.done) return this.vm;
     this.resetWorld();
-    this.table.render(this.rows);
+    this.renderTable();
     this.vm = new VM(this.world, cloneRows(this.rows), {
       stepLimit: this.level.limits?.steps ?? DEFAULT_STEP_LIMIT,
     });
@@ -200,19 +267,33 @@ class Game {
   }
 
   run() {
-    if (!this.rows.length) return this.toast('Najprv pridaj aspoň jeden príkaz.', true);
+    if (!this.canStart()) return;
     if (this.isRunning) { this.stopTimer(); return; }
     const vm = this.ensureVM();
     if (vm.done) return;
     document.body.classList.add('is-running');
+    this.board.reveal();
     this.board.setRunning(true);
     $('btnRun').innerHTML = '<span class="key-glyph" aria-hidden="true">❚❚</span><span class="key-word">Pauza</span>';
     this.timer = setInterval(() => this.tick(), this.speed);
     this.tick();
   }
 
+  /** Spoločná vstupná kontrola pre ▶ Štart aj ⏭ Krok. */
+  canStart() {
+    if (this.isPredict && !this.guess) {
+      this.toast('Najprv klikni na políčko, kde podľa teba pes zastane.', true);
+      return false;
+    }
+    if (!this.rows.length) {
+      this.toast('Najprv pridaj aspoň jeden príkaz.', true);
+      return false;
+    }
+    return true;
+  }
+
   singleStep() {
-    if (!this.rows.length) return this.toast('Najprv pridaj aspoň jeden príkaz.', true);
+    if (!this.canStart()) return;
     this.stopTimer();
     const vm = this.ensureVM();
     if (!vm.done) this.tick();
@@ -267,6 +348,12 @@ class Game {
   /** Ocenenia za práve dokončený level. `clean` je bonus za to, že plán
       vyšiel bez jediného nárazu — teda za premyslenie pred spustením. */
   earnedAwards() {
+    // V Predpovedi je plán daný, takže „krátky plán“ ani „bez nárazu“ nie sú
+    // zásluha dieťaťa. Ráta sa jediné: trafil tip, alebo nie.
+    if (this.isPredict) {
+      return this.guessRight && this.guessTries === 1 ? ['finish', 'predict'] : ['finish'];
+    }
+
     const awards = ['finish'];
     const limit = rowLimitFor(this.level.stars?.find((s) => s.id === 'rows'), this.mode);
     if (limit && countRows(this.rows) <= limit) awards.push('rows');
@@ -279,28 +366,36 @@ class Game {
     document.body.classList.add('is-celebrating');
     setTimeout(() => document.body.classList.remove('is-celebrating'), 2400);
 
+    if (this.isPredict) this.judgeGuess();
+
     const before = progress.totals().points;
     const awards = this.earnedAwards();
     const all = progress.recordResult(this.level.id, awards);
     const after = progress.totals().points;
 
     this.renderStars(all);
-    this.crew.renderChip();
+    this.renderChip();
     this.buildPicker();
     $('levelPicker').value = String(this.index);
 
     const limit = rowLimitFor(this.level.stars?.find((s) => s.id === 'rows'), this.mode);
     const text = {
-      finish: 'Misia splnená',
+      finish: this.isPredict ? 'Program dobehol' : 'Misia splnená',
+      predict: 'Trafil si políčko hneď prvým tipom',
       rows: limit ? `Plán má najviac ${limit} riadkov` : 'Krátky plán',
       bones: `Pozbierané všetky kosti (${this.world.totalBones})`,
       clean: 'Bez jediného nárazu',
     };
 
-    const bones = all.filter((a) => a !== 'clean').length;
-    $('winTitle').textContent = awards.length === 4 ? 'Bezchybná misia!' : 'Misia splnená!';
-    $('winStars').innerHTML = boneRow(bones);
+    const ids = this.levelAwardIds();
+    const boneIds = this.boneIds();
+    const bones = all.filter((a) => boneIds.includes(a)).length;
+
+    $('winTitle').textContent = this.predictTitle() ??
+      (awards.length === 4 ? 'Bezchybná misia!' : 'Misia splnená!');
+    $('winStars').innerHTML = boneRow(bones, boneIds.length);
     $('winList').innerHTML = progress.AWARDS
+      .filter(({ id }) => ids.includes(id))
       .map(({ id, points }) =>
         `<li class="${awards.includes(id) ? 'got' : ''}">${text[id]}<span class="pts">+${points}</span></li>`)
       .join('');
@@ -317,8 +412,31 @@ class Game {
     setTimeout(() => $('winBox').showModal(), 900);
   }
 
+  /** Porovná tip s tým, kde pes naozaj zastal, a ukáže to na doske. */
+  judgeGuess() {
+    const a = this.world.actor;
+    this.guessTries += 1;
+    this.guessRight = this.guess?.x === a.x && this.guess?.y === a.y;
+    this.board.setAnswer(a.x, a.y);
+  }
+
+  predictTitle() {
+    if (!this.isPredict) return null;
+    if (!this.guessRight) return 'Zastal inde!';
+    return this.guessTries === 1 ? 'Jasnovidec!' : 'Trafil si to!';
+  }
+
+  /** Odznak hráča v hlavičke — prezývka, body a hodnosť v bublinke. */
+  renderChip() {
+    const { points } = progress.totals();
+    $('playerNick').textContent = progress.getNick() ?? '—';
+    $('playerPts').textContent = `${points} b`;
+    $('playerChip').title = `${progress.rankFor(points).name} · ${points} bodov · otvoriť rebríček`;
+  }
+
   renderStars(awards) {
-    $('starRow').innerHTML = boneRow(awards.filter((a) => a !== 'clean').length);
+    const ids = this.boneIds();
+    $('starRow').innerHTML = boneRow(awards.filter((a) => ids.includes(a)).length, ids.length);
   }
 
   // ── Panel stavu ───────────────────────────────────────────────
@@ -327,7 +445,16 @@ class Game {
     const a = this.world.actor;
     $('stPos').textContent = `${a.x + 1}·${a.y + 1}`;
     $('stDir').textContent = `${DIR_GLYPH[a.dir]} ${DIR_LABEL[a.dir]}`;
-    $('stBones').textContent = `${this.world.bonesCollected()}/${this.world.totalBones}`;
+
+    // V Predpovedi nie sú kosti — tretia bunka namiesto nich ukazuje tip,
+    // aby displej neukazoval nezmyselné 0/0.
+    if (this.isPredict) {
+      $('stThirdKey').textContent = 'Tvoj tip';
+      $('stBones').textContent = this.guess ? `${this.guess.x + 1}·${this.guess.y + 1}` : '–';
+    } else {
+      $('stThirdKey').textContent = 'Kosti';
+      $('stBones').textContent = `${this.world.bonesCollected()}/${this.world.totalBones}`;
+    }
   }
 
   toast(message, bad = false) {
@@ -340,8 +467,9 @@ class Game {
   }
 }
 
-const boneRow = (got) =>
-  [0, 1, 2].map((i) => `<span class="bone ${i < got ? 'is-on' : ''}">${ICONS.bone()}</span>`).join('');
+const boneRow = (got, total = 3) =>
+  Array.from({ length: total },
+    (_, i) => `<span class="bone ${i < got ? 'is-on' : ''}">${ICONS.bone()}</span>`).join('');
 
 // ── Štart ───────────────────────────────────────────────────────
 
@@ -350,7 +478,14 @@ async function boot() {
   const levels = await Promise.all(
     manifest.levels.map(async (path) => (await fetch(`levels/${path}`)).json())
   );
-  new Game(levels);
+
+  // Najprv sa dieťa predstaví, až potom sa postaví hra. Bez prezývky by sa
+  // nemalo čo zapísať do rebríčka a odznak v hlavičke by bol prázdny.
+  const welcome = new WelcomeView();
+  welcome.bindPreview();
+  if (!progress.hasNick()) await welcome.ask();
+
+  new Game(levels, welcome);
 }
 
 boot().catch((err) => {

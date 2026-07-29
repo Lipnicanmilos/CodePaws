@@ -136,20 +136,20 @@ button { cursor: pointer; }
 
 .topbar-right { display: flex; align-items: center; gap: var(--space-2); }
 
-/* Odznak posádky — volací znak a body, klik otvorí zoznam hráčov. */
-.crewchip {
+/* Odznak hráča — prezývka a body, klik otvorí rebríček. */
+.playerchip {
   display: flex; align-items: center; gap: .5rem;
   padding: .3rem .5rem .3rem .7rem;
   border: 1px solid rgba(255, 255, 255, .2); border-radius: 999px;
   background: rgba(255, 255, 255, .08); color: #eaf4f8;
   transition: background .15s ease, transform .12s ease;
 }
-.crewchip:hover { background: rgba(255, 255, 255, .18); transform: translateY(-1px); }
-.crewchip-call {
+.playerchip:hover { background: rgba(255, 255, 255, .18); transform: translateY(-1px); }
+.playerchip-nick {
   font-family: var(--font-display); font-weight: 800; font-size: var(--step--1);
   letter-spacing: -.01em; max-width: 8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.crewchip-pts {
+.playerchip-pts {
   font-family: var(--font-data); font-size: .78rem;
   background: var(--beacon); color: #4a2f00;
   border-radius: 999px; padding: .1rem .5rem;
@@ -265,58 +265,38 @@ button { cursor: pointer; }
 
 .winbtns { display: flex; gap: .5rem; justify-content: center; flex-wrap: wrap; }
 
-/* ── Hráči ───────────────────────────────────────────── */
+/* ── Privítanie ──────────────────────────────────────────────
+   Prvé, čo dieťa z hry uvidí. Preto značka hore a jedno jediné pole:
+   nič na vyplňovanie, nič na zavretie. */
 
-.crewbox {
-  border: 0; border-radius: var(--radius); padding: 1.6rem;
+.startbox {
+  border: 0; border-radius: var(--radius); padding: 2rem 1.7rem 1.6rem;
   background: var(--surface); color: var(--text); box-shadow: var(--shadow);
-  max-width: min(94vw, 34rem); width: 100%;
+  max-width: min(94vw, 27rem); width: 100%; text-align: center;
 }
-.crewbox::backdrop { background: rgba(13, 34, 44, .55); backdrop-filter: blur(4px); }
-.crewbox h2 { font-size: var(--step-2); }
-.crewbox-note { color: var(--muted); font-size: var(--step--1); margin: .3rem 0 var(--space-2); }
+.startbox::backdrop { background: rgba(13, 34, 44, .78); backdrop-filter: blur(6px); }
+.startbox h2 { font-size: var(--step-2); }
+.startbox-note {
+  color: var(--muted); font-size: var(--step--1); margin: .4rem auto var(--space-3);
+  max-width: 32ch; line-height: 1.5;
+}
 
-.crew-scroll { overflow: auto; max-height: 46vh; border: 1px solid var(--line); border-radius: var(--radius-sm); }
-.crew { width: 100%; border-collapse: collapse; }
-.crew th {
-  position: sticky; top: 0; background: var(--surface-2); text-align: left;
-  font-family: var(--font-display); font-weight: 600;
-  font-size: .62rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted);
-  padding: .45rem .6rem; border-bottom: 1px solid var(--line);
-}
-.crew td { padding: .3rem .6rem; border-bottom: 1px solid var(--line); }
-.crew tr:last-child td { border-bottom: 0; }
-.crew .num { text-align: right; font-family: var(--font-data); font-size: .85rem; }
-.crew th.num { text-align: right; }
-.crew tr.is-active { background: color-mix(in srgb, var(--beacon) 15%, transparent); }
-.crew-rank { font-size: var(--step--1); color: var(--muted); }
+.startbox-mark { display: block; margin-bottom: .6rem; animation: pop .5s cubic-bezier(.3, 1.6, .5, 1); }
+.startbox-mark img { display: inline-block; }
 
-.crew-pick {
-  border: 0; background: none; padding: .2rem 0; color: var(--text);
-  font-family: var(--font-display); font-weight: 800; font-size: var(--step-0);
-  text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 3px;
+.startform input {
+  width: 100%; border: 2px solid var(--line-strong); border-radius: var(--radius-sm);
+  padding: .7rem .9rem; background: var(--surface); color: var(--text);
+  font-family: var(--font-display); font-weight: 800; font-size: var(--step-1);
+  text-align: center; letter-spacing: .04em;
 }
-.crew-pick:hover { text-decoration-color: var(--beacon-deep); }
-.crew-rename {
-  width: 100%; max-width: 9rem; border: 1px solid var(--line-strong); border-radius: var(--radius-xs);
-  padding: .2rem .4rem; background: var(--surface);
-  font-family: var(--font-display); font-weight: 800; font-size: var(--step-0);
-}
-.crew-del {
-  width: 1.6rem; height: 1.6rem; border-radius: var(--radius-xs);
-  border: 1px solid transparent; background: transparent; color: var(--muted);
-  display: grid; place-items: center; font-size: .85rem;
-}
-.crew-del:hover:not(:disabled) { background: color-mix(in srgb, var(--siren) 16%, transparent); color: var(--siren-deep); }
-.crew-del:disabled { opacity: .25; cursor: default; }
+.startform input:focus-visible { outline: 3px solid var(--beacon); outline-offset: 2px; }
 
-.crewadd { display: flex; gap: .5rem; margin: var(--space-2) 0; }
-.crewadd input {
-  flex: 1; min-width: 0; border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
-  padding: .55rem .8rem; background: var(--surface);
-  font-family: var(--font-display); font-weight: 600;
+.startpreview { margin: .55rem 0 0; color: var(--muted); font-size: var(--step--1); }
+.startpreview strong {
+  font-family: var(--font-display); color: var(--text); letter-spacing: .04em;
 }
-.crewadd .key { flex: none; padding: .55rem 1rem; }
+.startstatus { min-height: 1.2rem; margin: .35rem 0 var(--space-2); font-size: var(--step--1); color: var(--siren-deep); }
 
 /* ── Rebríček ──────────────────────────────────────────────── */
 

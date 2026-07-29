@@ -2,16 +2,17 @@
 
 import * as hall from '../game/leaderboard.js';
 import * as progress from '../game/progress.js';
+import { cleanNick, nickProblem } from '../game/nick.js';
 
 export class HallView {
-  constructor() {
+  constructor(onNickChange = () => {}) {
+    this.onNickChange = onNickChange;
     this.box = document.getElementById('hallBox');
     this.body = document.getElementById('hallBody');
     this.note = document.getElementById('hallNote');
     this.status = document.getElementById('hallStatus');
     this.input = document.getElementById('hallNick');
 
-    document.getElementById('hallOpen').addEventListener('click', () => this.open());
     document.getElementById('hallClose').addEventListener('click', () => this.box.close());
     document.getElementById('hallForm').addEventListener('submit', (e) => {
       e.preventDefault();
@@ -20,11 +21,10 @@ export class HallView {
   }
 
   async open() {
-    const profile = progress.activeProfile();
-    const { points, missions } = progress.totals(profile);
+    const { points, missions } = progress.totals();
     this.pending = { points, missions };
 
-    this.input.value = hall.cleanNick(profile.callsign);
+    this.input.value = cleanNick(progress.getNick() ?? '');
     this.note.textContent = hall.isGlobal()
       ? 'Rebríček je spoločný pre všetkých, čo hru hrajú.'
       : 'Rebríček je zatiaľ len na tomto zariadení.';
@@ -44,7 +44,7 @@ export class HallView {
   }
 
   async send() {
-    const problem = hall.nickProblem(this.input.value);
+    const problem = nickProblem(this.input.value);
     if (problem) return this.say(problem, true);
 
     const button = document.getElementById('hallSend');
@@ -52,7 +52,10 @@ export class HallView {
     this.say('Zapisujem…');
     try {
       const entries = await hall.submit({ nick: this.input.value, ...this.pending });
-      this.lastNick = hall.cleanNick(this.input.value);
+      this.lastNick = cleanNick(this.input.value);
+      // Prezývka v rebríčku a prezývka v hre majú byť tá istá.
+      progress.setNick(this.lastNick);
+      this.onNickChange();
       this.render(entries);
       const place = entries.findIndex((e) => e.nick === this.lastNick);
       this.say(place >= 0

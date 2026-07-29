@@ -24,25 +24,31 @@ export class TableView {
     });
   }
 
-  render(rows) {
+  /** `locked` = plán dal level a dieťa ho nemení (typy `predict` a `debug`).
+      Riadky sa vtedy vykreslia bez akcií, aby sa nedali ani omylom prehádzať. */
+  render(rows, { locked = false } = {}) {
     this.rows = rows;
+    this.locked = locked;
     this.body.replaceChildren();
+    this.body.classList.toggle('is-locked', locked);
     this.empty.hidden = rows.length > 0;
 
     rows.forEach((row, i) => {
       const tr = document.createElement('tr');
       tr.dataset.id = row.id;
 
-      tr.innerHTML = `
-        <td><span class="rownum">${i + 1}</span></td>
-        <td><span class="cmdcell">${iconOf(row.cmd)}<span>${labelOf(row.cmd)}</span></span></td>
-        <td>
-          <span class="rowacts">
+      const acts = locked
+        ? '<span class="rowlock" title="Tento plán sa nemení" aria-hidden="true"></span>'
+        : `<span class="rowacts">
             <button type="button" data-act="up" aria-label="Posunúť vyššie" ${i === 0 ? 'disabled' : ''}>▲</button>
             <button type="button" data-act="down" aria-label="Posunúť nižšie" ${i === rows.length - 1 ? 'disabled' : ''}>▼</button>
             <button type="button" class="del" data-act="del" aria-label="Zmazať riadok">✕</button>
-          </span>
-        </td>`;
+          </span>`;
+
+      tr.innerHTML = `
+        <td><span class="rownum">${i + 1}</span></td>
+        <td><span class="cmdcell">${iconOf(row.cmd)}<span>${labelOf(row.cmd)}</span></span></td>
+        <td>${acts}</td>`;
       this.body.append(tr);
     });
   }
@@ -53,7 +59,20 @@ export class TableView {
       tr.classList.toggle('is-current', tr.dataset.id === rowId);
     }
     const active = this.body.querySelector('tr.is-current');
-    active?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    if (active) this.scrollRowIntoView(active);
+  }
+
+  /** Posúva LEN vnútri tabuľky, nie celou stránkou. `scrollIntoView` by na
+      mobile pri každom kroku stiahol viewport dolu k tabuľke a dieťa by nevidelo
+      psíka na trati. Preto meníme scrollTop kontajnera ručne. */
+  scrollRowIntoView(tr) {
+    const box = this.body.closest('.table-scroll');
+    if (!box) return;
+    const top = tr.offsetTop;
+    const bottom = top + tr.offsetHeight;
+    const pad = 8;
+    if (top < box.scrollTop) box.scrollTop = top - pad;
+    else if (bottom > box.scrollTop + box.clientHeight) box.scrollTop = bottom - box.clientHeight + pad;
   }
 
   markDone(rowId) {
