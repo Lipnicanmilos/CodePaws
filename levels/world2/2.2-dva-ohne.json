@@ -1,0 +1,43 @@
+{
+  "id": "2.2",
+  "title": "Dva ohne",
+  "world": 2,
+  "type": "path",
+  "mode": "any",
+  "story": "Tentokrát horí na dvoch miestach. Hadica sa dá použiť koľkokrát treba — vždy len keď sa Fifo na oheň naozaj pozerá.",
+  "grid": {
+    "legend": { ".": "empty", "#": "wall", "o": "bone", "f": "fire", "g": "goal" },
+    "rows": [
+      "#######",
+      "#.#####",
+      "#.#####",
+      "#f#####",
+      "#o.ofg#",
+      "#######"
+    ]
+  },
+  "actors": [
+    { "id": "a1", "char": "fifo", "x": 1, "y": 1, "dir": "S" }
+  ],
+  "goals": [
+    { "type": "reach", "actor": "a1", "tile": "goal" }
+  ],
+  "palette": ["walk", "use"],
+  "limits": { "steps": 100 },
+  "stars": [
+    { "id": "finish" },
+    { "id": "rows", "max": { "absolute": 9, "relative": 10 } },
+    { "id": "bones", "all": true }
+  ],
+  "hint": "Prvý oheň je pod Fifom, druhý pred ním v spodnej chodbe. K obom sa treba najprv priblížiť na jedno políčko.",
+  "solutions": {
+    "absolute": [
+      { "cmd": "south" }, { "cmd": "use" }, { "cmd": "south", "n": 2 },
+      { "cmd": "east", "n": 2 }, { "cmd": "use" }, { "cmd": "east", "n": 2 }
+    ],
+    "relative": [
+      { "cmd": "move" }, { "cmd": "use" }, { "cmd": "move", "n": 2 },
+      { "cmd": "turnLeft" }, { "cmd": "move", "n": 2 }, { "cmd": "use" }, { "cmd": "move", "n": 2 }
+    ]
+  }
+}

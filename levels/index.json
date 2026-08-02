@@ -6,6 +6,19 @@
     "world1/1.4-kost-navyse.json",
     "world1/1.5-kde-skoncim.json",
     "world1/1.6-zly-riadok.json",
-    "world1/1.7-hori.json"
+    "world1/1.7-klukata-cesta.json",
+    "world1/1.8-krok-za-krokom.json",
+    "world1/1.9-dlha-cesta.json",
+    "world1/1.10-misia-dvor.json",
+    "world2/2.1-hori.json",
+    "world2/2.2-dva-ohne.json",
+    "world2/2.3-kost-za-ohnom.json",
+    "world2/2.4-ohniva-krizovatka.json",
+    "world2/2.5-uhasi-to.json",
+    "world2/2.6-zabudnuta-hadica.json",
+    "world2/2.7-tri-ohne.json",
+    "world2/2.8-obchadzka.json",
+    "world2/2.9-dlhy-zasah.json",
+    "world2/2.10-velky-poziar.json"
   ]
 }

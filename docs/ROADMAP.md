@@ -10,7 +10,7 @@ Cieľ: **jeden level sa dá naozaj prejsť.** Hotové 2026-07-28.
 - [x] `board.js` — vykreslenie mriežky a psa, animácia po políčkach
 - [x] `table.js` — tabuľka riadkov, pridať/zmazať/presunúť riadok, kurzor ▶
 - [x] HUD — ▶ Štart, ⏭ Krok, ✕ Vymazať, tri rýchlosti
-- [x] `levels/world1/*.json` — levely 1.1, 1.2, 1.3, 1.4 a 1.7
+- [x] `levels/world1/*.json` — levely 1.1 – 1.4 a `Horí!` (dnes `2.1`)
 - [x] `tests/index.html` — 57 testov vrátane overenia, že každý level je riešiteľný
 - [x] navyše oproti plánu: oba režimy ovládania, tri kosti, ukladanie postupu,
       panel Stav, tip po druhom neúspechu
@@ -18,26 +18,28 @@ Cieľ: **jeden level sa dá naozaj prejsť.** Hotové 2026-07-28.
 Výstup: dá sa ukázať dieťaťu a sledovať, kde tápa. **Toto je najdôležitejší
 míľnik celého projektu** — návrh sa po ňom bude prekresľovať.
 
-## Etapa 2 · Svet 1 kompletne
-- [ ] typy levelov **Predpoveď** (1.5) a **Oprav chybu** (1.6)
-- [ ] zvyšné levely sveta 1 (1.8 – 1.10) a mapa misií namiesto rozbaľovacieho zoznamu
+## Etapa 2 · Svety 1 a 2 kompletne
+- [x] typy levelov **Predpoveď** (1.5) a **Oprav chybu** (1.6)
+- [x] zvyšné levely sveta 1 (1.7 – 1.10) — Svet 1 je čisto chôdza a kosti
+- [x] Svet 2 (2.1 – 2.10) — hadica `Použi`, vrátane Predpovede (2.5) a Opravy (2.6)
+- [ ] mapa misií namiesto rozbaľovacieho zoznamu
 - [ ] zvuky a oslava v cieli
 - [ ] hlasové čítanie príkazov (`sk-SK`)
 - [ ] mobil/tablet: dotyk, na výšku aj na šírku
 - [ ] fonty self-hostovať (teraz sa ťahajú z Google Fonts → offline zlyhá)
 
-## Etapa 3 · Cykly a podmienky (Svety 2–3)
+## Etapa 3 · Cykly a podmienky (Svety 3–4)
 - [ ] `repeat` s blokom riadkov + odsadenie v tabuľke
 - [ ] limit riadkov a druhá kosť
 - [ ] `if` / `else`, senzory, typ levelu **Zrkadlo**
-- [ ] level 3.7 — náhodné bludisko
+- [ ] level 4.8 — náhodné bludisko
 
-## Etapa 4 · Abstrakcia a stav (Svety 4–6)
+## Etapa 4 · Abstrakcia a stav (Svety 5–7)
 - [ ] `call` + druhá tabuľka „Trik“
 - [ ] debny, tlačidlá, dvere
 - [ ] počítadlo, `while`, ochrana proti zacykleniu s vysvetlením
 
-## Etapa 5 · Súbeh a Staviteľ (Svet 7 + editor)
+## Etapa 5 · Súbeh a Staviteľ (Svet 8 + editor)
 - [ ] dve/tri tabuľky bežiace v jednom takte, `wait`
 - [ ] editor levelov, zdieľanie cez odkaz
 

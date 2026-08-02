@@ -1,0 +1,50 @@
+{
+  "id": "2.5",
+  "title": "Uhasí to?",
+  "world": 2,
+  "type": "predict",
+  "mode": "any",
+  "story": "Plán je hotový a je v ňom aj hadica. Vieš povedať, kde Fifo zastane, keď dobehne až do konca? Klikni na políčko!",
+  "grid": {
+    "legend": { ".": "empty", "#": "wall", "f": "fire" },
+    "rows": [
+      "#######",
+      "#.....#",
+      "#.###.#",
+      "#..f..#",
+      "#######"
+    ]
+  },
+  "actors": [
+    { "id": "a1", "char": "fifo", "x": 1, "y": 1, "dir": "E" }
+  ],
+  "preset": {
+    "locked": true,
+    "absolute": [
+      { "cmd": "east", "n": 4 },
+      { "cmd": "south", "n": 2 },
+      { "cmd": "west", "n": 1 },
+      { "cmd": "use" },
+      { "cmd": "west", "n": 2 }
+    ],
+    "relative": [
+      { "cmd": "move", "n": 4 },
+      { "cmd": "turnRight" },
+      { "cmd": "move", "n": 2 },
+      { "cmd": "turnRight" },
+      { "cmd": "move", "n": 1 },
+      { "cmd": "use" },
+      { "cmd": "move", "n": 2 }
+    ]
+  },
+  "goals": [
+    { "type": "predict", "actor": "a1", "answer": { "x": 2, "y": 3 } }
+  ],
+  "palette": [],
+  "limits": { "steps": 100 },
+  "stars": [
+    { "id": "finish" },
+    { "id": "predict" }
+  ],
+  "hint": "Hadica psa neposunie — len uhasí oheň pred ním. Ten riadok teda nerátaj medzi kroky."
+}

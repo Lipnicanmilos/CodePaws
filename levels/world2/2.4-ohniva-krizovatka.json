@@ -1,0 +1,44 @@
+{
+  "id": "2.4",
+  "title": "Ohnivá križovatka",
+  "world": 2,
+  "type": "path",
+  "mode": "any",
+  "story": "Búdka je za rohom v ľavej chodbe a inak sa k nej dostať nedá — oheň v spodnej chodbe stojí presne v ceste. Bez hadice sa dnes nezaobídeš.",
+  "grid": {
+    "legend": { ".": "empty", "#": "wall", "o": "bone", "f": "fire", "g": "goal" },
+    "rows": [
+      "#######",
+      "#g###.#",
+      "#.###.#",
+      "#o###o#",
+      "#.f...#",
+      "#######"
+    ]
+  },
+  "actors": [
+    { "id": "a1", "char": "fifo", "x": 5, "y": 1, "dir": "S" }
+  ],
+  "goals": [
+    { "type": "reach", "actor": "a1", "tile": "goal" }
+  ],
+  "palette": ["walk", "use"],
+  "limits": { "steps": 120 },
+  "stars": [
+    { "id": "finish" },
+    { "id": "rows", "max": { "absolute": 11, "relative": 13 } },
+    { "id": "bones", "all": true }
+  ],
+  "hint": "Zíď dole pravou chodbou a choď doľava, kým nebude oheň hneď pred Fifom. Vtedy hadica — a potom ďalej doľava a hore.",
+  "solutions": {
+    "absolute": [
+      { "cmd": "south", "n": 3 }, { "cmd": "west", "n": 2 }, { "cmd": "use" },
+      { "cmd": "west", "n": 2 }, { "cmd": "north", "n": 3 }
+    ],
+    "relative": [
+      { "cmd": "move", "n": 3 }, { "cmd": "turnRight" }, { "cmd": "move", "n": 2 },
+      { "cmd": "use" }, { "cmd": "move", "n": 2 },
+      { "cmd": "turnRight" }, { "cmd": "move", "n": 3 }
+    ]
+  }
+}

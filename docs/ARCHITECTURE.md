@@ -41,7 +41,8 @@ src/
   i18n/
     sk.json           # všetky texty (neskôr en.json, de.json)
 levels/
-  world1/*.json
+  world1/*.json      # Dvor — chôdza a kosti (1.1–1.10)
+  world2/*.json      # Požiarny dvor — hadica (2.1–2.10)
 assets/
   sprites/ sounds/
 tests/
@@ -98,7 +99,7 @@ Poznámky:
   v textovom editore.
 - `type: "mirror"` má viacero `variants` so štartovnými pozíciami; program musí
   prejsť **všetky**.
-- Náhodné bludiská (3.7): `"generator": { "kind": "maze", "seed": null }` —
+- Náhodné bludiská (4.8): `"generator": { "kind": "maze", "seed": null }` —
   `seed: null` = pri každom spustení iný, ale replikovateľný pre reklamáciu chyby.
 
 ## 4. Model programu (tabuľka)
@@ -140,7 +141,7 @@ Sada príkazov (rastie podľa `palette` levelu):
 | `push` | 🏗️ Tlač | Rex |
 | `counter` | 🧮 Počítadlo ±1 | Cent |
 | `while` | 🔁 Opakuj kým… | Cent |
-| `wait` | ⏳ Čakaj | Svet 7 |
+| `wait` | ⏳ Čakaj | Svet 8 |
 
 Podmienky (`cond`): `wallAhead`, `boneHere`, `fireAhead`, `doorAhead`,
 `counterLess:n`, `atGoal`.
@@ -149,7 +150,9 @@ Podmienky (`cond`): `wallAhead`, `boneHere`, `fireAhead`, `doorAhead`,
 `use` pôsobí vždy na políčko, na ktoré sa pes práve pozerá. V **absolútnom režime**
 sa ale pes nedá otočiť bez toho, aby sa pohol — pozerá tam, kam naposledy kráčal.
 **Level s ohňom naň preto musí viesť čelne:** posledný krok pred ohňom musí smerovať
-naň. Level `1.7 Horí!` je postavený presne takto a testy to strážia v oboch režimoch.
+naň, a oheň musí mať pred sebou aspoň jedno voľné políčko, na ktorom sa pes zastaví.
+Oheň hneď za zákrutou je neriešiteľný. Takto je postavený **celý Svet 2** (`2.1`–`2.10`)
+a testy to strážia v oboch režimoch.
 (Alternatívou by boli štyri smerové varianty `Použi`, čo by zbytočne nafúklo paletu.)
 
 ## 5. Virtuálny stroj

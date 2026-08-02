@@ -173,7 +173,11 @@ tests/index.html      testy v prehliadači
 
 ### Nový level
 
-Stačí JSON súbor v `levels/world1/` a riadok v `levels/index.json`.
+Stačí JSON súbor v `levels/world<N>/` a riadok v `levels/index.json`.
+
+Pozor pri leveloch s ohňom: v absolútnom režime sa pes otáča iba pohybom, takže
+oheň musí ležať na konci rovného úseku a mať pred sebou voľné políčko, na ktorom
+sa dá zastaviť a namieriť hadicu. Podrobnosti v `docs/ARCHITECTURE.md`.
 
 Ak má level vyplnené `solutions`, testy automaticky overia, že je riešiteľný,
 že limit riadkov sedí na optimálne riešenie a že sa dajú pozbierať všetky kosti.

@@ -1,0 +1,50 @@
+{
+  "id": "2.9",
+  "title": "Dlhý zásah",
+  "world": 2,
+  "type": "path",
+  "mode": "any",
+  "story": "Najdlhší zásah dňa: tri ohne, tri kosti a cesta cez celý dvor hore-dole. Plán bude poriadne dlhý — ale všimni si, že tie isté tri riadky sa opakujú stále dokola.",
+  "grid": {
+    "legend": { ".": "empty", "#": "wall", "o": "bone", "f": "fire", "g": "goal" },
+    "rows": [
+      "########",
+      "#..f.o.#",
+      "######.#",
+      "#.o.f..#",
+      "#.######",
+      "#..f.og#",
+      "########"
+    ]
+  },
+  "actors": [
+    { "id": "a1", "char": "fifo", "x": 1, "y": 1, "dir": "E" }
+  ],
+  "goals": [
+    { "type": "reach", "actor": "a1", "tile": "goal" }
+  ],
+  "palette": ["walk", "use"],
+  "limits": { "steps": 200 },
+  "stars": [
+    { "id": "finish" },
+    { "id": "rows", "max": { "absolute": 22, "relative": 26 } },
+    { "id": "bones", "all": true }
+  ],
+  "hint": "Had ide doprava, dole, doľava, dole a znova doprava. V každej vodorovnej chodbe je presne jeden oheň — vždy jeden krok, hadica, a potom ďalej.",
+  "solutions": {
+    "absolute": [
+      { "cmd": "east" }, { "cmd": "use" }, { "cmd": "east", "n": 4 },
+      { "cmd": "south", "n": 2 },
+      { "cmd": "west" }, { "cmd": "use" }, { "cmd": "west", "n": 4 },
+      { "cmd": "south", "n": 2 },
+      { "cmd": "east" }, { "cmd": "use" }, { "cmd": "east", "n": 4 }
+    ],
+    "relative": [
+      { "cmd": "move" }, { "cmd": "use" }, { "cmd": "move", "n": 4 },
+      { "cmd": "turnRight" }, { "cmd": "move", "n": 2 },
+      { "cmd": "turnRight" }, { "cmd": "move" }, { "cmd": "use" }, { "cmd": "move", "n": 4 },
+      { "cmd": "turnLeft" }, { "cmd": "move", "n": 2 },
+      { "cmd": "turnLeft" }, { "cmd": "move" }, { "cmd": "use" }, { "cmd": "move", "n": 4 }
+    ]
+  }
+}

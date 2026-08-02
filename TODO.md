@@ -83,8 +83,9 @@ nezmyslu, ktorú hraním nedosiahneš.
 - [ ] **Konflikt dvoch design skillov** — `modern-web-design` a `frontend-design`
       sa oba spustia na „sprav peknú stránku“. Ak si začnú protirečiť, zúžiť
       `description:` jedného z nich.
-- [x] **Číslovanie levelov má dieru** — vyriešené: 1.1–1.7 sú kompletné,
-      chýbajú už len 1.8–1.10.
+- [x] **Číslovanie levelov má dieru** — vyriešené: Svet 1 (1.1–1.10) aj Svet 2
+      (2.1–2.10) sú kompletné. Pôvodný level `1.7 Horí!` sa presunul na `2.1`,
+      aby Svet 1 ostal čisto o chôdzi a kostiach a hasenie dostalo vlastný svet.
 - [ ] Skontrolovať kontrast a ovládanie klávesnicou naprieč celou hrou
 - [ ] Otestovať na skutočnom tablete (nielen v zmenšenom okne prehliadača)
 
@@ -94,12 +95,12 @@ nezmyslu, ktorú hraním nedosiahneš.
 
 Detaily v [ROADMAP](docs/ROADMAP.md). V skratke:
 
-- **Svet 2** — `Opakuj n×` s blokom riadkov, odsadenie v tabuľke, limit riadkov
-- **Svet 3** — `Ak … inak`, senzory, typ levelu **Zrkadlo**, náhodné bludisko (3.7)
-- **Svet 4** — `Trik` = funkcia, druhá tabuľka
-- **Svet 5** — debny, tlačidlá, dvere (stav sveta)
-- **Svet 6** — počítadlo, `Opakuj kým…`
-- **Svet 7** — dva psy naraz, `Čakaj` (súbežnosť)
+- **Svet 3** — `Opakuj n×` s blokom riadkov, odsadenie v tabuľke, limit riadkov
+- **Svet 4** — `Ak … inak`, senzory, typ levelu **Zrkadlo**, náhodné bludisko (4.8)
+- **Svet 5** — `Trik` = funkcia, druhá tabuľka
+- **Svet 6** — debny, tlačidlá, dvere (stav sveta)
+- **Svet 7** — počítadlo, `Opakuj kým…`
+- **Svet 8** — dva psy naraz, `Čakaj` (súbežnosť)
 - **Dielňa** (Etapa 7) — React + FastAPI + PostgreSQL: editor levelov, solver na
   automatický limit riadkov, generátor bludísk, učiteľský prehľad.
   Hra na nej nikdy nezávisí za behu — viď [ADR-001](docs/ADR-001-stack.md).
