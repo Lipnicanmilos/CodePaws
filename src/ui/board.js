@@ -136,7 +136,9 @@ export class BoardView {
         const el = this.itemEls.get(key(event.x, event.y));
         if (el) {
           el.classList.add('is-gone');
-          setTimeout(() => el.remove(), 340);
+          // Hasenie má dlhšiu animáciu než zobratie kosti (oheň zhasína a parí sa),
+          // tak sa uzol nesmie zmazať skôr, než dobehne — inak zmizne v polovici.
+          setTimeout(() => el.remove(), event.type === 'extinguish' ? 640 : 340);
           this.itemEls.delete(key(event.x, event.y));
         }
         break;

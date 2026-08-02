@@ -4,18 +4,15 @@
   "world": 1,
   "type": "predict",
   "mode": "any",
-  "story": "Fifo už má plán hotový. Vieš povedať, kde zastane? Klikni na políčko!",
+  "story": "Nová hra! Tentokrát nič neskladáš — plán je už hotový. Prečítaj si ho a klikni do dvora na políčko, kde podľa teba Fifo zastane. Až potom stlač Štart a uvidíš, či si to trafil.",
   "grid": {
-    "legend": {
-      ".": "empty",
-      "#": "wall"
-    },
+    "legend": { ".": "empty", "#": "wall" },
     "rows": [
-      "#######",
-      "#.....#",
-      "#.###.#",
-      "#.....#",
-      "#######"
+      "######",
+      "#....#",
+      "#....#",
+      "#....#",
+      "######"
     ]
   },
   "actors": [
@@ -23,21 +20,18 @@
   ],
   "preset": {
     "locked": true,
-    "relative": [
-      { "cmd": "move", "n": 4 },
-      { "cmd": "turnRight" },
-      { "cmd": "move", "n": 2 },
-      { "cmd": "turnRight" },
-      { "cmd": "move", "n": 2 }
-    ],
     "absolute": [
-      { "cmd": "east", "n": 4 },
-      { "cmd": "south", "n": 2 },
-      { "cmd": "west", "n": 2 }
+      { "cmd": "east", "n": 3 },
+      { "cmd": "south", "n": 1 }
+    ],
+    "relative": [
+      { "cmd": "move", "n": 3 },
+      { "cmd": "turnRight" },
+      { "cmd": "move", "n": 1 }
     ]
   },
   "goals": [
-    { "type": "predict", "actor": "a1", "answer": { "x": 3, "y": 3 } }
+    { "type": "predict", "actor": "a1", "answer": { "x": 4, "y": 2 } }
   ],
   "palette": [],
   "limits": { "steps": 100 },
@@ -45,5 +39,5 @@
     { "id": "finish" },
     { "id": "predict" }
   ],
-  "hint": "Prejdi si program prstom po mriežke, riadok po riadku. Pomôže aj tlačidlo ⏭ Krok — ale najprv skús hádať!"
+  "hint": "Dvor je prázdny, nič ti nestojí v ceste. Prejdi prstom tri políčka doprava a potom jedno dole."
 }

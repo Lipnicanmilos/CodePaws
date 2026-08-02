@@ -4,12 +4,13 @@
   "world": 3,
   "type": "predict",
   "mode": "any",
-  "story": "Dlhší plán a chodba dookola. Fifo obehne skoro celý okruh — ale nie celý. Ustráž si posledný riadok.",
+  "story": "Dlhší plán a chodba dookola celého dvora. Fifo obehne skoro celý okruh — ale nie celý. Ustráž si posledný riadok.",
   "grid": {
     "legend": { ".": "empty", "#": "wall" },
     "rows": [
       "#######",
       "#.....#",
+      "#.###.#",
       "#.###.#",
       "#.....#",
       "#######"
@@ -22,14 +23,14 @@
     "locked": true,
     "absolute": [
       { "cmd": "east", "n": 4 },
-      { "cmd": "south", "n": 2 },
+      { "cmd": "south", "n": 3 },
       { "cmd": "west", "n": 4 },
       { "cmd": "north", "n": 1 }
     ],
     "relative": [
       { "cmd": "move", "n": 4 },
       { "cmd": "turnRight" },
-      { "cmd": "move", "n": 2 },
+      { "cmd": "move", "n": 3 },
       { "cmd": "turnRight" },
       { "cmd": "move", "n": 4 },
       { "cmd": "turnRight" },
@@ -37,7 +38,7 @@
     ]
   },
   "goals": [
-    { "type": "predict", "actor": "a1", "answer": { "x": 1, "y": 2 } }
+    { "type": "predict", "actor": "a1", "answer": { "x": 1, "y": 3 } }
   ],
   "palette": [],
   "limits": { "steps": 100 },

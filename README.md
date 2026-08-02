@@ -2,6 +2,11 @@
 
 ### ▶ Hrať: **[lipnicanmilos.github.io/CodePaws](https://lipnicanmilos.github.io/CodePaws/)**
 
+Hru si možno **nainštalovať na plochu** tabletu či telefónu — v prehliadači sa
+ukáže tlačidlo *Nainštalovať* (na iPhone/iPade cez Zdieľať → Pridať na plochu).
+Potom sa spúšťa na celú obrazovku a **funguje aj bez internetu**: po prvom
+spustení má v zásobe všetkých 30 misií.
+
 Hra pre deti (5–10 rokov), v ktorej **záchranárske šteniatka** prechádzajú bludiskom
 podľa programu, ktorý dieťa napíše do **tabuľky príkazov** — riadok po riadku,
 ako do databázy.

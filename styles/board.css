@@ -114,6 +114,47 @@
   to { transform: translateZ(46px) scale(.25); opacity: 0; }
 }
 
+/* Hasenie nie je zbieranie. Kosť odletí k psíkovi hore, ale oheň musí ZHASNÚŤ:
+   najprv bielo blikne, ako keď naň dopadne voda, potom klesne, vybledne do sivej
+   a nad ním sa zdvihne obláčik pary. Bez toho vyzeral zásah hadicou presne ako
+   zobratie kosti a dieťa nevidelo rozdiel medzi „mám to“ a „uhasil som to“. */
+.item[data-item="fire"].is-gone {
+  animation: doused .6s cubic-bezier(.3, .7, .4, 1) forwards;
+}
+@keyframes doused {
+  0% {
+    transform: translateZ(14px) scale(1.2);
+    color: #fff6d5;
+    filter: drop-shadow(0 0 16px var(--beacon));
+  }
+  30% {
+    transform: translateZ(9px) scale(.85);
+    color: var(--siren-deep);
+    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--siren) 50%, transparent));
+  }
+  100% {
+    transform: translateZ(0) scale(.3) translateY(22%);
+    color: #7f9dab;
+    opacity: 0;
+    filter: none;
+  }
+}
+
+/* Para stúpa a rozplynie sa. Kreslí ju ::after, nech na to netreba ďalší uzol. */
+.item[data-item="fire"].is-gone::after {
+  content: "";
+  position: absolute; inset: -15% -25% 5% -25%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 65%,
+    rgba(255, 255, 255, .9), rgba(214, 233, 240, .4) 45%, transparent 72%);
+  animation: steam .62s ease-out forwards;
+}
+@keyframes steam {
+  0%   { opacity: 0; transform: scale(.35) translateY(15%); }
+  25%  { opacity: .95; }
+  100% { opacity: 0; transform: scale(2) translateY(-75%); }
+}
+
 /* ── Šteniatko ───────────────────────────────────────────────── */
 
 .actor {

@@ -8,7 +8,13 @@
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#16323F">
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="assets/icon.svg">
+<!-- iOS ikonu z SVG nezoberie, na plochu potrebuje PNG. -->
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Kódolabky">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Atkinson+Hyperlegible:wght@400;700&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
@@ -16,6 +22,37 @@
 <link rel="stylesheet" href="styles/board.css">
 <link rel="stylesheet" href="styles/console.css">
 <link rel="stylesheet" href="styles/table.css">
+
+<script>
+/* Inštalácia na plochu a hranie bez internetu.
+   Beží v <head> naschvál: `beforeinstallprompt` môže preletieť skôr, než sa
+   dopíše telo stránky, tak si ho odchytíme hneď a na tlačidlo ho napojíme až
+   keď DOM existuje. Bez toho by sa ponuka inštalácie občas stratila. */
+(() => {
+  let ponuka = null;
+  const btn = () => document.getElementById('installBtn');
+  const ukaz = () => { if (ponuka && btn()) btn().hidden = false; };
+
+  addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); ponuka = e; ukaz(); });
+  addEventListener('appinstalled', () => { ponuka = null; if (btn()) btn().hidden = true; });
+
+  addEventListener('DOMContentLoaded', () => {
+    ukaz();
+    btn()?.addEventListener('click', async () => {
+      if (!ponuka) return;
+      btn().hidden = true;
+      ponuka.prompt();
+      await ponuka.userChoice;
+      ponuka = null;          // prehliadač druhý raz tú istú ponuku nedovolí
+    });
+  });
+
+  // Cez file:// service worker neexistuje — nemá zmysel sa oň ani pokúšať.
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  }
+})();
+</script>
 </head>
 <body>
 
@@ -32,6 +69,7 @@
   </nav>
 
   <div class="topbar-right">
+    <button class="steelbtn installbtn" id="installBtn" type="button" hidden>Nainštalovať</button>
     <button class="playerchip" id="playerChip" type="button" aria-label="Otvoriť rebríček">
       <span class="playerchip-nick" id="playerNick">—</span>
       <span class="playerchip-pts" id="playerPts">0 b</span>

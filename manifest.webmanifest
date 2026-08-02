@@ -1,0 +1,20 @@
+{
+  "name": "Kódolabky — nauč šteniatka programovať",
+  "short_name": "Kódolabky",
+  "description": "Detská hra, v ktorej na dispečerskom pulte naplánuješ misiu záchranárskeho šteniatka. Riadok po riadku.",
+  "lang": "sk",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#16323F",
+  "theme_color": "#16323F",
+  "categories": ["education", "games", "kids"],
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

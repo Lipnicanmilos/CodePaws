@@ -44,7 +44,13 @@ míľnik celého projektu** — návrh sa po ňom bude prekresľovať.
 - [ ] editor levelov, zdieľanie cez odkaz
 
 ## Etapa 6 · Vydanie
-- [ ] PWA (offline, inštalácia na tablet)
+- [x] PWA (offline, inštalácia na tablet) — `manifest.webmanifest` + `sw.js`.
+      Service worker je zámerne **bez čísla verzie**: stratégia „najprv sieť,
+      zásoba ako záloha“, takže sa pri nasadení nič nebumpuje a hra sa nedá
+      zaseknúť na starej verzii. Levely sa predsťahujú podľa `levels/index.json`,
+      nie z ručného zoznamu.
+- [ ] fonty self-hostovať — offline zatiaľ padne na náhradné písmo, kým sa
+      Google Fonts raz nestiahnu a neuložia do zásoby
 - [ ] rodičovský/učiteľský prehľad zvládnutých konceptov
 - [ ] tlačiteľné kartičky príkazov (PDF) na hru pri stole
 - [ ] EN/DE preklad (`i18n/`)
