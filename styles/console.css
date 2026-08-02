@@ -5,6 +5,50 @@
 .console { position: sticky; top: 1rem; min-width: 0; }
 @media (max-width: 760px) { .console { position: static; } }
 
+/* Na telefóne na výšku šípky presedlajú tesne nad mapku (viď app.js dockPad) —
+   nech ich dieťa nemusí hľadať až pod celým pultom. Na širšom displeji
+   #padDock ostáva prázdny a šípky sedia na svojom mieste v pulte. */
+.pad-dock { display: none; }
+@media (max-width: 760px) and (orientation: portrait) {
+  .pad-dock { display: block; margin-bottom: var(--space-2); }
+  .pad-dock #padGroup {
+    padding: .8rem .9rem .6rem;
+    border-radius: 22px;
+    background: linear-gradient(180deg, var(--depot-mid) 0%, var(--depot) 55%, var(--depot-deep) 100%);
+    box-shadow:
+      inset 0 2px 0 rgba(255, 255, 255, .16),
+      inset 0 -4px 0 rgba(0, 0, 0, .4),
+      0 10px 26px rgba(13, 34, 44, .3);
+  }
+  .pad-dock .pad { margin-bottom: 0; }
+}
+
+/* Telefón na šírku. Výšky je tu menej než čohokoľvek iného, a keby pult ostal
+   stĺpcom, ▶ Štart by spadol pod okraj obrazovky — dieťa vidí šípky, ale nemá
+   čím spustiť psíka. Preto sa doska rozloží na dva stĺpce: klávesy vľavo,
+   displej a ovládanie behu vedľa nich. */
+@media (orientation: landscape) and (max-height: 620px) {
+  .console-plate {
+    display: grid;
+    grid-template-columns: minmax(6.5rem, 8.5rem) minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    align-content: start;
+    gap: .4rem .7rem;
+    padding: .7rem .8rem;
+  }
+  .pad-group { grid-column: 1; grid-row: 1 / -1; }
+  .lcd, .transport, .speed { grid-column: 2; margin-bottom: 0; }
+  .lcd { grid-row: 1; }
+  .transport { grid-row: 2; }
+  .speed { grid-row: 3; }
+
+  .plate-label { margin-bottom: .4rem; }
+  .pad, .key-use, .padnote { margin-bottom: 0; }
+  .key svg { width: 20px; height: 20px; }
+  .key-pad { padding: .25rem; }
+  .key-word { font-size: .6rem; }
+}
+
 .console-plate {
   position: relative;
   padding: 1.05rem 1rem .95rem;

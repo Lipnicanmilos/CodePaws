@@ -202,6 +202,26 @@ button { cursor: pointer; }
   .plan { grid-column: auto; }
 }
 
+/* Telefón na šírku. Jediný stĺpec by tu znamenal, že pult je až pod doskou,
+   teda mimo obrazovky — dieťa vidí šípky, ale ▶ Štart musí hľadať scrollovaním.
+   Preto doska a pult vedľa seba a všetko ostatné o kúsok stlačené. */
+@media (orientation: landscape) and (max-height: 620px) {
+  .deck {
+    grid-template-columns: minmax(0, 1fr) minmax(15rem, 19rem);
+    gap: .6rem;
+    padding: .55rem;
+  }
+  .plan { grid-column: 1 / -1; }
+
+  .topbar { padding: .3rem clamp(.6rem, 2vw, 1.4rem); gap: var(--space-2); }
+  .brand-mark { width: 26px; height: 26px; }
+  .bone { width: 21px; height: 21px; }
+  .bone svg { width: 12px; height: 12px; }
+
+  .briefing { padding: .5rem .75rem; }
+  .briefing-title { font-size: var(--step-1); }
+}
+
 .field { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
 
 .briefing {

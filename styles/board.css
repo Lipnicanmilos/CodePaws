@@ -34,6 +34,14 @@
 }
 @keyframes board-in { from { opacity: 0; transform: rotateX(34deg) translateY(26px); } }
 
+/* Telefón na šírku: doska sa musí zmestiť do výšky, inak odtlačí pult aj so
+   ▶ Štart pod okraj obrazovky. Strop je vo `vh`, prepočítaný cez pomer strán
+   mriežky — šírka teda vyjde tak, aby výška nikdy nepresiahla daný podiel. */
+@media (orientation: landscape) and (max-height: 620px) {
+  .board { max-width: min(calc(var(--cols) * 82px), calc(58vh * var(--cols) / var(--rows))); }
+  .board-stage { padding: .3rem .3rem .9rem; }
+}
+
 /* ── Dlaždice ────────────────────────────────────────────────── */
 
 .tile {

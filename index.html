@@ -52,6 +52,7 @@
     <div class="board-stage">
       <div class="board" id="board" role="img" aria-label="Mapa bludiska"></div>
     </div>
+    <div class="pad-dock" id="padDock"></div>
     <div class="briefing">
       <h1 class="briefing-title" id="levelTitle">Kódolabky</h1>
       <p class="briefing-text" id="levelStory">Načítavam misiu…</p>
@@ -68,8 +69,10 @@
       <span class="rivet rivet-br" aria-hidden="true"></span>
       <span class="beacon-sweep" aria-hidden="true"></span>
 
-      <p class="plate-label" id="plateLabel">Naplánuj krok</p>
-      <div class="controls" id="palette"></div>
+      <div class="pad-group" id="padGroup">
+        <p class="plate-label" id="plateLabel">Naplánuj krok</p>
+        <div class="controls" id="palette"></div>
+      </div>
 
       <div class="lcd" id="statePanel">
         <div class="lcd-cell"><span class="lcd-key">Políčko</span><span class="lcd-val" id="stPos">–</span></div>
