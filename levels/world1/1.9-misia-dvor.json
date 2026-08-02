@@ -1,0 +1,111 @@
+{
+  "id": "1.9",
+  "title": "Misia dvor",
+  "world": 1,
+  "type": "path",
+  "mode": "any",
+  "story": "Posledná misia na dvore. Búdka stojí uprostred a dá sa k nej dôjsť aj rýchlo — ale poriadny záchranár najprv obehne celý dvor a nenechá ležať ani jednu kosť.",
+  "grid": {
+    "legend": {
+      ".": "empty",
+      "#": "wall",
+      "o": "bone",
+      "g": "goal"
+    },
+    "rows": [
+      "#######",
+      "#..o..#",
+      "#.###.#",
+      "#o.g.o#",
+      "#.###.#",
+      "#.....#",
+      "#######"
+    ]
+  },
+  "actors": [
+    {
+      "id": "a1",
+      "char": "fifo",
+      "x": 1,
+      "y": 5,
+      "dir": "N"
+    }
+  ],
+  "goals": [
+    {
+      "type": "reach",
+      "actor": "a1",
+      "tile": "goal"
+    }
+  ],
+  "palette": [
+    "walk"
+  ],
+  "limits": {
+    "steps": 150
+  },
+  "stars": [
+    {
+      "id": "finish"
+    },
+    {
+      "id": "rows",
+      "max": {
+        "absolute": 12,
+        "relative": 15
+      }
+    },
+    {
+      "id": "bones",
+      "all": true
+    }
+  ],
+  "hint": "Obehni dvor dokola v smere hodinových ručičiek — hore, doprava, dole — a do búdky vojdi až celkom na konci sprava.",
+  "solutions": {
+    "absolute": [
+      {
+        "cmd": "north",
+        "n": 4
+      },
+      {
+        "cmd": "east",
+        "n": 4
+      },
+      {
+        "cmd": "south",
+        "n": 2
+      },
+      {
+        "cmd": "west",
+        "n": 2
+      }
+    ],
+    "relative": [
+      {
+        "cmd": "move",
+        "n": 4
+      },
+      {
+        "cmd": "turnRight"
+      },
+      {
+        "cmd": "move",
+        "n": 4
+      },
+      {
+        "cmd": "turnRight"
+      },
+      {
+        "cmd": "move",
+        "n": 2
+      },
+      {
+        "cmd": "turnRight"
+      },
+      {
+        "cmd": "move",
+        "n": 2
+      }
+    ]
+  }
+}

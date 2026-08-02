@@ -1,0 +1,49 @@
+{
+  "id": "3.4",
+  "title": "Okolo dokola",
+  "world": 3,
+  "type": "predict",
+  "mode": "any",
+  "story": "Dlhší plán a chodba dookola. Fifo obehne skoro celý okruh — ale nie celý. Ustráž si posledný riadok.",
+  "grid": {
+    "legend": { ".": "empty", "#": "wall" },
+    "rows": [
+      "#######",
+      "#.....#",
+      "#.###.#",
+      "#.....#",
+      "#######"
+    ]
+  },
+  "actors": [
+    { "id": "a1", "char": "fifo", "x": 1, "y": 1, "dir": "E" }
+  ],
+  "preset": {
+    "locked": true,
+    "absolute": [
+      { "cmd": "east", "n": 4 },
+      { "cmd": "south", "n": 2 },
+      { "cmd": "west", "n": 4 },
+      { "cmd": "north", "n": 1 }
+    ],
+    "relative": [
+      { "cmd": "move", "n": 4 },
+      { "cmd": "turnRight" },
+      { "cmd": "move", "n": 2 },
+      { "cmd": "turnRight" },
+      { "cmd": "move", "n": 4 },
+      { "cmd": "turnRight" },
+      { "cmd": "move", "n": 1 }
+    ]
+  },
+  "goals": [
+    { "type": "predict", "actor": "a1", "answer": { "x": 1, "y": 2 } }
+  ],
+  "palette": [],
+  "limits": { "steps": 100 },
+  "stars": [
+    { "id": "finish" },
+    { "id": "predict" }
+  ],
+  "hint": "Po treťom úseku je Fifo späť v ľavom dolnom rohu. Odtiaľ ho čaká už len jeden krok."
+}

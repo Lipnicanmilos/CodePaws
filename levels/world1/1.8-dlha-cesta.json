@@ -1,0 +1,122 @@
+{
+  "id": "1.8",
+  "title": "Dlhá cesta",
+  "world": 1,
+  "type": "path",
+  "mode": "any",
+  "story": "Dnes to bude poriadna šichta: tri kosti a cesta cez celý dvor tam a späť. Plán bude dlhý — a to je naschvál. Zapamätaj si, aké je to otravné písať to isté stále dokola.",
+  "grid": {
+    "legend": {
+      ".": "empty",
+      "#": "wall",
+      "o": "bone",
+      "g": "goal"
+    },
+    "rows": [
+      "#######",
+      "#..o..#",
+      "#####.#",
+      "#..o..#",
+      "#.#####",
+      "#..o.g#",
+      "#######"
+    ]
+  },
+  "actors": [
+    {
+      "id": "a1",
+      "char": "fifo",
+      "x": 1,
+      "y": 1,
+      "dir": "E"
+    }
+  ],
+  "goals": [
+    {
+      "type": "reach",
+      "actor": "a1",
+      "tile": "goal"
+    }
+  ],
+  "palette": [
+    "walk"
+  ],
+  "limits": {
+    "steps": 150
+  },
+  "stars": [
+    {
+      "id": "finish"
+    },
+    {
+      "id": "rows",
+      "max": {
+        "absolute": 16,
+        "relative": 20
+      }
+    },
+    {
+      "id": "bones",
+      "all": true
+    }
+  ],
+  "hint": "Cesta je ako had: doprava, dole, doľava, dole, doprava. Chodba je stále len jedna, nedá sa zablúdiť — len to treba vydržať naklikať.",
+  "solutions": {
+    "absolute": [
+      {
+        "cmd": "east",
+        "n": 4
+      },
+      {
+        "cmd": "south",
+        "n": 2
+      },
+      {
+        "cmd": "west",
+        "n": 4
+      },
+      {
+        "cmd": "south",
+        "n": 2
+      },
+      {
+        "cmd": "east",
+        "n": 4
+      }
+    ],
+    "relative": [
+      {
+        "cmd": "move",
+        "n": 4
+      },
+      {
+        "cmd": "turnRight"
+      },
+      {
+        "cmd": "move",
+        "n": 2
+      },
+      {
+        "cmd": "turnRight"
+      },
+      {
+        "cmd": "move",
+        "n": 4
+      },
+      {
+        "cmd": "turnLeft"
+      },
+      {
+        "cmd": "move",
+        "n": 2
+      },
+      {
+        "cmd": "turnLeft"
+      },
+      {
+        "cmd": "move",
+        "n": 4
+      }
+    ]
+  }
+}

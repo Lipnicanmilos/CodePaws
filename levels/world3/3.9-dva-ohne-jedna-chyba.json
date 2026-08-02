@@ -1,0 +1,65 @@
+{
+  "id": "3.9",
+  "title": "Dva ohne, jedna chyba",
+  "world": 3,
+  "type": "debug",
+  "mode": "any",
+  "story": "Dlhý zásah cez dva ohne. Prvá hadica v pláne je, druhá sa kdesi stratila. Prejdi si plán celý — chyba je až v druhej polovici.",
+  "grid": {
+    "legend": { ".": "empty", "#": "wall", "o": "bone", "f": "fire", "g": "goal" },
+    "rows": [
+      "#######",
+      "#.o.f.#",
+      "#####.#",
+      "#g.f..#",
+      "#######"
+    ]
+  },
+  "actors": [
+    { "id": "a1", "char": "fifo", "x": 1, "y": 1, "dir": "E" }
+  ],
+  "preset": {
+    "absolute": [
+      { "cmd": "east", "n": 2, "locked": true },
+      { "cmd": "use", "locked": true },
+      { "cmd": "east", "n": 2, "locked": true },
+      { "cmd": "south", "n": 2, "locked": true },
+      { "cmd": "west", "locked": true },
+      { "cmd": "west" },
+      { "cmd": "west", "n": 3, "locked": true }
+    ],
+    "relative": [
+      { "cmd": "move", "n": 2, "locked": true },
+      { "cmd": "use", "locked": true },
+      { "cmd": "move", "n": 2, "locked": true },
+      { "cmd": "turnRight", "locked": true },
+      { "cmd": "move", "n": 2, "locked": true },
+      { "cmd": "turnRight", "locked": true },
+      { "cmd": "move", "locked": true },
+      { "cmd": "move" },
+      { "cmd": "move", "n": 3, "locked": true }
+    ]
+  },
+  "solutions": {
+    "absolute": [
+      { "cmd": "east", "n": 2 }, { "cmd": "use" }, { "cmd": "east", "n": 2 },
+      { "cmd": "south", "n": 2 }, { "cmd": "west" }, { "cmd": "use" }, { "cmd": "west", "n": 3 }
+    ],
+    "relative": [
+      { "cmd": "move", "n": 2 }, { "cmd": "use" }, { "cmd": "move", "n": 2 },
+      { "cmd": "turnRight" }, { "cmd": "move", "n": 2 }, { "cmd": "turnRight" },
+      { "cmd": "move" }, { "cmd": "use" }, { "cmd": "move", "n": 3 }
+    ]
+  },
+  "goals": [
+    { "type": "reach", "actor": "a1", "tile": "goal" }
+  ],
+  "palette": ["walk", "use"],
+  "limits": { "steps": 120 },
+  "stars": [
+    { "id": "finish" },
+    { "id": "bones" },
+    { "id": "clean" }
+  ],
+  "hint": "Prvý oheň je uhasený správne. Pozri sa, ako to tam vyzerá, a nájdi to isté miesto v spodnej chodbe."
+}

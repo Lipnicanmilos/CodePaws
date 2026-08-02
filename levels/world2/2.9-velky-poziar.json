@@ -1,0 +1,160 @@
+{
+  "id": "2.9",
+  "title": "Veľký požiar",
+  "world": 2,
+  "type": "path",
+  "mode": "any",
+  "story": "Finále. Horí po celom obvode dvora a búdka je schovaná v strede — dostať sa k nej dá jedine úzkou chodbičkou zľava. Tri ohne, tri kosti, jeden plán. Ideš na to?",
+  "grid": {
+    "legend": {
+      ".": "empty",
+      "#": "wall",
+      "o": "bone",
+      "f": "fire",
+      "g": "goal"
+    },
+    "rows": [
+      "#######",
+      "#..fo.#",
+      "#.###.#",
+      "#..g#f#",
+      "#o###.#",
+      "#.of..#",
+      "#######"
+    ]
+  },
+  "actors": [
+    {
+      "id": "a1",
+      "char": "fifo",
+      "x": 1,
+      "y": 1,
+      "dir": "E"
+    }
+  ],
+  "goals": [
+    {
+      "type": "reach",
+      "actor": "a1",
+      "tile": "goal"
+    }
+  ],
+  "palette": [
+    "walk",
+    "use"
+  ],
+  "limits": {
+    "steps": 200
+  },
+  "stars": [
+    {
+      "id": "finish"
+    },
+    {
+      "id": "rows",
+      "max": {
+        "absolute": 19,
+        "relative": 23
+      }
+    },
+    {
+      "id": "bones",
+      "all": true
+    }
+  ],
+  "hint": "Obehni dvor dokola v smere hodinových ručičiek — doprava, dole, doľava, hore. Búdka je až úplne na konci: z ľavej chodby sa do stredu vchádza doprava.",
+  "solutions": {
+    "absolute": [
+      {
+        "cmd": "east"
+      },
+      {
+        "cmd": "use"
+      },
+      {
+        "cmd": "east",
+        "n": 3
+      },
+      {
+        "cmd": "south"
+      },
+      {
+        "cmd": "use"
+      },
+      {
+        "cmd": "south",
+        "n": 3
+      },
+      {
+        "cmd": "west"
+      },
+      {
+        "cmd": "use"
+      },
+      {
+        "cmd": "west",
+        "n": 3
+      },
+      {
+        "cmd": "north",
+        "n": 2
+      },
+      {
+        "cmd": "east",
+        "n": 2
+      }
+    ],
+    "relative": [
+      {
+        "cmd": "move"
+      },
+      {
+        "cmd": "use"
+      },
+      {
+        "cmd": "move",
+        "n": 3
+      },
+      {
+        "cmd": "turnRight"
+      },
+      {
+        "cmd": "move"
+      },
+      {
+        "cmd": "use"
+      },
+      {
+        "cmd": "move",
+        "n": 3
+      },
+      {
+        "cmd": "turnRight"
+      },
+      {
+        "cmd": "move"
+      },
+      {
+        "cmd": "use"
+      },
+      {
+        "cmd": "move",
+        "n": 3
+      },
+      {
+        "cmd": "turnRight"
+      },
+      {
+        "cmd": "move",
+        "n": 2
+      },
+      {
+        "cmd": "turnRight"
+      },
+      {
+        "cmd": "move",
+        "n": 2
+      }
+    ]
+  }
+}

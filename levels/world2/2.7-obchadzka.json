@@ -1,0 +1,86 @@
+{
+  "id": "2.7",
+  "title": "Obchádzka",
+  "world": 2,
+  "type": "path",
+  "mode": "any",
+  "story": "Búdka je rovno pod Fifom, len cez oheň. Obísť sa to dá aj po kraji dvora — ibaže tá cesta je oveľa dlhšia a obe kosti ležia v strede. Čo sa oplatí viac?",
+  "grid": {
+    "legend": {
+      ".": "empty",
+      "#": "wall",
+      "o": "bone",
+      "f": "fire",
+      "g": "goal"
+    },
+    "rows": [
+      "#######",
+      "#.....#",
+      "#.#f#.#",
+      "#.#o#.#",
+      "#.#o#.#",
+      "#..g..#",
+      "#######"
+    ]
+  },
+  "actors": [
+    {
+      "id": "a1",
+      "char": "fifo",
+      "x": 3,
+      "y": 1,
+      "dir": "S"
+    }
+  ],
+  "goals": [
+    {
+      "type": "reach",
+      "actor": "a1",
+      "tile": "goal"
+    }
+  ],
+  "palette": [
+    "walk",
+    "use"
+  ],
+  "limits": {
+    "steps": 100
+  },
+  "stars": [
+    {
+      "id": "finish"
+    },
+    {
+      "id": "rows",
+      "max": {
+        "absolute": 5,
+        "relative": 5
+      }
+    },
+    {
+      "id": "bones",
+      "all": true
+    }
+  ],
+  "hint": "Fifo sa už teraz pozerá dole a oheň má hneď pred sebou. Hadica môže byť úplne prvý riadok plánu.",
+  "solutions": {
+    "absolute": [
+      {
+        "cmd": "use"
+      },
+      {
+        "cmd": "south",
+        "n": 4
+      }
+    ],
+    "relative": [
+      {
+        "cmd": "use"
+      },
+      {
+        "cmd": "move",
+        "n": 4
+      }
+    ]
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "id": "1.7",
+  "title": "Krok za krokom",
+  "world": 1,
+  "type": "path",
+  "mode": "any",
+  "story": "Táto chodba sa krúti hore-dole a v hlave sa ľahko stratíš. Skús tlačidlo ⏭ Krok — pes urobí vždy len jeden riadok a ty vidíš, kde presne je.",
+  "grid": {
+    "legend": {
+      ".": "empty",
+      "#": "wall",
+      "o": "bone",
+      "g": "goal"
+    },
+    "rows": [
+      "#######",
+      "#.#o.g#",
+      "#.#.###",
+      "#o..###",
+      "#######"
+    ]
+  },
+  "actors": [
+    {
+      "id": "a1",
+      "char": "fifo",
+      "x": 1,
+      "y": 1,
+      "dir": "S"
+    }
+  ],
+  "goals": [
+    {
+      "type": "reach",
+      "actor": "a1",
+      "tile": "goal"
+    }
+  ],
+  "palette": [
+    "walk"
+  ],
+  "limits": {
+    "steps": 100
+  },
+  "stars": [
+    {
+      "id": "finish"
+    },
+    {
+      "id": "rows",
+      "max": {
+        "absolute": 8,
+        "relative": 11
+      }
+    },
+    {
+      "id": "bones",
+      "all": true
+    }
+  ],
+  "hint": "Dole, doprava, hore a doprava. Ak si nie si istý, klikaj ⏭ Krok a sleduj psíka.",
+  "solutions": {
+    "absolute": [
+      {
+        "cmd": "south",
+        "n": 2
+      },
+      {
+        "cmd": "east",
+        "n": 2
+      },
+      {
+        "cmd": "north",
+        "n": 2
+      },
+      {
+        "cmd": "east",
+        "n": 2
+      }
+    ],
+    "relative": [
+      {
+        "cmd": "move",
+        "n": 2
+      },
+      {
+        "cmd": "turnLeft"
+      },
+      {
+        "cmd": "move",
+        "n": 2
+      },
+      {
+        "cmd": "turnLeft"
+      },
+      {
+        "cmd": "move",
+        "n": 2
+      },
+      {
+        "cmd": "turnRight"
+      },
+      {
+        "cmd": "move",
+        "n": 2
+      }
+    ]
+  }
+}

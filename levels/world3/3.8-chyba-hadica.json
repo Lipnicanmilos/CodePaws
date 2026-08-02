@@ -1,0 +1,56 @@
+{
+  "id": "3.8",
+  "title": "Chýba hadica",
+  "world": 3,
+  "type": "debug",
+  "mode": "any",
+  "story": "Do plánu sa vrátil oheň. Niekto namiesto hadice napísal ďalší krok — a Fifo by vbehol rovno do plameňov. Vymeň ten riadok za hadicu.",
+  "grid": {
+    "legend": { ".": "empty", "#": "wall", "o": "bone", "f": "fire", "g": "goal" },
+    "rows": [
+      "#######",
+      "#.#####",
+      "#.#####",
+      "#..fog#",
+      "#######"
+    ]
+  },
+  "actors": [
+    { "id": "a1", "char": "fifo", "x": 1, "y": 1, "dir": "S" }
+  ],
+  "preset": {
+    "absolute": [
+      { "cmd": "south", "n": 2, "locked": true },
+      { "cmd": "east", "locked": true },
+      { "cmd": "east" },
+      { "cmd": "east", "n": 3, "locked": true }
+    ],
+    "relative": [
+      { "cmd": "move", "n": 2, "locked": true },
+      { "cmd": "turnLeft", "locked": true },
+      { "cmd": "move", "locked": true },
+      { "cmd": "move" },
+      { "cmd": "move", "n": 3, "locked": true }
+    ]
+  },
+  "solutions": {
+    "absolute": [
+      { "cmd": "south", "n": 2 }, { "cmd": "east" }, { "cmd": "use" }, { "cmd": "east", "n": 3 }
+    ],
+    "relative": [
+      { "cmd": "move", "n": 2 }, { "cmd": "turnLeft" }, { "cmd": "move" },
+      { "cmd": "use" }, { "cmd": "move", "n": 3 }
+    ]
+  },
+  "goals": [
+    { "type": "reach", "actor": "a1", "tile": "goal" }
+  ],
+  "palette": ["walk", "use"],
+  "limits": { "steps": 100 },
+  "stars": [
+    { "id": "finish" },
+    { "id": "bones" },
+    { "id": "clean" }
+  ],
+  "hint": "Spočítaj si, na ktorom políčku Fifo stojí, keď príde rad na pokazený riadok. Čo má hneď pred sebou?"
+}

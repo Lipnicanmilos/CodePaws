@@ -1,0 +1,43 @@
+{
+  "id": "3.1",
+  "title": "Kam dôjde?",
+  "world": 3,
+  "type": "predict",
+  "mode": "any",
+  "story": "Vitaj vo veži! Tu sa nič neskladá — tu sa číta. Plán je hotový, dvor je prázdny a nič psíkovi nestojí v ceste. Prejdi si riadky prstom po mape a klikni, kde Fifo zastane.",
+  "grid": {
+    "legend": { ".": "empty", "#": "wall" },
+    "rows": [
+      "#######",
+      "#.....#",
+      "#.....#",
+      "#.....#",
+      "#######"
+    ]
+  },
+  "actors": [
+    { "id": "a1", "char": "fifo", "x": 1, "y": 1, "dir": "E" }
+  ],
+  "preset": {
+    "locked": true,
+    "absolute": [
+      { "cmd": "east", "n": 3 },
+      { "cmd": "south", "n": 2 }
+    ],
+    "relative": [
+      { "cmd": "move", "n": 3 },
+      { "cmd": "turnRight" },
+      { "cmd": "move", "n": 2 }
+    ]
+  },
+  "goals": [
+    { "type": "predict", "actor": "a1", "answer": { "x": 4, "y": 3 } }
+  ],
+  "palette": [],
+  "limits": { "steps": 100 },
+  "stars": [
+    { "id": "finish" },
+    { "id": "predict" }
+  ],
+  "hint": "Tri kroky doprava, potom dva dole. Rátaj políčka, nie riadky."
+}

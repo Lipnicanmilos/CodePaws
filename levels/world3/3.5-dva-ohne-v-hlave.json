@@ -1,0 +1,51 @@
+{
+  "id": "3.5",
+  "title": "Dva ohne v hlave",
+  "world": 3,
+  "type": "predict",
+  "mode": "any",
+  "story": "Najťažšia predpoveď vo veži: dva ohne, dve hadice a na konci ešte zákruta. Celý plán si musíš prejsť v hlave — a hadice pritom nerátať ako kroky.",
+  "grid": {
+    "legend": { ".": "empty", "#": "wall", "f": "fire" },
+    "rows": [
+      "#######",
+      "#.....#",
+      "#.#f#.#",
+      "#.....#",
+      "#.#f#.#",
+      "#.....#",
+      "#######"
+    ]
+  },
+  "actors": [
+    { "id": "a1", "char": "fifo", "x": 3, "y": 1, "dir": "S" }
+  ],
+  "preset": {
+    "locked": true,
+    "absolute": [
+      { "cmd": "use" },
+      { "cmd": "south", "n": 2 },
+      { "cmd": "use" },
+      { "cmd": "south", "n": 2 },
+      { "cmd": "west", "n": 2 }
+    ],
+    "relative": [
+      { "cmd": "use" },
+      { "cmd": "move", "n": 2 },
+      { "cmd": "use" },
+      { "cmd": "move", "n": 2 },
+      { "cmd": "turnRight" },
+      { "cmd": "move", "n": 2 }
+    ]
+  },
+  "goals": [
+    { "type": "predict", "actor": "a1", "answer": { "x": 1, "y": 5 } }
+  ],
+  "palette": [],
+  "limits": { "steps": 100 },
+  "stars": [
+    { "id": "finish" },
+    { "id": "predict" }
+  ],
+  "hint": "Po každej hadici sa Fifo posunie o dve políčka dole. Až celkom naspodku zabočí."
+}

@@ -1,0 +1,56 @@
+{
+  "id": "3.7",
+  "title": "Opačná strana",
+  "world": 3,
+  "type": "debug",
+  "mode": "any",
+  "story": "Fifo dnes vyráža doľava a plán je dlhší. Chyba je zase jediná — a zase je to zabočenie na opačnú stranu.",
+  "grid": {
+    "legend": { ".": "empty", "#": "wall", "o": "bone", "g": "goal" },
+    "rows": [
+      "#######",
+      "#..o..#",
+      "#.#####",
+      "#....g#",
+      "#######"
+    ]
+  },
+  "actors": [
+    { "id": "a1", "char": "fifo", "x": 5, "y": 1, "dir": "W" }
+  ],
+  "preset": {
+    "absolute": [
+      { "cmd": "west", "n": 4, "locked": true },
+      { "cmd": "north" },
+      { "cmd": "south", "locked": true },
+      { "cmd": "east", "n": 4, "locked": true }
+    ],
+    "relative": [
+      { "cmd": "move", "n": 4, "locked": true },
+      { "cmd": "turnRight" },
+      { "cmd": "move", "n": 2, "locked": true },
+      { "cmd": "turnLeft", "locked": true },
+      { "cmd": "move", "n": 4, "locked": true }
+    ]
+  },
+  "solutions": {
+    "absolute": [
+      { "cmd": "west", "n": 4 }, { "cmd": "south", "n": 2 }, { "cmd": "east", "n": 4 }
+    ],
+    "relative": [
+      { "cmd": "move", "n": 4 }, { "cmd": "turnLeft" }, { "cmd": "move", "n": 2 },
+      { "cmd": "turnLeft" }, { "cmd": "move", "n": 4 }
+    ]
+  },
+  "goals": [
+    { "type": "reach", "actor": "a1", "tile": "goal" }
+  ],
+  "palette": ["walk"],
+  "limits": { "steps": 100 },
+  "stars": [
+    { "id": "finish" },
+    { "id": "bones" },
+    { "id": "clean" }
+  ],
+  "hint": "Hore už žiadna chodba nevedie — nad Fifom je stena. Kadiaľ sa teda dostane do spodnej chodby?"
+}

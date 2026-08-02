@@ -1,0 +1,53 @@
+{
+  "id": "3.10",
+  "title": "Zastal inde",
+  "world": 3,
+  "type": "debug",
+  "mode": "any",
+  "story": "Najzákernejší plán vo veži. Fifo nikde nenarazí, nič sa nerozbije — plán proste dobehne a psík stojí inde než pri búdke. Práve preto sa tá chyba hľadá najhoršie.",
+  "grid": {
+    "legend": { ".": "empty", "#": "wall", "o": "bone", "g": "goal" },
+    "rows": [
+      "#########",
+      "#..o....#",
+      "#.......#",
+      "#.......#",
+      "#..g....#",
+      "#########"
+    ]
+  },
+  "actors": [
+    { "id": "a1", "char": "fifo", "x": 1, "y": 1, "dir": "E" }
+  ],
+  "preset": {
+    "absolute": [
+      { "cmd": "east", "n": 2, "locked": true },
+      { "cmd": "east" },
+      { "cmd": "south", "n": 2, "locked": true }
+    ],
+    "relative": [
+      { "cmd": "move", "n": 2, "locked": true },
+      { "cmd": "move" },
+      { "cmd": "move", "n": 3, "locked": true }
+    ]
+  },
+  "solutions": {
+    "absolute": [
+      { "cmd": "east", "n": 2 }, { "cmd": "south", "n": 3 }
+    ],
+    "relative": [
+      { "cmd": "move", "n": 2 }, { "cmd": "turnRight" }, { "cmd": "move", "n": 3 }
+    ]
+  },
+  "goals": [
+    { "type": "reach", "actor": "a1", "tile": "goal" }
+  ],
+  "palette": ["walk"],
+  "limits": { "steps": 100 },
+  "stars": [
+    { "id": "finish" },
+    { "id": "bones" },
+    { "id": "clean" }
+  ],
+  "hint": "Búdka je presne pod kosťou. Keď na ňu Fifo stúpi, čo má urobiť hneď ďalším krokom?"
+}

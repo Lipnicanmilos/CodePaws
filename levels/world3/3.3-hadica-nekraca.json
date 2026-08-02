@@ -1,0 +1,45 @@
+{
+  "id": "3.3",
+  "title": "Hadica nekráča",
+  "world": 3,
+  "type": "predict",
+  "mode": "any",
+  "story": "V pláne je aj hadica. Dobre si rozmysli, čo hadica urobí — a čo neurobí. Posunie psíka o políčko, alebo nie?",
+  "grid": {
+    "legend": { ".": "empty", "#": "wall", "f": "fire" },
+    "rows": [
+      "#######",
+      "#.....#",
+      "#.#f#.#",
+      "#.....#",
+      "#######"
+    ]
+  },
+  "actors": [
+    { "id": "a1", "char": "fifo", "x": 3, "y": 1, "dir": "S" }
+  ],
+  "preset": {
+    "locked": true,
+    "absolute": [
+      { "cmd": "use" },
+      { "cmd": "south", "n": 2 },
+      { "cmd": "east", "n": 2 }
+    ],
+    "relative": [
+      { "cmd": "use" },
+      { "cmd": "move", "n": 2 },
+      { "cmd": "turnLeft" },
+      { "cmd": "move", "n": 2 }
+    ]
+  },
+  "goals": [
+    { "type": "predict", "actor": "a1", "answer": { "x": 5, "y": 3 } }
+  ],
+  "palette": [],
+  "limits": { "steps": 100 },
+  "stars": [
+    { "id": "finish" },
+    { "id": "predict" }
+  ],
+  "hint": "Hadica oheň uhasí, ale psíka nechá stáť na mieste. Ten riadok teda medzi kroky nerátaj."
+}

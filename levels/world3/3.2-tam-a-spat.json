@@ -1,0 +1,49 @@
+{
+  "id": "3.2",
+  "title": "Tam a späť",
+  "world": 3,
+  "type": "predict",
+  "mode": "any",
+  "story": "Tentokrát sa Fifo na konci vracia. Pozor — nezastane tam, odkiaľ vyšiel, ani na kraji. Kde teda?",
+  "grid": {
+    "legend": { ".": "empty", "#": "wall" },
+    "rows": [
+      "#######",
+      "#.....#",
+      "#.....#",
+      "#.....#",
+      "#######"
+    ]
+  },
+  "actors": [
+    { "id": "a1", "char": "fifo", "x": 1, "y": 1, "dir": "E" }
+  ],
+  "preset": {
+    "locked": true,
+    "absolute": [
+      { "cmd": "east", "n": 3 },
+      { "cmd": "south", "n": 2 },
+      { "cmd": "west", "n": 2 },
+      { "cmd": "north", "n": 1 }
+    ],
+    "relative": [
+      { "cmd": "move", "n": 3 },
+      { "cmd": "turnRight" },
+      { "cmd": "move", "n": 2 },
+      { "cmd": "turnRight" },
+      { "cmd": "move", "n": 2 },
+      { "cmd": "turnRight" },
+      { "cmd": "move", "n": 1 }
+    ]
+  },
+  "goals": [
+    { "type": "predict", "actor": "a1", "answer": { "x": 2, "y": 2 } }
+  ],
+  "palette": [],
+  "limits": { "steps": 100 },
+  "stars": [
+    { "id": "finish" },
+    { "id": "predict" }
+  ],
+  "hint": "Posledný riadok je jediný krok hore. Najprv si nájdi, kde psík stojí pred ním."
+}
