@@ -5,49 +5,6 @@
 .console { position: sticky; top: 1rem; min-width: 0; }
 @media (max-width: 760px) { .console { position: static; } }
 
-/* Na telefóne na výšku šípky presedlajú tesne nad mapku (viď app.js dockPad) —
-   nech ich dieťa nemusí hľadať až pod celým pultom. Na širšom displeji
-   #padDock ostáva prázdny a šípky sedia na svojom mieste v pulte. */
-.pad-dock { display: none; }
-@media (max-width: 760px) and (orientation: portrait) {
-  .pad-dock { display: block; margin-bottom: var(--space-2); }
-  .pad-dock #padGroup {
-    padding: .8rem .9rem .6rem;
-    border-radius: 22px;
-    background: linear-gradient(180deg, var(--depot-mid) 0%, var(--depot) 55%, var(--depot-deep) 100%);
-    box-shadow:
-      inset 0 2px 0 rgba(255, 255, 255, .16),
-      inset 0 -4px 0 rgba(0, 0, 0, .4),
-      0 10px 26px rgba(13, 34, 44, .3);
-  }
-  .pad-dock .pad { margin-bottom: 0; }
-}
-
-/* Telefón na šírku. Výšky je tu menej než čohokoľvek iného, a keby pult ostal
-   stĺpcom, ▶ Štart by spadol pod okraj obrazovky — dieťa vidí šípky, ale nemá
-   čím spustiť psíka. Preto sa doska rozloží na dva stĺpce: klávesy vľavo,
-   displej a ovládanie behu vedľa nich. */
-@media (orientation: landscape) and (max-height: 620px) {
-  .console-plate {
-    display: grid;
-    grid-template-columns: minmax(6.5rem, 8.5rem) minmax(0, 1fr);
-    grid-template-rows: auto auto auto;
-    align-content: start;
-    gap: .4rem .7rem;
-    padding: .7rem .8rem;
-  }
-  .pad-group { grid-column: 1; grid-row: 1 / -1; }
-  .lcd, .transport, .speed { grid-column: 2; margin-bottom: 0; }
-  .lcd { grid-row: 1; }
-  .transport { grid-row: 2; }
-  .speed { grid-row: 3; }
-
-  .plate-label { margin-bottom: .4rem; }
-  .pad, .key-use, .padnote { margin-bottom: 0; }
-  .key svg { width: 20px; height: 20px; }
-  .key-pad { padding: .25rem; }
-  .key-word { font-size: .6rem; }
-}
 
 .console-plate {
   position: relative;
@@ -210,3 +167,62 @@ body.is-celebrating .beacon-sweep { animation: sweep 1.15s linear 2; }
 /* Počas behu sa plán needituje — klávesy to majú aj ukázať. */
 body.is-running .key-pad,
 body.is-running .key-use { opacity: .4; pointer-events: none; }
+
+/* ── Malé displeje ───────────────────────────────────────────────
+   Tieto bloky musia ostať na KONCI súboru. Sú to prepisy tých istých
+   vlastností (padding, margin) s rovnakou špecifickosťou ako pravidlá vyššie —
+   keby stáli hore, základné pravidlá by ich ticho prebili a nič by sa nezmenilo. */
+
+/* Telefón na výšku. Pult je tu nad mapkou (poradie z HTML, jediný stĺpec),
+   takže o každý ušetrený pixel sa mapka posunie vyššie do záberu. Kríž na plnú
+   šírku displeja by mal klávesy cez pol dlane a mapku by odtlačil pod okraj. */
+@media (max-width: 760px) and (orientation: portrait) {
+  .console-plate { padding: .7rem .8rem .75rem; }
+  .plate-label { margin-bottom: .4rem; }
+  .pad { max-width: 10.5rem; margin-inline: auto; margin-bottom: .55rem; }
+  .key-use { max-width: 10.5rem; margin-inline: auto; margin-bottom: .55rem; }
+  .lcd { margin-bottom: .55rem; padding: .35rem .5rem; }
+  .transport { margin-bottom: .45rem; }
+  .padnote { margin-bottom: .55rem; padding: .6rem .7rem; }
+}
+
+/* Nižší telefón (SE a spol.). Pult aj mapka sa sem naraz zmestia len tesne,
+   tak ide dole všetko naraz — kríž na 9.5rem drží klávesy ešte na ~46 px,
+   čo je stále nad hranicou trafiteľnosti prstom. */
+@media (max-width: 760px) and (orientation: portrait) and (max-height: 720px) {
+  .console-plate { padding: .55rem .7rem .6rem; }
+  .plate-label { margin-bottom: .3rem; }
+  .pad { max-width: 9.5rem; gap: .35rem; margin-bottom: .4rem; }
+  .key-use { max-width: 9.5rem; margin-bottom: .4rem; padding: .4rem; }
+  .lcd { margin-bottom: .4rem; }
+  .lcd-val { font-size: .88rem; }
+  .transport { margin-bottom: .35rem; }
+  .transport .key { padding: .4rem .3rem; }
+}
+
+/* Telefón na šírku. Výšky je tu menej než čohokoľvek iného, a keby pult ostal
+   stĺpcom, ▶ Štart by spadol pod okraj obrazovky — dieťa vidí šípky, ale nemá
+   čím spustiť psíka. Preto sa doska rozloží na dva stĺpce: klávesy vľavo,
+   displej a ovládanie behu vedľa nich. */
+@media (orientation: landscape) and (max-height: 620px) {
+  .console-plate {
+    display: grid;
+    grid-template-columns: minmax(0, 10rem) minmax(0, 1fr);
+    align-content: start;
+    gap: .45rem .7rem;
+    padding: .7rem .8rem;
+  }
+  /* Klávesy vľavo cez dva riadky, beh a rýchlosť vedľa nich. LCD ide naspodok
+     cez celú šírku — v úzkom stĺpci sa mu „Pozerá: doprava“ orezávalo na „dopr…“. */
+  .pad-group { grid-column: 1; grid-row: 1 / 3; }
+  .transport { grid-column: 2; grid-row: 1; margin-bottom: 0; }
+  .speed     { grid-column: 2; grid-row: 2; }
+  .lcd       { grid-column: 1 / -1; grid-row: 3; margin-bottom: 0; }
+
+  .plate-label { margin-bottom: .4rem; }
+  .pad { max-width: none; margin-inline: 0; margin-bottom: 0; }
+  .key-use, .padnote { margin-bottom: 0; }
+  .key svg { width: 21px; height: 21px; }
+  .key-pad { padding: .25rem; }
+  .key-word { font-size: .62rem; }
+}

@@ -34,9 +34,17 @@
 }
 @keyframes board-in { from { opacity: 0; transform: rotateX(34deg) translateY(26px); } }
 
-/* Telefón na šírku: doska sa musí zmestiť do výšky, inak odtlačí pult aj so
-   ▶ Štart pod okraj obrazovky. Strop je vo `vh`, prepočítaný cez pomer strán
-   mriežky — šírka teda vyjde tak, aby výška nikdy nepresiahla daný podiel. */
+/* Na telefóne musí doska pustiť k slovu aj klávesy a ▶ Štart, inak ich odtlačí
+   pod okraj obrazovky. Strop je vo `vh` a cez pomer strán mriežky sa prepočíta
+   na šírku — výška dosky tak nikdy nepresiahne daný podiel obrazovky. */
+@media (max-width: 760px) and (orientation: portrait) {
+  .board { max-width: min(calc(var(--cols) * 82px), calc(30vh * var(--cols) / var(--rows))); }
+  .board-stage { padding: .35rem .35rem 1rem; }
+}
+@media (max-width: 760px) and (orientation: portrait) and (max-height: 720px) {
+  .board { max-width: min(calc(var(--cols) * 82px), calc(26vh * var(--cols) / var(--rows))); }
+  .board-stage { padding: .25rem .25rem .8rem; }
+}
 @media (orientation: landscape) and (max-height: 620px) {
   .board { max-width: min(calc(var(--cols) * 82px), calc(58vh * var(--cols) / var(--rows))); }
   .board-stage { padding: .3rem .3rem .9rem; }

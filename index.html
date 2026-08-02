@@ -47,20 +47,12 @@
 
 <main class="deck">
 
-  <!-- ── Svet ─────────────────────────────────────────────── -->
-  <section class="field" aria-label="Bludisko">
-    <div class="board-stage">
-      <div class="board" id="board" role="img" aria-label="Mapa bludiska"></div>
-    </div>
-    <div class="pad-dock" id="padDock"></div>
-    <div class="briefing">
-      <h1 class="briefing-title" id="levelTitle">Kódolabky</h1>
-      <p class="briefing-text" id="levelStory">Načítavam misiu…</p>
-      <p class="hint" id="hintBar" hidden></p>
-    </div>
-  </section>
-
-  <!-- ── Pult ─────────────────────────────────────────────── -->
+  <!-- ── Pult ─────────────────────────────────────────────────
+       Pult je v HTML PRED bludiskom zámerne. Na telefóne je stĺpec jediný,
+       takže klávesy aj ▶ Štart vyjdú rovno nad mapku bez akéhokoľvek
+       presúvania uzlov — a poradie pre klávesnicu aj čítačku ostáva to isté
+       ako to, čo je vidieť. Na širokej obrazovke si stĺpce určuje `grid-column`
+       v base.css, takže pult sedí naďalej medzi bludiskom a plánom. -->
   <section class="console" aria-label="Dispečerský pult">
     <div class="console-plate">
       <span class="rivet rivet-tl" aria-hidden="true"></span>
@@ -80,7 +72,7 @@
         <div class="lcd-cell"><span class="lcd-key" id="stThirdKey">Kosti</span><span class="lcd-val" id="stBones">–</span></div>
       </div>
 
-      <div class="transport">
+      <div class="transport" id="transport">
         <button class="key key-run" id="btnRun" type="button">
           <span class="key-glyph" aria-hidden="true">▶</span><span class="key-word">Štart</span>
         </button>
@@ -98,6 +90,18 @@
         <button class="speedbtn" data-speed="150" type="button" aria-label="Rýchlo">▸▸▸</button>
         <button class="speedbtn sndbtn" id="soundToggle" type="button" aria-label="Zapnúť alebo vypnúť zvuky" aria-pressed="true"></button>
       </div>
+    </div>
+  </section>
+
+  <!-- ── Svet ─────────────────────────────────────────────── -->
+  <section class="field" aria-label="Bludisko">
+    <div class="board-stage">
+      <div class="board" id="board" role="img" aria-label="Mapa bludiska"></div>
+    </div>
+    <div class="briefing">
+      <h1 class="briefing-title" id="levelTitle">Kódolabky</h1>
+      <p class="briefing-text" id="levelStory">Načítavam misiu…</p>
+      <p class="hint" id="hintBar" hidden></p>
     </div>
   </section>
 

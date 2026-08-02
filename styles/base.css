@@ -193,25 +193,53 @@ button { cursor: pointer; }
   align-items: start;
   padding: clamp(.9rem, 2.2vw, 1.75rem);
 }
+/* Poradie v HTML je pult · bludisko · plán (kvôli telefónu, viď index.html),
+   tak si miesto v mriežke určíme výslovne — inak by autoplacement dal pult
+   doľava. Riadok treba uviesť tiež: autoplacement ide len dopredu, takže
+   bludisko za pultom by inak spadlo do druhého riadku. */
+.field   { grid-column: 1; grid-row: 1; }
+.console { grid-column: 2; grid-row: 1; }
+.plan    { grid-column: 3; grid-row: 1; }
+
 @media (max-width: 1080px) {
   .deck { grid-template-columns: minmax(0, 1fr) minmax(250px, 20rem); }
-  .plan { grid-column: 1 / -1; }
+  .plan { grid-column: 1 / -1; grid-row: 2; }
 }
+/* Jediný stĺpec = platí poradie z HTML: pult (a s ním klávesy aj ▶ Štart)
+   vyjde nad mapku. Stĺpce treba vynulovať, inak by `grid-column: 2` na pulte
+   vyrobil neexistujúci druhý stĺpec. */
 @media (max-width: 760px) {
   .deck { grid-template-columns: minmax(0, 1fr); }
-  .plan { grid-column: auto; }
+  .field, .console, .plan { grid-column: 1; grid-row: auto; }
+}
+
+/* Na telefóne sa lišta lámala na tri riadky a zožrala pätinu obrazovky.
+   Dva riadky stačia: značka s výberom misie hore, odznak a prepínače pod nimi. */
+@media (max-width: 760px) {
+  .topbar { padding: .4rem .7rem; gap: .45rem var(--space-2); }
+  .brand-mark { width: 27px; height: 27px; }
+  .brand-name { font-size: var(--step-0); }
+  .levelnav { margin-inline: 0; flex: 1; min-width: 0; }
+  .levelnav select { flex: 1; min-width: 0; max-width: none; }
+  .topbar-right { width: 100%; justify-content: space-between; gap: var(--space-1); }
+  .bone { width: 22px; height: 22px; }
+  .bone svg { width: 13px; height: 13px; }
 }
 
 /* Telefón na šírku. Jediný stĺpec by tu znamenal, že pult je až pod doskou,
    teda mimo obrazovky — dieťa vidí šípky, ale ▶ Štart musí hľadať scrollovaním.
    Preto doska a pult vedľa seba a všetko ostatné o kúsok stlačené. */
 @media (orientation: landscape) and (max-height: 620px) {
+  /* Doska je tu stropovaná na výšku, takže jej široký stĺpec aj tak nevyužije —
+     radšej ho dostane pult, inak sa mu popisky na LCD zliepajú do seba. */
   .deck {
-    grid-template-columns: minmax(0, 1fr) minmax(15rem, 19rem);
+    grid-template-columns: minmax(0, 1fr) minmax(19rem, 26rem);
     gap: .6rem;
     padding: .55rem;
   }
-  .plan { grid-column: 1 / -1; }
+  .field { grid-column: 1; grid-row: 1; }
+  .console { grid-column: 2; grid-row: 1; }
+  .plan { grid-column: 1 / -1; grid-row: 2; }
 
   .topbar { padding: .3rem clamp(.6rem, 2vw, 1.4rem); gap: var(--space-2); }
   .brand-mark { width: 26px; height: 26px; }

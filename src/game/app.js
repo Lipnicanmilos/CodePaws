@@ -26,26 +26,6 @@ const MESSAGES = {
   nothing: 'Tu nie je nič, čo by sa dalo použiť.',
 };
 
-/** Na úzkom displeji NAVYŠKU (telefón na výšku) šípky aj so štítkom presedlajú
-    do #padDock priamo nad mapku — inak by ich dieťa hľadalo až pod doskou.
-    Na telefóne na šírku sa to NEROBÍ: tam je málo výšky a pult musí ostať
-    pokope, aby bolo vedľa šípok vidno aj ▶ Štart (rieši to console.css).
-    Presúva sa ten istý uzol, nie kópia — poslucháč kliknutia z PaletteView
-    tak funguje bez ohľadu na to, kde v strome práve sedí. */
-(function dockPad() {
-  const group = document.getElementById('padGroup');
-  const dock = document.getElementById('padDock');
-  const homeParent = group.parentNode;
-  const homeNext = group.nextSibling;
-  const place = (docked) => {
-    if (docked) dock.appendChild(group);
-    else homeParent.insertBefore(group, homeNext);
-  };
-  const mq = window.matchMedia('(max-width: 760px) and (orientation: portrait)');
-  place(mq.matches);
-  mq.addEventListener('change', (e) => place(e.matches));
-})();
-
 class Game {
   constructor(levels, welcome) {
     this.levels = levels;
